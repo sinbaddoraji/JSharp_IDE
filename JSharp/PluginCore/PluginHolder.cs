@@ -16,7 +16,7 @@ namespace JSharp
         public List<Plugin> RegisteredPlugins { get; set; }
 
         private readonly string[] exludedFiles = new[]
-        { "AvalonDock.Themes.VS2013.dll", "AvalonDock.dll", "ICSharpCode.AvalonEdit.dll", "JSharp.dll", "HL.dll" };
+        { "AvalonDock.Themes.VS2013.dll", "AvalonDock.dll", "ICSharpCode.AvalonEdit.dll", "JSharp.dll", "ControlzEx.dll", "MahApps.Metro.dll", "Microsoft.Xaml.Behaviors.dll" };
 
         public PluginHolder()
         {
@@ -30,24 +30,31 @@ namespace JSharp
 
         private void LoadPlugin(string pluginPath)
         {
-            if (exludedFiles.Contains(Path.GetFileName(pluginPath))) return;
-
-            Assembly asm = Assembly.LoadFile(pluginPath);
-
-            if (asm == null) return;
-
-            Type objType = asm.GetExportedTypes().First(x => x.Name == "Entry");
-
-            if (objType != null)
+            try
             {
-                Plugin ipi = (Plugin)Activator.CreateInstance(objType);
-                if (ipi != null)
+                if (exludedFiles.Contains(Path.GetFileName(pluginPath))) return;
+
+                Assembly asm = Assembly.LoadFile(pluginPath);
+
+                if (asm == null) return;
+
+                Type objType = asm.GetExportedTypes().First(x => x.Name == "Entry");
+
+                if (objType != null)
                 {
-                    ipi.ParentWindow = ParentWindow;
-                    RegisteredPlugins.Add(ipi);
-                    ipi.Init();
+                    Plugin ipi = (Plugin)Activator.CreateInstance(objType);
+                    if (ipi != null)
+                    {
+                        ipi.ParentWindow = ParentWindow;
+                        RegisteredPlugins.Add(ipi);
+                        ipi.Init();
+                    }
                 }
             }
+            catch (Exception)
+            {
+            }
+            
         }
 
         public void Load()

@@ -1,8 +1,10 @@
 ﻿using AvalonDock.Layout;
 using AvalonDock.Themes;
+using ControlzEx.Theming;
 using ICSharpCode.AvalonEdit.Highlighting;
 using JSharp.Inbuilt_Panes;
 using JSharp.PluginCore;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,7 +16,7 @@ using System.Windows.Media;
 
 namespace JSharp
 {
-    public partial class Main : Window
+    public partial class Main : MetroWindow
     {
         /*
          * This class contains all the abstract definitions for the main window
@@ -62,37 +64,19 @@ namespace JSharp
 
         #region WindowSettings
 
-        public void SetWindowTheme(int themeIndex)
+        public void SetWindowTheme(bool darkMode)
         {
-            if (themeIndex == 0)
+            if (darkMode)
             {
                 //Visual studio dark theme
                 dockManager.Theme = new Vs2013DarkTheme();
-                Background = dockManager.Background;
-                Foreground = new SolidColorBrush(Colors.White);
+                ThemeManager.Current.ChangeTheme(this, "Dark.Blue");
+                ThemeManager.Current.SyncTheme();
+                var Background = dockManager.Background;
+                var Foreground = new SolidColorBrush(Colors.White);
                 //Setup menu colors
-                menu.Background = dockManager.Background;
+                menu.Background = Background;
                 menu.Foreground = Foreground;
-
-                foreach (var item in menu.Items)
-                {
-                    var menuItem = ((MenuItem)item);
-                    menuItem.Background = Background;
-                    menuItem.Foreground = Foreground;
-                    foreach (var childItem in menuItem.Items)
-                    {
-                        if (childItem is Control childMenuItem)
-                        {
-                            childMenuItem.Foreground = new SolidColorBrush(Colors.Black);
-                        }
-                    }
-                }
-                //Setup tool bar colors
-                toolBar.Background = dockManager.Background;
-                toolBar.Foreground = Foreground;
-                //Setup status bar colors
-                statusBar.Background = dockManager.Background;
-                toolBar.Foreground = Foreground;
                 //Setup editor colors
                 Editor.TextBackground = Background;
                 Editor.TextForeground = Foreground;
@@ -103,6 +87,7 @@ namespace JSharp
             {
                 //Visual studio dark theme
                 dockManager.Theme = new Vs2013LightTheme();
+                ThemeManager.Current.ChangeTheme(this, "Light.Blue");
                 return;
             }
         }
@@ -156,7 +141,7 @@ namespace JSharp
         {
             if (pane == null) return;
             LayoutAnchorable lA = new LayoutAnchorable { Title = pane.title };
-
+            
             lA.Content = pane.content;
             ((UserControl)pane.content).HorizontalAlignment = HorizontalAlignment.Stretch;
             ((UserControl)pane.content).VerticalAlignment = VerticalAlignment.Stretch;

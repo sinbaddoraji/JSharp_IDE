@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,7 +9,7 @@ namespace JSharp
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class Main : Window
+    public partial class Main : MetroWindow
     {
         /*
          * This handles the events of the main window (Strictly)
@@ -18,11 +19,10 @@ namespace JSharp
         {
             InitializeComponent();
             LoadPlugins();
-            SetWindowTheme(0);
+            SetWindowTheme(true);
             AddInbuiltPanes();
             InitalizePanes();
-
-           
+            
             Editor.FilterOptions = "Java Files (*.java)|*.java|Other Files (*.*)|*.*";
             openFileDialog = new System.Windows.Forms.OpenFileDialog()
             {
