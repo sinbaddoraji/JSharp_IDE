@@ -1,0 +1,7 @@
+JSharp has a flexible UI using the Avalon Dock framework
+
+JSharp supports syntax highlighting using The AvalonEditor
+
+JSharp supports plugins (PluginCore is built along side JSharp)
+
+JSharp supports code folding

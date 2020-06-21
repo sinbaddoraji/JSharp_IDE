@@ -1,0 +1,5 @@
+the Entry class is necessary for plugins to be recognized
+apparently plugins act as if they are in the same directory with the main program
+
+
+Plugins have full control of the parent window too

@@ -1,0 +1,156 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xcad="https://github.com/Dirkster99/AvalonDock" x:Name="window" x:Class="JSharp.Main"
+        mc:Ignorable="d"
+        Title="JSharp" Height="450" Width="800" SizeToContent="Manual" WindowStartupLocation="CenterScreen" Background="White" Closing="Window_Closing" WindowState="Maximized">
+
+    <DockPanel LastChildFill="True" HorizontalAlignment="Stretch">
+        <Menu DockPanel.Dock="Top" Background="White" x:Name="menu">
+            <MenuItem x:Name="File" Header="File">
+                <MenuItem x:Name="New" Header="New" Click="New_Click" />
+                <MenuItem x:Name="Open" Header="Open" InputGestureText="Ctrl+O" Click="Open_Click" />
+                <MenuItem x:Name="Save" Header="Save" InputGestureText="Ctrl+S" Click="Save_Click" />
+                <MenuItem x:Name="SaveAs" Header="Save As" Click="SaveAs_Click" />
+                <MenuItem x:Name="SaveAll" Header="Save All" Click="SaveAll_Click" />
+                <Separator />
+                <MenuItem x:Name="Print" Header="Print" />
+                <MenuItem x:Name="RenameFile" Header="Rename Selected" />
+                <Separator />
+                <MenuItem x:Name="CloseAll" Header="Close All" />
+                <Separator />
+                <MenuItem x:Name="Recents" Header="Recent Files" />
+                <MenuItem x:Name="Exit" Header="Exit" Click="Exit_Click" />
+            </MenuItem>
+
+            <MenuItem x:Name="Edit" Header="Edit"  DockPanel.Dock="Top">
+                <MenuItem Header="Undo" Command="Undo" />
+                <MenuItem Header="Redo" Command="Redo" />
+                <Separator />
+                <MenuItem Header="Cut" Command="Cut" />
+                <MenuItem Header="Copy" Command="Copy" />
+                <MenuItem Header="Paste" Command="Paste" />
+                <MenuItem Header="Delete" Command="Delete" />
+                <Separator />
+                <MenuItem Header="Goto Line" />
+            </MenuItem>
+
+            <MenuItem x:Name="View" Header="View"  DockPanel.Dock="Top">
+                <MenuItem Header="View Settings" Command="" />
+            </MenuItem>
+
+            <MenuItem x:Name="Project" Header="Project"  DockPanel.Dock="Top">
+                <MenuItem Header="Create Jar File" Command="" />
+            </MenuItem>
+
+            <MenuItem x:Name="Build" Header="Build"  DockPanel.Dock="Top">
+                <MenuItem Header="Build" Command="" />
+                <MenuItem Header="Run" Command="" />
+                <MenuItem Header="Run in CMD" Command="" />
+            </MenuItem>
+
+            <MenuItem x:Name="Debug" Header="Debug"  DockPanel.Dock="Top">
+                <MenuItem Header="Set Breakpoint" Command="" />
+                <MenuItem Header="Step Into" Command="" />
+                <MenuItem Header="Step Over" Command="" />
+            </MenuItem>
+
+            <MenuItem x:Name="PluginMenu" Header="Tools" DockPanel.Dock="Top">
+            </MenuItem>
+
+            <MenuItem  Header="Help" DockPanel.Dock="Top">
+                <MenuItem  Header="View Help" DockPanel.Dock="Top" />
+                <MenuItem  Header="About JSharp" DockPanel.Dock="Top" />
+            </MenuItem>
+        </Menu>
+
+        <ToolBar Grid.Row="1" DockPanel.Dock="Top" Background="White" x:Name="toolBar">
+            <ToolBar.Resources>
+                <Style TargetType="{x:Type Image}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ButtonBase}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
+                            <Setter Property="Opacity" Value="0.30" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ToolBar.Resources>
+            <Button>
+                <Image Height="16" Source="/Images/Open.png" />
+            </Button>
+            <Button Click="Save_Click">
+                <Image Source="/Images/Save.png" Height="16" />
+            </Button>
+            <Separator />
+            <Button Command="Cut">
+                <Image Source="/Images/Cut.png" Height="16" />
+            </Button>
+            <Button Command="Copy">
+                <Image Source="/Images/Copy.png" Height="16" />
+            </Button>
+            <Button Command="Paste">
+                <Image Source="/Images/Paste.png" Height="16" />
+            </Button>
+            <Button Command="Delete">
+                <Image Source="/Images/Delete.png" Height="16" />
+            </Button>
+            <Separator />
+            <Button Command="Undo">
+                <Image Source="/Images/Undo.png" Height="16" />
+            </Button>
+            <Button Command="Redo">
+                <Image Source="/Images/Redo.png" Height="16" />
+            </Button>
+            <Separator />
+        </ToolBar>
+
+        <StatusBar Background="#FF007ACC" DockPanel.Dock="Bottom" Height="25" x:Name="statusBar">
+            <ComboBox x:Name="zoomValue" Width="41" SelectionChanged="ZoomValue_SelectionChanged" SelectedIndex="12" Height="20">
+            </ComboBox>
+        </StatusBar>
+
+        <xcad:DockingManager Grid.Row="1"
+                           BorderBrush="Black" BorderThickness="1"
+                           x:Name="dockManager" Panel.ZIndex="2">
+
+            <xcad:DockingManager.DocumentHeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding IconSource}" Margin="0,0,4,0" />
+                        <TextBlock Text="{Binding Title}" />
+                    </StackPanel>
+                </DataTemplate>
+            </xcad:DockingManager.DocumentHeaderTemplate>
+
+            <xcad:LayoutRoot x:Name="_layoutRoot">
+                
+                <xcad:LayoutPanel Orientation="Vertical">
+                    
+                    <xcad:LayoutPanel Orientation="Horizontal">
+
+                        <xcad:LayoutAnchorablePaneGroup DockWidth="280"  Orientation="Vertical">
+                            <xcad:LayoutAnchorablePane x:Name="leftPane"></xcad:LayoutAnchorablePane>
+                            <xcad:LayoutAnchorablePane x:Name="leftPane2"></xcad:LayoutAnchorablePane>
+                        </xcad:LayoutAnchorablePaneGroup>
+
+                        <xcad:LayoutDocumentPaneGroup>
+                            <xcad:LayoutDocumentPane x:Name="documents" />
+                        </xcad:LayoutDocumentPaneGroup>
+
+                        <xcad:LayoutAnchorablePaneGroup DockWidth="280" Orientation="Vertical">
+                            <xcad:LayoutAnchorablePane x:Name="rightPane"></xcad:LayoutAnchorablePane>
+                            <xcad:LayoutAnchorablePane x:Name="rightPane2"></xcad:LayoutAnchorablePane>
+                        </xcad:LayoutAnchorablePaneGroup>
+                    </xcad:LayoutPanel>
+
+                    <xcad:LayoutAnchorablePaneGroup DockHeight="280">
+                        <xcad:LayoutAnchorablePane x:Name="LowerPane"></xcad:LayoutAnchorablePane>
+                        <xcad:LayoutAnchorablePane x:Name="LowerPane2"></xcad:LayoutAnchorablePane>
+                    </xcad:LayoutAnchorablePaneGroup>
+                </xcad:LayoutPanel>
+                
+            </xcad:LayoutRoot>
+        </xcad:DockingManager>
+    </DockPanel>
+</Window>

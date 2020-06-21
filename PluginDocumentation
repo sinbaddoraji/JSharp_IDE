@@ -1,0 +1,23 @@
+plugins can
+
+open file
+Change selected tab
+close tab
+add status bar item
+add document item
+add new filetype
+modify syntax highlighting for filetype
+modify folding strategy
+modify auto complete for filetype
+3
+
+
+
+
+plugins have access to
+
+selectedDoc
+Files open on text editor
+
+
+
