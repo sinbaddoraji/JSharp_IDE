@@ -72,23 +72,32 @@ namespace JSharp
                 dockManager.Theme = new Vs2013DarkTheme();
                 ThemeManager.Current.ChangeTheme(this, "Dark.Blue");
                 ThemeManager.Current.SyncTheme();
-                var Background = dockManager.Background;
-                var Foreground = new SolidColorBrush(Colors.White);
+                Background = dockManager.Background;
+                Foreground = new SolidColorBrush(Colors.White);
                 //Setup menu colors
-                menu.Background = Background;
-                menu.Foreground = Foreground;
+               // menu.Background = Background;
+                //menu.Foreground = Foreground;
                 //Setup editor colors
+                
                 Editor.TextBackground = Background;
                 Editor.TextForeground = Foreground;
+                WindowTitleBrush = Background;
+                TitleForeground = Foreground;
                 //Set pane colours
-                
             }
             else
             {
                 //Visual studio dark theme
                 dockManager.Theme = new Vs2013LightTheme();
-                ThemeManager.Current.ChangeTheme(this, "Light.Blue");
-                return;
+                //Background = new SolidColorBrush(Colors.Cyan);
+                Foreground = new SolidColorBrush(Colors.Black);
+                statusBar.Background = WindowTitleBrush;
+
+                //menu.Background = Background;
+                WindowTitleBrush = new SolidColorBrush(Colors.White);
+                TitleForeground = new SolidColorBrush(Colors.Black);
+                ThemeManager.Current.ChangeTheme(this, "Light.Cyan");
+                ThemeManager.Current.SyncTheme();
             }
         }
 

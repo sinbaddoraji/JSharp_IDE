@@ -4,69 +4,75 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xcad="https://github.com/Dirkster99/AvalonDock" x:Name="window" x:Class="JSharp.Main"
-        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        mc:Ignorable="d"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d" 
         Title="JSharp" Height="450" Width="800" SizeToContent="Manual" WindowStartupLocation="CenterScreen" Background="White" Closing="Window_Closing" WindowState="Maximized">
 
+    
+    <mah:MetroWindow.LeftWindowCommands>
+        <mah:WindowCommands>
+            <Menu DockPanel.Dock="Top" Background="Transparent" x:Name="menu">
+                <MenuItem x:Name="File" Header="File" Background="Transparent">
+                    <MenuItem x:Name="New" Header="New" Click="New_Click" />
+                    <MenuItem x:Name="Open" Header="Open" InputGestureText="Ctrl+O" Click="Open_Click" />
+                    <MenuItem x:Name="Save" Header="Save" InputGestureText="Ctrl+S" Click="Save_Click" />
+                    <MenuItem x:Name="SaveAs" Header="Save As" Click="SaveAs_Click" />
+                    <MenuItem x:Name="SaveAll" Header="Save All" Click="SaveAll_Click" />
+                    <Separator />
+                    <MenuItem x:Name="Print" Header="Print" />
+                    <MenuItem x:Name="RenameFile" Header="Rename Selected" />
+                    <Separator />
+                    <MenuItem x:Name="CloseAll" Header="Close All" />
+                    <Separator />
+                    <MenuItem x:Name="Recents" Header="Recent Files" />
+                    <MenuItem x:Name="Exit" Header="Exit" Click="Exit_Click" />
+                </MenuItem>
+
+                <MenuItem x:Name="Edit" Header="Edit"  DockPanel.Dock="Top" Background="Transparent">
+                    <MenuItem Header="Undo" Command="Undo" />
+                    <MenuItem Header="Redo" Command="Redo" />
+                    <Separator />
+                    <MenuItem Header="Cut" Command="Cut" />
+                    <MenuItem Header="Copy" Command="Copy" />
+                    <MenuItem Header="Paste" Command="Paste" />
+                    <MenuItem Header="Delete" Command="Delete" />
+                    <Separator />
+                    <MenuItem Header="Goto Line" />
+                </MenuItem>
+
+                <MenuItem x:Name="View" Header="View"  DockPanel.Dock="Top" Background="Transparent">
+                    <MenuItem Header="View Settings" Command="" />
+                </MenuItem>
+
+                <MenuItem x:Name="Project" Header="Project"  DockPanel.Dock="Top" Background="Transparent">
+                    <MenuItem Header="Create Jar File" Command="" />
+                </MenuItem>
+
+                <MenuItem x:Name="Build" Header="Build"  DockPanel.Dock="Top" Background="Transparent">
+                    <MenuItem Header="Build" Command="" />
+                    <MenuItem Header="Run" Command="" />
+                    <MenuItem Header="Run in CMD" Command="" />
+                </MenuItem>
+
+                <MenuItem x:Name="Debug" Header="Debug"  DockPanel.Dock="Top" Background="Transparent">
+                    <MenuItem Header="Set Breakpoint" Command="" />
+                    <MenuItem Header="Step Into" Command="" />
+                    <MenuItem Header="Step Over" Command="" />
+                </MenuItem>
+
+                <MenuItem x:Name="PluginMenu" Header="Tools" DockPanel.Dock="Top" Background="Transparent">
+                </MenuItem>
+
+                <MenuItem  Header="Help" DockPanel.Dock="Top" Background="Transparent">
+                    <MenuItem  Header="View Help" DockPanel.Dock="Top" />
+                    <MenuItem  Header="About JSharp" DockPanel.Dock="Top" />
+                </MenuItem>
+            </Menu>
+
+        </mah:WindowCommands>
+        </mah:MetroWindow.LeftWindowCommands>
 
     <DockPanel LastChildFill="True" HorizontalAlignment="Stretch">
-        <Menu DockPanel.Dock="Top" Background="White" x:Name="menu">
-            <MenuItem x:Name="File" Header="File">
-                <MenuItem x:Name="New" Header="New" Click="New_Click" />
-                <MenuItem x:Name="Open" Header="Open" InputGestureText="Ctrl+O" Click="Open_Click" />
-                <MenuItem x:Name="Save" Header="Save" InputGestureText="Ctrl+S" Click="Save_Click" />
-                <MenuItem x:Name="SaveAs" Header="Save As" Click="SaveAs_Click" />
-                <MenuItem x:Name="SaveAll" Header="Save All" Click="SaveAll_Click" />
-                <Separator />
-                <MenuItem x:Name="Print" Header="Print" />
-                <MenuItem x:Name="RenameFile" Header="Rename Selected" />
-                <Separator />
-                <MenuItem x:Name="CloseAll" Header="Close All" />
-                <Separator />
-                <MenuItem x:Name="Recents" Header="Recent Files" />
-                <MenuItem x:Name="Exit" Header="Exit" Click="Exit_Click" />
-            </MenuItem>
-
-            <MenuItem x:Name="Edit" Header="Edit"  DockPanel.Dock="Top">
-                <MenuItem Header="Undo" Command="Undo" />
-                <MenuItem Header="Redo" Command="Redo" />
-                <Separator />
-                <MenuItem Header="Cut" Command="Cut" />
-                <MenuItem Header="Copy" Command="Copy" />
-                <MenuItem Header="Paste" Command="Paste" />
-                <MenuItem Header="Delete" Command="Delete" />
-                <Separator />
-                <MenuItem Header="Goto Line" />
-            </MenuItem>
-
-            <MenuItem x:Name="View" Header="View"  DockPanel.Dock="Top">
-                <MenuItem Header="View Settings" Command="" />
-            </MenuItem>
-
-            <MenuItem x:Name="Project" Header="Project"  DockPanel.Dock="Top">
-                <MenuItem Header="Create Jar File" Command="" />
-            </MenuItem>
-
-            <MenuItem x:Name="Build" Header="Build"  DockPanel.Dock="Top">
-                <MenuItem Header="Build" Command="" />
-                <MenuItem Header="Run" Command="" />
-                <MenuItem Header="Run in CMD" Command="" />
-            </MenuItem>
-
-            <MenuItem x:Name="Debug" Header="Debug"  DockPanel.Dock="Top">
-                <MenuItem Header="Set Breakpoint" Command="" />
-                <MenuItem Header="Step Into" Command="" />
-                <MenuItem Header="Step Over" Command="" />
-            </MenuItem>
-
-            <MenuItem x:Name="PluginMenu" Header="Tools" DockPanel.Dock="Top">
-            </MenuItem>
-
-            <MenuItem  Header="Help" DockPanel.Dock="Top">
-                <MenuItem  Header="View Help" DockPanel.Dock="Top" />
-                <MenuItem  Header="About JSharp" DockPanel.Dock="Top" />
-            </MenuItem>
-        </Menu>
 
         <ToolBar Grid.Row="1" DockPanel.Dock="Top" x:Name="toolBar">
             <ToolBar.Resources>
@@ -76,6 +82,11 @@
                             <Setter Property="Opacity" Value="0.30" />
                         </DataTrigger>
                     </Style.Triggers>
+                </Style>
+
+                <Style TargetType="ToolBar">
+                    <Setter Property="Foreground" Value="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}" />
+                    <Setter Property="Background" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}" />
                 </Style>
             </ToolBar.Resources>
             <ToolBar.BorderBrush>

@@ -19,7 +19,7 @@ namespace JSharp
         {
             InitializeComponent();
             LoadPlugins();
-            SetWindowTheme(true);
+            SetWindowTheme(false);
             AddInbuiltPanes();
             InitalizePanes();
             
