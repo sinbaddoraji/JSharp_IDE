@@ -5,3 +5,7 @@ JSharp supports syntax highlighting using The AvalonEditor
 JSharp supports plugins (PluginCore is built along side JSharp)
 
 JSharp supports code folding
+
+JSharp has two themes (a light theme and a dark one)
+
+JSharp remembers previously Opened Documents

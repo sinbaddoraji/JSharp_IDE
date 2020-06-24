@@ -4,11 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xcad="https://github.com/Dirkster99/AvalonDock" x:Name="window" x:Class="JSharp.Main"
-        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-        mc:Ignorable="d" 
-        Title="JSharp" Height="450" Width="800" SizeToContent="Manual" WindowStartupLocation="CenterScreen" Background="White" Closing="Window_Closing" WindowState="Maximized">
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" 
+        mc:Ignorable="d" SaveWindowPosition="True"   GlowBrush="Black" ShowIconOnTitleBar="True" TitleAlignment="Center" Title="JSharp"
+        Height="450" Width="800" SizeToContent="Manual" WindowStartupLocation="CenterScreen" Background="White" Closing="Window_Closing" WindowState="Maximized">
 
-    
+
+
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <Menu DockPanel.Dock="Top" Background="Transparent" x:Name="menu">
@@ -19,12 +20,9 @@
                     <MenuItem x:Name="SaveAs" Header="Save As" Click="SaveAs_Click" />
                     <MenuItem x:Name="SaveAll" Header="Save All" Click="SaveAll_Click" />
                     <Separator />
-                    <MenuItem x:Name="Print" Header="Print" />
-                    <MenuItem x:Name="RenameFile" Header="Rename Selected" />
-                    <Separator />
                     <MenuItem x:Name="CloseAll" Header="Close All" />
                     <Separator />
-                    <MenuItem x:Name="Recents" Header="Recent Files" />
+                    <MenuItem x:Name="Recents" Header="Recent Files" Click="Recents_Click" />
                     <MenuItem x:Name="Exit" Header="Exit" Click="Exit_Click" />
                 </MenuItem>
 
@@ -39,11 +37,6 @@
                     <Separator />
                     <MenuItem Header="Goto Line" />
                 </MenuItem>
-
-                <MenuItem x:Name="View" Header="View"  DockPanel.Dock="Top" Background="Transparent">
-                    <MenuItem Header="View Settings" Command="" />
-                </MenuItem>
-
                 <MenuItem x:Name="Project" Header="Project"  DockPanel.Dock="Top" Background="Transparent">
                     <MenuItem Header="Create Jar File" Command="" />
                 </MenuItem>
@@ -61,6 +54,7 @@
                 </MenuItem>
 
                 <MenuItem x:Name="PluginMenu" Header="Tools" DockPanel.Dock="Top" Background="Transparent">
+                    <MenuItem Header="View Settings" Click="Settings_Click"/>
                 </MenuItem>
 
                 <MenuItem  Header="Help" DockPanel.Dock="Top" Background="Transparent">

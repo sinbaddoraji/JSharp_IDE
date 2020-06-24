@@ -8,6 +8,7 @@ using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -36,9 +37,44 @@ namespace JSharp
         private readonly System.Windows.Forms.OpenFileDialog openFileDialog;
 
         //Document Related Properties
-        private readonly List<string> OpenedFiles = new List<string>();
+        private IEnumerable<string> OpenedFiles
+        {
+            get
+            {
+                foreach (var document in documents.Children)
+                {
+                    yield return ((Editor)document.Content).OpenedDocument;
+                }
+            }
+        }
+
+        public StringCollection GetOpenedFiles(bool fromSettings)
+        {
+            if(fromSettings) return Properties.Settings.Default.OpenedFiles;
+
+            StringCollection stringCollection = new StringCollection();
+            foreach (var str in OpenedFiles)
+            {
+                stringCollection.Add(str);
+            }
+            Properties.Settings.Default.OpenedFiles = stringCollection;
+            Properties.Settings.Default.Save();
+            return Properties.Settings.Default.OpenedFiles;
+        }
 
         public FileExplorer fileExplorer;
+
+        public string GetSelectedFile
+        {
+            get
+            {
+                if (documents.SelectedContent == null) return "JSharp";
+
+                var o = documents.SelectedContent.Content;
+                if (o.GetType() != typeof(Editor)) return "JSharp";
+                else return ((Editor)o).OpenedDocument;
+            }
+        }
 
         public Editor GetSelectedDocument()
         {
@@ -89,14 +125,15 @@ namespace JSharp
             {
                 //Visual studio dark theme
                 dockManager.Theme = new Vs2013LightTheme();
-                //Background = new SolidColorBrush(Colors.Cyan);
                 Foreground = new SolidColorBrush(Colors.Black);
-                statusBar.Background = WindowTitleBrush;
-
-                //menu.Background = Background;
-                WindowTitleBrush = new SolidColorBrush(Colors.White);
+                
+                
+                menu.Background = Background;
+                
+                //WindowTitleBrush = new SolidColorBrush(Colors.White);
                 TitleForeground = new SolidColorBrush(Colors.Black);
                 ThemeManager.Current.ChangeTheme(this, "Light.Cyan");
+                statusBar.Background = WindowTitleBrush;
                 ThemeManager.Current.SyncTheme();
             }
         }
@@ -194,8 +231,36 @@ namespace JSharp
             }
         }
 
+        private void OpenDocuments(StringCollection previouslyOpenedDocuments)
+        {
+            System.Collections.IList list = previouslyOpenedDocuments;
+            if (list == null || list.Count < 1) return;
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                string file = (string)list[i];
+                try
+                {
+                    OpenDocument(file);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
+            }
+        }
+
         public void OpenDocument(string filename)
         {
+            if (Properties.Settings.Default.RecentFiles == null)
+            {
+                Properties.Settings.Default.RecentFiles = new StringCollection();
+            }
+            if(!Properties.Settings.Default.RecentFiles.Contains(filename))
+            {
+                Properties.Settings.Default.RecentFiles.Add(filename);
+                Properties.Settings.Default.Save();
+            }
             if (OpenedFiles.Contains(filename)) return;
             if (documents.Children.Count == 0)
             {
@@ -215,8 +280,6 @@ namespace JSharp
                 AddDocumentPage(name, ex);
             }
             ex.OpenDocument(filename);
-
-            OpenedFiles.Add(filename);
         }
 
         public void SelectTab(int index)

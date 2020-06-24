@@ -8,6 +8,7 @@ using ICSharpCode.AvalonEdit.Search;
 using JSharp.Code_Completion;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -162,7 +163,15 @@ namespace JSharp
         public void SaveDocument()
         {
             if (IsUnoccupied()) return;
-            Save(fileStream);
+            try
+            {
+                Save(fileStream);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            
         }
 
         public void SaveAs(string fileName)
@@ -173,6 +182,16 @@ namespace JSharp
             fileStream.Close();
             fileName = saveFileDialog.FileName;
             fileStream = File.Open(fileName, FileMode.Open);
+
+            if (Properties.Settings.Default.RecentFiles == null)
+            {
+                Properties.Settings.Default.RecentFiles = new StringCollection();
+            }
+            if (!Properties.Settings.Default.RecentFiles.Contains(fileName))
+            {
+                Properties.Settings.Default.RecentFiles.Add(fileName);
+                Properties.Settings.Default.Save();
+            }
         }
 
         public void SaveAs()

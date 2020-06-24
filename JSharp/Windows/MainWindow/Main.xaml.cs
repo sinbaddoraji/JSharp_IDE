@@ -1,5 +1,8 @@
-﻿using MahApps.Metro.Controls;
+﻿using JSharp.MainWindow;
+using JSharp.Windows;
+using MahApps.Metro.Controls;
 using System;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,7 +22,7 @@ namespace JSharp
         {
             InitializeComponent();
             LoadPlugins();
-            SetWindowTheme(false);
+            SetWindowTheme(Properties.Settings.Default.DarkTheme);
             AddInbuiltPanes();
             InitalizePanes();
             
@@ -31,6 +34,9 @@ namespace JSharp
 
             for (int i = 1; i <= 100; i++) zoomValue.Items.Add(i);
 
+            var previouslyOpenedDocuments = GetOpenedFiles(true);
+            OpenDocuments(previouslyOpenedDocuments);
+
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
@@ -41,9 +47,11 @@ namespace JSharp
             }
         }
 
+       
+
         private void SelectedContent_Closed(object sender, EventArgs e)
         {
-            OpenedFiles.Remove(GetSelectedDocument().OpenedDocument);
+            //OpenedFiles.Remove(GetSelectedDocument().OpenedDocument);
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
@@ -71,6 +79,8 @@ namespace JSharp
         {
             //Unload all registered plugins incase none managable objects were used in plugins
             PluginHolder.instance.UnloadAllRegisteredPlugins();
+
+            GetOpenedFiles(false);
         }
 
         private void New_Click(object sender, RoutedEventArgs e)
@@ -88,6 +98,17 @@ namespace JSharp
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            new Settings().ShowDialog();
+            SetWindowTheme(Properties.Settings.Default.DarkTheme);
+        }
+
+        private void Recents_Click(object sender, RoutedEventArgs e)
+        {
+            (new RecentFiles()).ShowDialog();
         }
     }
 }
