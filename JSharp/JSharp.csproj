@@ -18,15 +18,10 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <None Remove="Highlighting\Resources\CPP-DarkMode.xshd" />
     <None Remove="Highlighting\Resources\CPP-LightMode.xshd" />
-    <None Remove="Highlighting\Resources\CSharp-DarkMode.xshd" />
     <None Remove="Highlighting\Resources\CSharp-LightMode.xshd" />
-    <None Remove="Highlighting\Resources\Java-DarkMode.xshd" />
     <None Remove="Highlighting\Resources\Java-LightMode.xshd" />
-    <None Remove="Highlighting\Resources\Python-DarkMode.xshd" />
     <None Remove="Highlighting\Resources\Python-LightMode.xshd" />
-    <None Remove="Highlighting\Resources\XML-DarkMode.xshd" />
     <None Remove="Highlighting\Resources\XML-LightMode.xshd" />
     <None Remove="Images\add.png" />
     <None Remove="Images\application.png" />
@@ -52,6 +47,15 @@
     <None Remove="Images\WordWrap.png" />
     <None Remove="JSharp.png" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="bin\Debug\net46\Resources\Java-DarkMode.xshd" />
+    <None Include="bin\Debug\net46\Resources\Java-LightMode.xshd" />
+    <None Include="bin\Debug\net46\Resources\Python-DarkMode.xshd" />
+    <None Include="bin\Debug\net46\Resources\Python-LightMode.xshd" />
+    <None Include="bin\Debug\net46\Resources\XML-DarkMode.xshd" />
+    <None Include="bin\Debug\net46\Resources\XML-LightMode.xshd" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.0.1" />
@@ -60,31 +64,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Highlighting\Resources\CPP-DarkMode.xshd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Highlighting\Resources\CPP-LightMode.xshd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Highlighting\Resources\CSharp-DarkMode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Highlighting\Resources\CSharp-LightMode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Highlighting\Resources\Java-DarkMode.xshd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Highlighting\Resources\Java-LightMode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Highlighting\Resources\Python-DarkMode.xshd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Highlighting\Resources\Python-LightMode.xshd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Highlighting\Resources\XML-DarkMode.xshd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Highlighting\Resources\XML-LightMode.xshd">

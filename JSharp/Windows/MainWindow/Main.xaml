@@ -116,7 +116,7 @@
         </ToolBar>
 
         <StatusBar Background="#FF007ACC" DockPanel.Dock="Bottom" Height="25" x:Name="statusBar">
-            <ComboBox x:Name="zoomValue" Width="41" SelectionChanged="ZoomValue_SelectionChanged" SelectedIndex="12" Height="20">
+            <ComboBox x:Name="zoomValue" Width="41" SelectionChanged="ZoomValue_SelectionChanged" SelectedIndex="16" Height="20">
             </ComboBox>
         </StatusBar>
 

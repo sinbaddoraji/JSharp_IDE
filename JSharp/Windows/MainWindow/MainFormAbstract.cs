@@ -51,7 +51,6 @@ namespace JSharp
         public StringCollection GetOpenedFiles(bool fromSettings)
         {
             if(fromSettings) return Properties.Settings.Default.OpenedFiles;
-
             StringCollection stringCollection = new StringCollection();
             foreach (var str in OpenedFiles)
             {
@@ -60,6 +59,7 @@ namespace JSharp
             Properties.Settings.Default.OpenedFiles = stringCollection;
             Properties.Settings.Default.Save();
             return Properties.Settings.Default.OpenedFiles;
+            
         }
 
         public FileExplorer fileExplorer;
@@ -131,7 +131,9 @@ namespace JSharp
                 menu.Background = Background;
                 
                 //WindowTitleBrush = new SolidColorBrush(Colors.White);
-                TitleForeground = new SolidColorBrush(Colors.Black);
+                Color fontColour = (Color)ColorConverter.ConvertFromString("#FFDCDCDC");
+                TitleForeground = new SolidColorBrush(fontColour);
+                
                 ThemeManager.Current.ChangeTheme(this, "Light.Cyan");
                 statusBar.Background = WindowTitleBrush;
                 ThemeManager.Current.SyncTheme();

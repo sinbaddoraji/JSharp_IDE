@@ -6,6 +6,7 @@ using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Search;
 using JSharp.Code_Completion;
+using JSharp.Highlighting;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -43,6 +44,8 @@ namespace JSharp
 
         private Dictionary<string, string> brackets;
 
+        private InnerHighlightingManager highlightingManager;
+
         public Editor()
         {
             //Initialize objects
@@ -53,7 +56,7 @@ namespace JSharp
 
             //Initialize default properties
             ShowLineNumbers = true;
-            FontSize = 12;
+            FontSize = 16;
             AllowDrop = true;
 
             //Initialize event handlers
@@ -78,6 +81,8 @@ namespace JSharp
                 { "'", "'" },
                 { "\"", "\"" }
             };
+
+            highlightingManager = new InnerHighlightingManager();
         }
 
         
@@ -176,7 +181,7 @@ namespace JSharp
         private void SelectHighlighting(string filename)
         {
             //Setup syntax highlighting
-            SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(new FileInfo(filename).Extension);
+            SyntaxHighlighting = highlightingManager.GetHighlightingFromExtension(new FileInfo(filename).Extension);
             //Set up folding strategy
             var highlighting = HighlightingManager.Instance.HighlightingDefinitions.Where(x => x.Name.Contains("ml"));
             foldingStrategy = highlighting.Contains(SyntaxHighlighting) ? new XmlFoldingStrategy() : (object)new BraceFoldingStrategy();

@@ -101,6 +101,26 @@ namespace JSharp.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Java_DarkMode {
+            get {
+                object obj = ResourceManager.GetObject("Java_DarkMode", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Java_LightMode {
+            get {
+                object obj = ResourceManager.GetObject("Java_LightMode", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Open {
@@ -117,6 +137,26 @@ namespace JSharp.Properties {
             get {
                 object obj = ResourceManager.GetObject("Paste", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Python_DarkMode {
+            get {
+                object obj = ResourceManager.GetObject("Python_DarkMode", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Python_LightMode {
+            get {
+                object obj = ResourceManager.GetObject("Python_LightMode", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -157,6 +197,26 @@ namespace JSharp.Properties {
             get {
                 object obj = ResourceManager.GetObject("WordWrap", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] XML_DarkMode {
+            get {
+                object obj = ResourceManager.GetObject("XML_DarkMode", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] XML_LightMode {
+            get {
+                object obj = ResourceManager.GetObject("XML_LightMode", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }
