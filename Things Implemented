@@ -9,3 +9,5 @@ JSharp supports code folding
 JSharp has two themes (a light theme and a dark one)
 
 JSharp remembers previously Opened Documents
+
+JSharp supports automatic bracket or quote closing

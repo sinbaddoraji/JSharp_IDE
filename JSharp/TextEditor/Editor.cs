@@ -39,6 +39,10 @@ namespace JSharp
         public static Brush TextForeground = null;
         public static Brush TextBackground = null;
 
+        IList<ICompletionData> data;
+
+        private Dictionary<string, string> brackets;
+
         public Editor()
         {
             //Initialize objects
@@ -53,6 +57,7 @@ namespace JSharp
             AllowDrop = true;
 
             //Initialize event handlers
+            KeyDown += Editor_KeyDown;
             TextArea.TextEntering += TextEditor_TextArea_TextEntering;
             TextArea.TextEntered += TextEditor_TextArea_TextEntered;
             TextArea.TextCopied += TextArea_TextCopied;
@@ -64,7 +69,18 @@ namespace JSharp
 
             if (TextForeground != null) Foreground = TextForeground;
             if (TextBackground != null) Background = TextBackground;
+
+            brackets = new Dictionary<string, string>
+            {
+                { "(", ")" },
+                { "{", "}" },
+                { "[", "]" },
+                { "'", "'" },
+                { "\"", "\"" }
+            };
         }
+
+        
 
         private void InitalizeContextMenu()
         {
@@ -106,23 +122,28 @@ namespace JSharp
             //throw new NotImplementedException();
         }
 
-        private void TextEditor_TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        private void Editor_KeyDown(object sender, KeyEventArgs e)
         {
-            
-            
-            if (e.Text == ".")
+            if (e.Key == Key.Decimal || e.Key == Key.Tab)
             {
                 // Open code completion after the user has pressed dot:
                 completionWindow = new CompletionWindow(TextArea);
                 IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
                 data.Add(new MyCompletionData("class"));
                 data.Add(new MyCompletionData("void"));
-                data.Add(new MyCompletionData("int"));
+                data.Add(new MyCompletionData("public"));
                 completionWindow.Show();
-                completionWindow.Closed += delegate
-                {
+                completionWindow.Closed += delegate {
                     completionWindow = null;
                 };
+            }
+        }
+        private void TextEditor_TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        {
+            if(brackets.ContainsKey(e.Text))
+            {
+                Document.Insert(CaretOffset, brackets[e.Text]);
+                CaretOffset--;
             }
         }
 
@@ -135,6 +156,7 @@ namespace JSharp
                     // Whenever a non-letter is typed while the completion window is open,
                     // insert the currently selected element.
                     completionWindow.CompletionList.RequestInsertion(e);
+                    
                 }
             }
             // Do not set e.Handled=true.
@@ -171,7 +193,6 @@ namespace JSharp
             {
                 MessageBox.Show(e.Message);
             }
-            
         }
 
         public void SaveAs(string fileName)
