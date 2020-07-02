@@ -11,3 +11,7 @@ JSharp has two themes (a light theme and a dark one)
 JSharp remembers previously Opened Documents
 
 JSharp supports automatic bracket or quote closing
+
+JSharp's highlighting scheme can be edited by their users
+
+JSharp uses a custom highlighting scheme for avalonEdit

@@ -17,7 +17,7 @@ namespace JSharp.Code_Completion
             get { return null; }
         }
 
-        public string Text { get; private set; }
+        public string Text { get; }
 
         // Use this property if you want to show a fancy UIElement in the list.
         public object Content

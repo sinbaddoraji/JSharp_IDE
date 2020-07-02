@@ -83,6 +83,7 @@ namespace JSharp
             };
 
             highlightingManager = new InnerHighlightingManager();
+            this.ShowLineNumbers = true;
         }
 
         
@@ -95,20 +96,32 @@ namespace JSharp
             MenuItem paste = new MenuItem() { Header = "Paste" };
             MenuItem selectAll = new MenuItem() { Header = "Select All" };
 
+            MenuItem setBreakPoint = new MenuItem() { Header = "Set Breakpoint" };
+
             //Initialize menu item events
             cut.Click += delegate { this.Cut(); };
             copy.Click += delegate { this.Copy(); };
             paste.Click += delegate { this.Paste(); };
             selectAll.Click += delegate { this.SelectAll(); };
-
+            setBreakPoint.Click += SetBreakPoint_Click;
             //Add menu items to context menu
             contextMenu.Items.Add(cut);
             contextMenu.Items.Add(copy);
             contextMenu.Items.Add(paste);
             contextMenu.Items.Add(selectAll);
+            contextMenu.Items.Add(setBreakPoint);
 
             //Initialize context menu
             ContextMenu = contextMenu;
+        }
+
+        private void SetBreakPoint_Click(object sender, RoutedEventArgs e)
+        {
+            int lineOffset = (Document.GetLineByOffset(CaretOffset).Offset);
+            //var line = Document.GetLineByOffset(Document.GetLineByOffset(CaretOffset).Offset);
+            //Select(line.Offset, line.Length);
+
+            TextArea.TextView.LineTransformers.Add(new BreakPointColourizer(lineOffset));
         }
 
         private void Editor_Drop(object sender, DragEventArgs e)

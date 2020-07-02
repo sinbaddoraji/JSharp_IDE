@@ -1,21 +1,9 @@
-﻿using JSharp.PluginCore;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using JSharp;
 
 namespace JSharp
 {
@@ -29,13 +17,13 @@ namespace JSharp
 
         public FileItem(string path, bool isParent)
         {
-            FileAttributes attr = File.GetAttributes(path);
-            IsDirectory = attr.HasFlag(FileAttributes.Directory);
             FullPath = path;
+            FileAttributes attr = File.GetAttributes(path);
+            IsDirectory = (attr & FileAttributes.Directory) != 0;
 
-            if (isParent) Name = "...";
-
-            else Name = IsDirectory ? new DirectoryInfo(FullPath).Name
+            Name = isParent
+                ? "..."
+                : IsDirectory ? new DirectoryInfo(FullPath).Name
                             : new FileInfo(FullPath).Name;
 
             ParentDirectory = Directory.GetParent(FullPath).FullName;
@@ -43,6 +31,7 @@ namespace JSharp
             ImageSource = IsDirectory ? "/JSharp;component/Images/folder.png" : null;
         }
     }
+
     public partial class FileExplorer : UserControl
     {
         public ObservableCollection<FileItem> Files { get; set; }
@@ -52,17 +41,16 @@ namespace JSharp
         public FileExplorer()
         {
             InitializeComponent();
+            //Initialize list view item source
             Files = new ObservableCollection<FileItem>();
             listView.ItemsSource = Files;
 
+            //Match parent window background color 
             listView.Background = PluginHolder.instance.ParentWindow.Background;
             listView.Foreground = PluginHolder.instance.ParentWindow.Foreground;
         }
 
-        private string GetExtension(string file)
-        {
-            return new FileInfo(file).Extension;
-        }
+        private string GetExtension(string file) => new FileInfo(file).Extension;
 
         private void AddListItem(string path)
         {
@@ -70,7 +58,7 @@ namespace JSharp
             {
                 Files.Add(new FileItem(path, false));
             }
-            catch 
+            catch
             {
             }
         }
@@ -89,7 +77,7 @@ namespace JSharp
             listView.Items.Refresh();
         }
 
-        private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             FileItem selectedFile = (FileItem)listView.SelectedItem;
             if(selectedFile.IsDirectory)
@@ -105,12 +93,7 @@ namespace JSharp
         private void SelectedContent_IsSelectedChanged(object sender, EventArgs e)
         {
             string selectedTabPath = ((Editor)PluginHolder.instance.ParentWindow.Documents.SelectedContent.Content).OpenedDocument;
-            listView.SelectedIndex = Files.IndexOf(Files.Where(x => x.FullPath == selectedTabPath).First());
-        }
-
-        private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            
+            listView.SelectedIndex = Files.IndexOf(item: Files.First(x => x.FullPath == selectedTabPath));
         }
     }
 }

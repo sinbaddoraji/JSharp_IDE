@@ -1,20 +1,8 @@
 ﻿using ICSharpCode.AvalonEdit.Document;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Media;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace JSharp.Inbuilt_Panes
 {
@@ -23,48 +11,29 @@ namespace JSharp.Inbuilt_Panes
     /// </summary>
     public partial class FindReplace : UserControl
     {
-        private static string textToFind = "";
-        private static bool caseSensitive = true;
-        private static bool wholeWord = true;
-        private static bool useRegex = false;
-        private static bool useWildcards = false;
-        private static bool searchUp = false;
-
-        private Editor editor => PluginHolder.instance.ParentWindow.GetSelectedDocument();
+        private Editor GetEditor() => PluginHolder.instance.ParentWindow.GetSelectedDocument();
 
         public FindReplace()
         {
             InitializeComponent();
-
-            txtFind.Text = txtFind2.Text = textToFind;
-            cbCaseSensitive.IsChecked = caseSensitive;
-            cbWholeWord.IsChecked = wholeWord;
-            cbRegex.IsChecked = useRegex;
-            cbWildcards.IsChecked = useWildcards;
-            cbSearchUp.IsChecked = searchUp;
-
-            Background = PluginHolder.instance.ParentWindow.Background;
-            Foreground = PluginHolder.instance.ParentWindow.Foreground;
-
-            label1.Foreground = label2.Foreground = label3.Foreground = Foreground;
-            tabMain.Background = Background;
-            tabMain.Foreground = Foreground;
-
-            cbCaseSensitive.Foreground = Foreground;
-            cbWholeWord.Foreground = Foreground;
-            cbRegex.Foreground = Foreground;
-            cbWildcards.Foreground = Foreground;
-            cbSearchUp.Foreground = Foreground;
+            InitalizeThemeSettings();
         }
 
-        private void Window_Closed(object sender, System.EventArgs e)
+        private void InitalizeThemeSettings()
         {
-            textToFind = txtFind2.Text;
-            caseSensitive = (cbCaseSensitive.IsChecked == true);
-            wholeWord = (cbWholeWord.IsChecked == true);
-            useRegex = (cbRegex.IsChecked == true);
-            useWildcards = (cbWildcards.IsChecked == true);
-            searchUp = (cbSearchUp.IsChecked == true);
+            //Set Window background and foreground of the window
+            Background = PluginHolder.instance.ParentWindow.Background;
+            Foreground = PluginHolder.instance.ParentWindow.Foreground;
+            label1.Foreground = label2.Foreground = label3.Foreground = Foreground;
+            //Setup tab background and foreground
+            tabMain.Background = Background;
+            tabMain.Foreground = Foreground;
+            //Setup foreground color of check-boxes in the window
+            isCaseSensitive.Foreground = Foreground;
+            searchWholeWord.Foreground = Foreground;
+            isRegexSearch.Foreground = Foreground;
+            useWildCards.Foreground = Foreground;
+            searchUpwards.Foreground = Foreground;
         }
 
         private void FindNextClick(object sender, RoutedEventArgs e)
@@ -82,12 +51,12 @@ namespace JSharp.Inbuilt_Panes
         private void ReplaceClick(object sender, RoutedEventArgs e)
         {
             Regex regex = GetRegEx(txtFind2.Text);
-            string input = editor.Text.Substring(editor.SelectionStart, editor.SelectionLength);
+            string input = GetEditor().Text.Substring(GetEditor().SelectionStart, GetEditor().SelectionLength);
             Match match = regex.Match(input);
             bool replaced = false;
             if (match.Success && match.Index == 0 && match.Length == input.Length)
             {
-                editor.Document.Replace(editor.SelectionStart, editor.SelectionLength, txtReplace.Text);
+                GetEditor().Document.Replace(GetEditor().SelectionStart, GetEditor().SelectionLength, txtReplace.Text);
                 replaced = true;
             }
 
@@ -97,42 +66,42 @@ namespace JSharp.Inbuilt_Panes
 
         private void ReplaceAllClick(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to Replace All occurences of \"" +
+            if (MessageBox.Show("Are you sure you want to Replace All occurrences of \"" +
             txtFind2.Text + "\" with \"" + txtReplace.Text + "\"?",
                 "Replace All", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
             {
                 Regex regex = GetRegEx(txtFind2.Text, true);
                 int offset = 0;
-                editor.BeginChange();
-                foreach (Match match in regex.Matches(editor.Text))
+                GetEditor().BeginChange();
+                foreach (Match match in regex.Matches(GetEditor().Text))
                 {
-                    editor.Document.Replace(offset + match.Index, match.Length, txtReplace.Text);
+                    GetEditor().Document.Replace(offset + match.Index, match.Length, txtReplace.Text);
                     offset += txtReplace.Text.Length - match.Length;
                 }
-                editor.EndChange();
+                GetEditor().EndChange();
             }
         }
 
         private bool FindNext(string textToFind)
         {
             Regex regex = GetRegEx(textToFind);
-            int start = regex.Options.HasFlag(RegexOptions.RightToLeft) ?
-            editor.SelectionStart : editor.SelectionStart + editor.SelectionLength;
-            Match match = regex.Match(editor.Text, start);
+            int start = (regex.Options & RegexOptions.RightToLeft) != 0 ?
+            GetEditor().SelectionStart : GetEditor().SelectionStart + GetEditor().SelectionLength;
+            Match match = regex.Match(GetEditor().Text, start);
 
             if (!match.Success)  // start again from beginning or end
             {
-                if (regex.Options.HasFlag(RegexOptions.RightToLeft))
-                    match = regex.Match(editor.Text, editor.Text.Length);
+                if ((regex.Options & RegexOptions.RightToLeft) != 0)
+                    match = regex.Match(GetEditor().Text, GetEditor().Text.Length);
                 else
-                    match = regex.Match(editor.Text, 0);
+                    match = regex.Match(GetEditor().Text, 0);
             }
 
             if (match.Success)
             {
-                editor.Select(match.Index, match.Length);
-                TextLocation loc = editor.Document.GetLocation(match.Index);
-                editor.ScrollTo(loc.Line, loc.Column);
+                GetEditor().Select(match.Index, match.Length);
+                TextLocation loc = GetEditor().Document.GetLocation(match.Index);
+                GetEditor().ScrollTo(loc.Line, loc.Column);
             }
 
             return match.Success;
@@ -141,21 +110,21 @@ namespace JSharp.Inbuilt_Panes
         private Regex GetRegEx(string textToFind, bool leftToRight = false)
         {
             RegexOptions options = RegexOptions.None;
-            if (cbSearchUp.IsChecked == true && !leftToRight)
+            if (searchUpwards.IsChecked == true && !leftToRight)
                 options |= RegexOptions.RightToLeft;
-            if (cbCaseSensitive.IsChecked == false)
+            if (isCaseSensitive.IsChecked == false)
                 options |= RegexOptions.IgnoreCase;
 
-            if (cbRegex.IsChecked == true)
+            if (isRegexSearch.IsChecked == true)
             {
                 return new Regex(textToFind, options);
             }
             else
             {
                 string pattern = Regex.Escape(textToFind);
-                if (cbWildcards.IsChecked == true)
+                if (useWildCards.IsChecked == true)
                     pattern = pattern.Replace("\\*", ".*").Replace("\\?", ".");
-                if (cbWholeWord.IsChecked == true)
+                if (searchWholeWord.IsChecked == true)
                     pattern = "\\b" + pattern + "\\b";
                 return new Regex(pattern, options);
             }

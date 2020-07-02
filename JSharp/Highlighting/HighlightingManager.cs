@@ -1,30 +1,25 @@
 ﻿using ICSharpCode.AvalonEdit.Highlighting;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using System.IO;
+using System.Xml;
 
 namespace JSharp.Highlighting
 {
-    internal class InnerHighlightingManager: HighlightingManager
+    internal class InnerHighlightingManager : HighlightingManager
     {
         //Java highlighting
-        public readonly IHighlightingDefinition javaLight;
-        public readonly IHighlightingDefinition javaDark;
+        private readonly IHighlightingDefinition javaLight;
+        private readonly IHighlightingDefinition javaDark;
         //Python highlighting
-        public readonly IHighlightingDefinition pythonLight;
-        public readonly IHighlightingDefinition pythonDark;
+        private readonly IHighlightingDefinition pythonLight;
+        private readonly IHighlightingDefinition pythonDark;
         //XML highlighting
-        public readonly IHighlightingDefinition xmlLight;
-        public readonly IHighlightingDefinition xmlDark;
+        private readonly IHighlightingDefinition xmlLight;
+        private readonly IHighlightingDefinition xmlDark;
 
         public InnerHighlightingManager()
         {
-            if(!Directory.Exists("Resources"))
+            if (!Directory.Exists("Resources"))
             {
                 Directory.CreateDirectory("Resources");
                 File.WriteAllBytes("Resources\\Java-LightMode.xshd", Properties.Resources.Java_LightMode);
@@ -40,23 +35,25 @@ namespace JSharp.Highlighting
             //Python highlighting
             pythonLight = HighlightingLoader.Load(new XmlTextReader(File.OpenRead("Resources\\Python-LightMode.xshd")), this);
             pythonDark = HighlightingLoader.Load(new XmlTextReader(File.OpenRead("Resources\\Python-DarkMode.xshd")), this);
-            //Xml highlighting
+            //XML highlighting
             xmlLight = HighlightingLoader.Load(new XmlTextReader(File.OpenRead("Resources\\XML-LightMode.xshd")), this);
             xmlDark = HighlightingLoader.Load(new XmlTextReader(File.OpenRead("Resources\\XML-DarkMode.xshd")), this);
         }
 
         public IHighlightingDefinition GetHighlightingFromExtension(string extension)
         {
-            IHighlightingDefinition d;
             if (extension == ".py" || extension == ".pyw")
             {
-                return Properties.Settings.Default.DarkTheme? pythonDark : pythonLight;
+                return Properties.Settings.Default.DarkTheme ? pythonDark : pythonLight;
             }
             else if (extension.EndsWith("ml") || extension.Contains("config"))
             {
                 return Properties.Settings.Default.DarkTheme ? xmlDark : xmlLight;
             }
-            else return Properties.Settings.Default.DarkTheme ? javaDark : javaLight;
+            else
+            {
+                return Properties.Settings.Default.DarkTheme ? javaDark : javaLight;
+            }
         }
 
     }

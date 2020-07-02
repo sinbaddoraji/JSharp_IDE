@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "In-Built Plugins", "In-Buil
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginList", "PluginList\PluginList.csproj", "{A594A5F5-7356-4362-8F1A-95E669F9DCE2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaParser", "JavaParser\JavaParser.csproj", "{3CA6412B-16F5-409C-961F-3B5516BB864E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{A594A5F5-7356-4362-8F1A-95E669F9DCE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A594A5F5-7356-4362-8F1A-95E669F9DCE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A594A5F5-7356-4362-8F1A-95E669F9DCE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CA6412B-16F5-409C-961F-3B5516BB864E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CA6412B-16F5-409C-961F-3B5516BB864E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CA6412B-16F5-409C-961F-3B5516BB864E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CA6412B-16F5-409C-961F-3B5516BB864E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
