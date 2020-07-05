@@ -16,11 +16,11 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <TabControl Name="tabMain" Height="Auto" Grid.ColumnSpan="2">
+        <TabControl Name="TabMain" Height="Auto" Grid.ColumnSpan="2">
             <TabItem Header="Find">
                 <StackPanel>
-                    <TextBlock Margin="3" x:Name="label1">Text to Find:</TextBlock>
-                    <TextBox Margin="3" Name="txtFind" />
+                    <TextBlock Margin="3" x:Name="Label1">Text to Find:</TextBlock>
+                    <TextBox Margin="3" Name="TxtFind" />
                     <Button Margin="5" HorizontalAlignment="Right"
 
                     Width="80" Content="Find Next" Click="FindNextClick" />
@@ -28,10 +28,10 @@
             </TabItem>
             <TabItem Header="Replace">
                 <StackPanel>
-                    <TextBlock Margin="3" x:Name="label2">Text to Find:</TextBlock>
-                    <TextBox Margin="3" Name="txtFind2" />
-                    <TextBlock Margin="3" x:Name="label3" Text="Replace with:" />
-                    <TextBox Margin="3" Name="txtReplace" />
+                    <TextBlock Margin="3" x:Name="Label2">Text to Find:</TextBlock>
+                    <TextBox Margin="3" Name="TxtFind2" />
+                    <TextBlock Margin="3" x:Name="Label3" Text="Replace with:" />
+                    <TextBox Margin="3" Name="TxtReplace" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Margin="5" HorizontalAlignment="Right"
 
@@ -49,18 +49,18 @@
 
         <CheckBox Grid.Row="1" Grid.Column="0" Margin="10,2"
 
-        Name="isCaseSensitive" Content="Match case" IsChecked="true" />
+        Name="IsCaseSensitive" Content="Match case" IsChecked="true" />
         <CheckBox Grid.Row="2" Grid.Column="0" Margin="10,2"
 
-        Name="searchWholeWord" Content="Match whole word" IsChecked="true" />
+        Name="SearchWholeWord" Content="Match whole word" IsChecked="true" />
         <CheckBox Grid.Row="1" Grid.Column="1" Margin="10,2"
 
-        Name="isRegexSearch" Content="Regular Expression" />
+        Name="IsRegexSearch" Content="Regular Expression" />
         <CheckBox Grid.Row="2" Grid.Column="1" Margin="10,2"
 
-        Name="useWildCards" Content="Wild-cards" />
+        Name="UseWildCards" Content="Wild-cards" />
         <CheckBox Grid.Row="3" Grid.Column="1" Margin="10,2"
 
-        Name="searchUpwards" Content="Search upwards" />
+        Name="SearchUpwards" Content="Search upwards" />
     </Grid>
 </UserControl>

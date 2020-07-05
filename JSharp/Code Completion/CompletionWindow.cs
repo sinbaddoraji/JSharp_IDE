@@ -1,100 +1,84 @@
-﻿using ICSharpCode.AvalonEdit.CodeCompletion;
-using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Editing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.SessionState;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Editing;
+using JSharp.PluginCore;
 
 namespace JSharp.Code_Completion
 {
     public class EditorCompletionWindow : CompletionWindowBase
     {
-        private TextArea textArea;
+	    public static readonly CompletionList CompletionList = new CompletionList();
 
-		public static readonly CompletionList CompletionList = new CompletionList();
+		private ToolTip _toolTip = new ToolTip();
 
-		private ToolTip toolTip = new ToolTip();
-
-		public bool CloseAutomatically
+	    private bool CloseAutomatically
 		{
 			get;
-			set;
-		}
+	    }
 
 		protected override bool CloseOnFocusLost => CloseAutomatically;
 
-		public bool CloseWhenCaretAtBeginning
-		{
-			get;
-			set;
-		}
+	    private static bool CloseWhenCaretAtBeginning => false;
 
+	    private static bool _completionDataInitialized;
 
-		public EditorCompletionWindow(TextArea textArea) : base(textArea)
+	    public EditorCompletionWindow(TextArea textArea) : base(textArea)
         {
-            this.textArea = textArea;
-
-			CloseAutomatically = true;
+	        CloseAutomatically = true;
             SizeToContent = SizeToContent.Height;
-			base.MaxHeight = 300.0;
-			base.Width = 175.0;
-			base.Content = CompletionList;
-			base.MinHeight = 15.0;
-			base.MinWidth = 30.0;
-			toolTip.PlacementTarget = this;
-			toolTip.Placement = PlacementMode.Right;
-			toolTip.Closed += toolTip_Closed;
+			MaxHeight = 300.0;
+			Width = 175.0;
+			Content = CompletionList;
+			MinHeight = 15.0;
+			MinWidth = 30.0;
+			_toolTip.PlacementTarget = this;
+			_toolTip.Placement = PlacementMode.Right;
+			_toolTip.Closed += toolTip_Closed;
 			AttachEvents();
 
 		}
-		public static bool completionDataInitialized = false;
 
 		public static void InitalizeCompletionData()
         {
-			if (completionDataInitialized) return;
-			CompletionList.Background = PluginHolder.instance.ParentWindow.Background;
-			CompletionList.Background = PluginHolder.instance.ParentWindow.Foreground;
+			if (_completionDataInitialized) return;
+			CompletionList.Background = PluginHolder.Instance.ParentWindow.Background;
+			CompletionList.Background = PluginHolder.Instance.ParentWindow.Foreground;
 
-			IList<ICompletionData> data = CompletionList.CompletionData;
+			var data = CompletionList.CompletionData;
 			data.Add(new MyCompletionData("class"));
 			data.Add(new MyCompletionData("void"));
 			data.Add(new MyCompletionData("public"));
 			data.Add(new MyCompletionData("bal.ballah("));
 
-			completionDataInitialized = true;
+			_completionDataInitialized = true;
 		}
 
 
 
 		private void toolTip_Closed(object sender, RoutedEventArgs e)
 		{
-			if (toolTip != null)
+			if (_toolTip != null)
 			{
-				toolTip.Content = null;
+				_toolTip.Content = null;
 			}
 		}
 
 		private void CompletionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			ICompletionData selectedItem = CompletionList.SelectedItem;
-			if (selectedItem == null)
-			{
-				return;
-			}
-			object description = selectedItem.Description;
+			var selectedItem = CompletionList.SelectedItem;
+			if (selectedItem == null) return;
+			
+			var description = selectedItem.Description;
 			if (description != null)
 			{
-				string text = description as string;
-				if (text != null)
+				if (description is string text)
 				{
-					toolTip.Content = new TextBlock
+					_toolTip.Content = new TextBlock
 					{
 						Text = text,
 						TextWrapping = TextWrapping.Wrap
@@ -102,27 +86,27 @@ namespace JSharp.Code_Completion
 				}
 				else
 				{
-					toolTip.Content = description;
+					_toolTip.Content = description;
 				}
-				toolTip.IsOpen = true;
+				_toolTip.IsOpen = true;
 			}
 			else
 			{
-				toolTip.IsOpen = false;
+				_toolTip.IsOpen = false;
 			}
 		}
 
 		private void CompletionList_InsertionRequested(object sender, EventArgs e)
 		{
 			Close();
-			CompletionList.SelectedItem?.Complete(base.TextArea, new AnchorSegment(base.TextArea.Document, base.StartOffset, base.EndOffset - base.StartOffset), e);
+			CompletionList.SelectedItem?.Complete(TextArea, new AnchorSegment(TextArea.Document, StartOffset, EndOffset - StartOffset), e);
 		}
 
 		private void AttachEvents()
 		{
 			CompletionList.InsertionRequested += CompletionList_InsertionRequested;
 			CompletionList.SelectionChanged += CompletionList_SelectionChanged;
-			base.TextArea.Caret.PositionChanged += CaretPositionChanged;
+			TextArea.Caret.PositionChanged += CaretPositionChanged;
             TextArea.MouseWheel += textArea_MouseWheel;
             TextArea.PreviewTextInput += textArea_PreviewTextInput;
 		}
@@ -131,20 +115,18 @@ namespace JSharp.Code_Completion
 		{
 			CompletionList.InsertionRequested -= CompletionList_InsertionRequested;
 			CompletionList.SelectionChanged -= CompletionList_SelectionChanged;
-			base.TextArea.Caret.PositionChanged -= CaretPositionChanged;
-			base.TextArea.MouseWheel -= textArea_MouseWheel;
-			base.TextArea.PreviewTextInput -= textArea_PreviewTextInput;
+			TextArea.Caret.PositionChanged -= CaretPositionChanged;
+			TextArea.MouseWheel -= textArea_MouseWheel;
+			TextArea.PreviewTextInput -= textArea_PreviewTextInput;
 			base.DetachEvents();
 		}
 
 		protected override void OnClosed(EventArgs e)
 		{
 			base.OnClosed(e);
-			if (toolTip != null)
-			{
-				toolTip.IsOpen = false;
-				toolTip = null;
-			}
+			if (_toolTip == null) return;
+			_toolTip.IsOpen = false;
+			_toolTip = null;
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -158,12 +140,12 @@ namespace JSharp.Code_Completion
 
 		private void textArea_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
-			e.Handled = CompletionWindowBase.RaiseEventPair(this, UIElement.PreviewTextInputEvent, UIElement.TextInputEvent, new TextCompositionEventArgs(e.Device, e.TextComposition));
+			e.Handled = RaiseEventPair(this, PreviewTextInputEvent, TextInputEvent, new TextCompositionEventArgs(e.Device, e.TextComposition));
 		}
 
 		private void textArea_MouseWheel(object sender, MouseWheelEventArgs e)
 		{
-			e.Handled = CompletionWindowBase.RaiseEventPair(GetScrollEventTarget(), UIElement.PreviewMouseWheelEvent, UIElement.MouseWheelEvent, new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta));
+			e.Handled = RaiseEventPair(GetScrollEventTarget(), PreviewMouseWheelEvent, MouseWheelEvent, new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta));
 		}
 
 		private UIElement GetScrollEventTarget()
@@ -172,13 +154,13 @@ namespace JSharp.Code_Completion
 			{
 				return this;
 			}
-			return (UIElement)(CompletionList.ScrollViewer ?? ((object)CompletionList.ListBox) ?? ((object)CompletionList));
+			return (UIElement)(CompletionList.ScrollViewer ?? CompletionList.ListBox ?? ((object)CompletionList));
 		}
 
 		private void CaretPositionChanged(object sender, EventArgs e)
 		{
-			int offset = base.TextArea.Caret.Offset;
-			if (offset == base.StartOffset)
+			var offset = TextArea.Caret.Offset;
+			if (offset == StartOffset)
 			{
 				if (CloseAutomatically && CloseWhenCaretAtBeginning)
 				{
@@ -190,7 +172,7 @@ namespace JSharp.Code_Completion
 				}
 				return;
 			}
-			if (offset < base.StartOffset || offset > base.EndOffset)
+			if (offset < StartOffset || offset > EndOffset)
 			{
 				if (CloseAutomatically)
 				{
@@ -198,10 +180,10 @@ namespace JSharp.Code_Completion
 				}
 				return;
 			}
-			TextDocument document = base.TextArea.Document;
+			var document = TextArea.Document;
 			if (document != null)
 			{
-				CompletionList.SelectItem(document.GetText(base.StartOffset, offset - base.StartOffset));
+				CompletionList.SelectItem(document.GetText(StartOffset, offset - StartOffset));
 			}
 		}
 

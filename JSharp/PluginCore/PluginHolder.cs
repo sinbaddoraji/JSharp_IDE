@@ -1,5 +1,4 @@
-﻿using JSharp.PluginCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,30 +6,29 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace JSharp
+namespace JSharp.PluginCore
 {
     public class PluginHolder
     {
         /// <summary>
         /// Plug-in holder global instance
         /// </summary>
-        public static PluginHolder instance;
+        public static PluginHolder Instance;
 
         /// <summary>
         /// JSharp Window
         /// </summary>
-        public Main ParentWindow { get; set; }
+        public Windows.MainWindow.Main ParentWindow { get; set; }
 
         /// <summary>
         /// A list of all valid registered plug-ins connected to JSharp
         /// </summary>
-        public List<Plugin> RegisteredPlugins { get; set; }
+        public List<Plugin> RegisteredPlugins { get; }
 
         /// <summary>
         /// A list of executables in root folder known not to be plug-in files
         /// </summary>
-        private readonly string[] exludedFiles = new[]
-        { 
+        private readonly string[] _exludedFiles = { 
             "AvalonDock.Themes.VS2013.dll", 
             "AvalonDock.dll", 
             "ICSharpCode.AvalonEdit.dll", 
@@ -63,24 +61,18 @@ namespace JSharp
         {
             try
             {
-                if (exludedFiles.Contains(Path.GetFileName(pluginPath))) return;
+                if (_exludedFiles.Contains(Path.GetFileName(pluginPath))) return;
 
-                Assembly asm = Assembly.LoadFile(pluginPath);
+                var asm = Assembly.LoadFile(pluginPath);
 
-                if (asm == null) return;
+                var objType = asm.GetExportedTypes().First(x => x.Name == "Entry");
 
-                Type objType = asm.GetExportedTypes().First(x => x.Name == "Entry");
-
-                if (objType != null)
-                {
-                    Plugin ipi = (Plugin)Activator.CreateInstance(objType);
-                    if (ipi != null)
-                    {
-                        ipi.ParentWindow = ParentWindow;
-                        RegisteredPlugins.Add(ipi);
-                        ipi.Init();
-                    }
-                }
+                if (objType == null) return;
+                
+                var ipi = (Plugin)Activator.CreateInstance(objType);
+                ipi.ParentWindow = ParentWindow;
+                RegisteredPlugins.Add(ipi);
+                ipi.Init();
             }
             catch (Exception exception)
             {
@@ -93,11 +85,11 @@ namespace JSharp
         /// </summary>
         public void Load()
         {
-            string pluginPath = Directory.GetParent(Environment.GetCommandLineArgs()[0]) + @"\";
+            var pluginPath = Directory.GetParent(Environment.GetCommandLineArgs()[0]) + @"\";
 
             if (!Directory.Exists(pluginPath)) Directory.CreateDirectory(pluginPath);
 
-            foreach (string plugin in Directory.EnumerateFiles(pluginPath, "*.dll"))
+            foreach (var plugin in Directory.EnumerateFiles(pluginPath, "*.dll"))
             {
                 LoadPlugin(plugin);
             }

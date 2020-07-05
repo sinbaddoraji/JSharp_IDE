@@ -1,18 +1,10 @@
-﻿using JSharp.PluginCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using JSharp.PluginCore;
 
 namespace PluginList
 {
@@ -41,7 +33,7 @@ namespace PluginList
             if (!Directory.Exists(pluginPath)) Directory.CreateDirectory(pluginPath);
 
             String[] pluginFiles = Directory.GetFiles(pluginPath, "*.dll");
-            string[] exludedFiles = new[] { "AvalonDock.Themes.VS2013.dll", "AvalonDock.dll", "ICSharpCode.AvalonEdit.dll", "JSharp.dll" };
+            string[] exludedFiles = { "AvalonDock.Themes.VS2013.dll", "AvalonDock.dll", "ICSharpCode.AvalonEdit.dll", "JSharp.dll" };
 
             for (int i = 0; i < pluginFiles.Length; i++)
             {

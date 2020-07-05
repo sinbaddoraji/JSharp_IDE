@@ -1,21 +1,27 @@
-﻿using AvalonDock.Layout;
-using AvalonDock.Themes;
-using ControlzEx.Theming;
-using ICSharpCode.AvalonEdit.Highlighting;
-using JSharp.Inbuilt_Panes;
-using JSharp.PluginCore;
-using MahApps.Metro.Controls;
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media;
+using AvalonDock.Layout;
+using AvalonDock.Themes;
+using ControlzEx.Theming;
+using ICSharpCode.AvalonEdit.Highlighting;
+using JSharp.Inbuilt_Panes;
+using JSharp.PluginCore;
+using JSharp.Properties;
+using JSharp.TextEditor;
+using MahApps.Metro.Controls;
+using HorizontalAlignment = System.Windows.HorizontalAlignment;
+using MessageBox = System.Windows.MessageBox;
+using UserControl = System.Windows.Controls.UserControl;
 
-namespace JSharp
+namespace JSharp.Windows.MainWindow
 {
     public partial class Main : MetroWindow
     {
@@ -34,14 +40,14 @@ namespace JSharp
         private readonly ObservableCollection<Pane> BottomPaneItemsLeft = new ObservableCollection<Pane>();
         private readonly ObservableCollection<Pane> BottomPaneItemsRight = new ObservableCollection<Pane>();
         //Dialogs
-        private readonly System.Windows.Forms.OpenFileDialog openFileDialog;
+        private readonly OpenFileDialog openFileDialog;
 
         //Document Related Properties
         private IEnumerable<string> OpenedFiles
         {
             get
             {
-                foreach (var document in documents.Children)
+                foreach (var document in DocumentPane.Children)
                 {
                     yield return ((Editor)document.Content).OpenedDocument;
                 }
@@ -50,51 +56,51 @@ namespace JSharp
 
         public StringCollection GetOpenedFiles(bool fromSettings)
         {
-            if(fromSettings) return Properties.Settings.Default.OpenedFiles;
+            if(fromSettings) return Settings.Default.OpenedFiles;
             StringCollection stringCollection = new StringCollection();
             foreach (var str in OpenedFiles)
             {
                 stringCollection.Add(str);
             }
-            Properties.Settings.Default.OpenedFiles = stringCollection;
-            Properties.Settings.Default.Save();
-            return Properties.Settings.Default.OpenedFiles;
+            Settings.Default.OpenedFiles = stringCollection;
+            Settings.Default.Save();
+            return Settings.Default.OpenedFiles;
             
         }
 
-        public FileExplorer fileExplorer;
+        public Inbuilt_Panes.FileExplorer fileExplorer;
 
         public string GetSelectedFile
         {
             get
             {
-                if (documents.SelectedContent == null) return "JSharp";
+                if (DocumentPane.SelectedContent == null) return "JSharp";
 
-                var o = documents.SelectedContent.Content;
+                var o = DocumentPane.SelectedContent.Content;
                 if (o.GetType() != typeof(Editor)) return "JSharp";
-                else return ((Editor)o).OpenedDocument;
+                return ((Editor)o).OpenedDocument;
             }
         }
 
         public Editor GetSelectedDocument()
         {
-            if (documents.SelectedContent == null) return null;
+            if (DocumentPane.SelectedContent == null) return null;
 
-            var o = documents.SelectedContent.Content;
+            var o = DocumentPane.SelectedContent.Content;
             if (o.GetType() != typeof(Editor)) return null;
-            else return (Editor)o;
+            return (Editor)o;
         }
 
         public void SetSelectedDocument(Editor value)
         {
-            var o = documents.SelectedContent.Content;
+            var o = DocumentPane.SelectedContent.Content;
             if (o.GetType() == typeof(Editor))
-                documents.SelectedContent.Content = value;
+                DocumentPane.SelectedContent.Content = value;
         }
 
-        public LayoutDocumentPane Documents => documents;
+        public LayoutDocumentPane Documents => DocumentPane;
 
-        private LayoutContent SelectedDocumentFrame => documents.SelectedContent;
+        private LayoutContent SelectedDocumentFrame => DocumentPane.SelectedContent;
 
         private IOrderedEnumerable<IHighlightingDefinition> HighlightCollection { get; set; }
 
@@ -105,10 +111,10 @@ namespace JSharp
             if (darkMode)
             {
                 //Visual studio dark theme
-                dockManager.Theme = new Vs2013DarkTheme();
+                DockManager.Theme = new Vs2013DarkTheme();
                 ThemeManager.Current.ChangeTheme(this, "Dark.Blue");
                 ThemeManager.Current.SyncTheme();
-                Background = dockManager.Background;
+                Background = DockManager.Background;
                 Foreground = new SolidColorBrush(Colors.White);
                 //Setup menu colors
                // menu.Background = Background;
@@ -124,18 +130,18 @@ namespace JSharp
             else
             {
                 //Visual studio dark theme
-                dockManager.Theme = new Vs2013LightTheme();
+                DockManager.Theme = new Vs2013LightTheme();
                 Foreground = new SolidColorBrush(Colors.Black);
                 
                 
-                menu.Background = Background;
+                Background = Background;
                 
                 //WindowTitleBrush = new SolidColorBrush(Colors.White);
                 Color fontColour = (Color)ColorConverter.ConvertFromString("#FFDCDCDC");
                 TitleForeground = new SolidColorBrush(fontColour);
                 
                 ThemeManager.Current.ChangeTheme(this, "Light.Cyan");
-                statusBar.Background = WindowTitleBrush;
+                Background = WindowTitleBrush;
                 ThemeManager.Current.SyncTheme();
             }
         }
@@ -148,7 +154,7 @@ namespace JSharp
         private void AddInbuiltPanes()
         {
             //LowerPaneItems.Add(new Pane(new CommandPrompt(), "Command prompt"));
-            fileExplorer = new FileExplorer();
+            fileExplorer = new Inbuilt_Panes.FileExplorer();
             fileExplorer.SetDirectory(Environment.CurrentDirectory);
             AddPane(new Pane(fileExplorer, "File Explorer"), 0);
 
@@ -194,7 +200,7 @@ namespace JSharp
             ((UserControl)pane.content).HorizontalAlignment = HorizontalAlignment.Stretch;
             ((UserControl)pane.content).VerticalAlignment = VerticalAlignment.Stretch;
 
-            new[] { leftPane, leftPane2, rightPane, rightPane2, LowerPane, LowerPane2 }[paneLocation].Children.Add(lA);
+            new[] { LeftPane, LeftPane2, RightPane, RightPane2, LowerPane, LowerPane2 }[paneLocation].Children.Add(lA);
         }
 
         #endregion Pane Related Functions
@@ -214,8 +220,8 @@ namespace JSharp
             
            
 
-            documents.Children.Add(newDocument);
-            SelectTab(documents.IndexOfChild(newDocument));
+            DocumentPane.Children.Add(newDocument);
+            SelectTab((int) DocumentPane.IndexOfChild(newDocument));
         }
 
         public void OpenDocuments(string[] filenames)
@@ -235,7 +241,7 @@ namespace JSharp
 
         private void OpenDocuments(StringCollection previouslyOpenedDocuments)
         {
-            System.Collections.IList list = previouslyOpenedDocuments;
+            IList list = previouslyOpenedDocuments;
             if (list == null || list.Count < 1) return;
 
             for (int i = 0; i < list.Count; i++)
@@ -254,17 +260,17 @@ namespace JSharp
 
         public void OpenDocument(string filename)
         {
-            if (Properties.Settings.Default.RecentFiles == null)
+            if (Settings.Default.RecentFiles == null)
             {
-                Properties.Settings.Default.RecentFiles = new StringCollection();
+                Settings.Default.RecentFiles = new StringCollection();
             }
-            if(!Properties.Settings.Default.RecentFiles.Contains(filename))
+            if(!Settings.Default.RecentFiles.Contains(filename))
             {
-                Properties.Settings.Default.RecentFiles.Add(filename);
-                Properties.Settings.Default.Save();
+                Settings.Default.RecentFiles.Add(filename);
+                Settings.Default.Save();
             }
             if (OpenedFiles.Contains(filename)) return;
-            if (documents.Children.Count == 0)
+            if (DocumentPane.Children.Count == 0)
             {
                 AddDocumentPage("untitled");//Add Default Page
             }
@@ -286,7 +292,7 @@ namespace JSharp
 
         public void SelectTab(int index)
         {
-            documents.SelectedContentIndex = index;
+            DocumentPane.SelectedContentIndex = index;
         }
 
         public void SelectTab(string filename)
@@ -317,7 +323,7 @@ namespace JSharp
                 var ToolBarItems = plugin.GetToolbarItems();
                 //Add toolbar items
                 for (int i = 0; i < ToolBarItems.Length; i++)
-                    toolBar.Items.Add(ToolBarItems[i]);
+                    ToolBar.Items.Add(ToolBarItems[i]);
             }
 
             var MenuItems = plugin.GetMenuItems();
@@ -329,7 +335,7 @@ namespace JSharp
                 if (!plugin.AddToContextMenu && !plugin.AddToMenu) break;
 
                 if (plugin.AddToContextMenu)
-                    Editor.contextMenu.Items.Add(MenuItems[i]);
+                    Editor.EditorContntextMenu.Items.Add(MenuItems[i]);
 
                 if (plugin.AddToMenu)
                     PluginMenu.Items.Add(MenuItems[i]);
@@ -338,10 +344,10 @@ namespace JSharp
 
         private void LoadPlugins()
         {
-            PluginHolder.instance = new PluginHolder { ParentWindow = this };
-            PluginHolder.instance.Load();
+            PluginHolder.Instance = new PluginHolder { ParentWindow = this };
+            PluginHolder.Instance.Load();
 
-            foreach (Plugin plugin in PluginHolder.instance.RegisteredPlugins)
+            foreach (Plugin plugin in PluginHolder.Instance.RegisteredPlugins)
             {
                 LoadPlugin(plugin);
             }

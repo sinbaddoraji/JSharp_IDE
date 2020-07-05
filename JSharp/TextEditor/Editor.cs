@@ -1,58 +1,60 @@
-﻿using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.CodeCompletion;
-using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Editing;
-using ICSharpCode.AvalonEdit.Folding;
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Search;
-using JSharp.Code_Completion;
-using JSharp.Highlighting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.AvalonEdit.Editing;
+using ICSharpCode.AvalonEdit.Folding;
+using ICSharpCode.AvalonEdit.Highlighting;
+using JSharp.CodeFolding;
+using JSharp.Code_Completion;
+using JSharp.Highlighting;
+using JSharp.PluginCore;
+using JSharp.Properties;
+using ContextMenu = System.Windows.Controls.ContextMenu;
+using DataFormats = System.Windows.DataFormats;
+using DragEventArgs = System.Windows.DragEventArgs;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MenuItem = System.Windows.Controls.MenuItem;
+using MessageBox = System.Windows.MessageBox;
 
-namespace JSharp
+namespace JSharp.TextEditor
 {
-    public class Editor : TextEditor
+    public class Editor : ICSharpCode.AvalonEdit.TextEditor
     {
-        private readonly System.Windows.Forms.SaveFileDialog saveFileDialog;
-        private EditorCompletionWindow completionWindow;
+        private readonly SaveFileDialog _saveFileDialog;
+        private EditorCompletionWindow _completionWindow;
 
         public static string FilterOptions { get; set; }
 
         public string OpenedDocument { get; private set; } = "Untitled";
 
-        private object foldingStrategy;
-        private FoldingManager foldingManager;
+        private object _foldingStrategy;
+        private FoldingManager _foldingManager;
 
-        private Stream fileStream;
+        private Stream _fileStream;
 
-        public static ContextMenu contextMenu = new ContextMenu();
+        public static readonly ContextMenu EditorContntextMenu = new ContextMenu();
 
         public bool IsUnoccupied() => OpenedDocument == null;
 
         public static Brush TextForeground = null;
         public static Brush TextBackground = null;
 
-        IList<ICompletionData> data;
+        private readonly Dictionary<string, string> _brackets;
 
-        private Dictionary<string, string> brackets;
+        private readonly InnerHighlightingManager _highlightingManager;
 
-        private InnerHighlightingManager highlightingManager;
+        private static IList<ICompletionData> CompletionData => EditorCompletionWindow.CompletionList.CompletionData;
 
-        private IList<ICompletionData> CompletionData => EditorCompletionWindow.CompletionList.CompletionData;
-
-        public string GetClosedWordToCursor()
+        private string GetClosedWordToCursor()
         {
-            int caretOffset = CaretOffset - 1;
-
-            int start; int end;
+            var caretOffset = CaretOffset - 1;
 
             while(caretOffset > -1 && !char.IsWhiteSpace(Document.GetCharAt(caretOffset)))
             {
@@ -60,14 +62,14 @@ namespace JSharp
             }
 
             caretOffset++;
-            start = caretOffset;
+            var start = caretOffset;
             
             while (caretOffset < Document.TextLength && !char.IsWhiteSpace(Document.GetCharAt(caretOffset)))
             {
                 caretOffset++;
             }
 
-            end = caretOffset;
+            var end = caretOffset;
 
             return Document.GetText(start, end-start);
         }
@@ -75,10 +77,9 @@ namespace JSharp
         public Editor()
         {
             //Initialize objects
-            saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            saveFileDialog.Filter = FilterOptions;
-            foldingManager = FoldingManager.Install(TextArea);
-            foldingStrategy = new BraceFoldingStrategy();
+            _saveFileDialog = new SaveFileDialog {Filter = FilterOptions};
+            _foldingManager = FoldingManager.Install(TextArea);
+            _foldingStrategy = new BraceFoldingStrategy();
 
             //Initialize default properties
             ShowLineNumbers = true;
@@ -99,7 +100,7 @@ namespace JSharp
             if (TextForeground != null) Foreground = TextForeground;
             if (TextBackground != null) Background = TextBackground;
 
-            brackets = new Dictionary<string, string>
+            _brackets = new Dictionary<string, string>
             {
                 { "(", ")" },
                 { "{", "}" },
@@ -108,8 +109,8 @@ namespace JSharp
                 { "\"", "\"" }
             };
 
-            highlightingManager = new InnerHighlightingManager();
-            this.ShowLineNumbers = true;
+            _highlightingManager = new InnerHighlightingManager();
+            ShowLineNumbers = true;
 
             EditorCompletionWindow.InitalizeCompletionData();
         }
@@ -119,43 +120,43 @@ namespace JSharp
         private void InitalizeContextMenu()
         {
             //Initialize menu item objects
-            MenuItem cut = new MenuItem() { Header = "Cut" };
-            MenuItem copy = new MenuItem() { Header = "Copy" };
-            MenuItem paste = new MenuItem() { Header = "Paste" };
-            MenuItem selectAll = new MenuItem() { Header = "Select All" };
+            var cut = new MenuItem { Header = "Cut" };
+            var copy = new MenuItem { Header = "Copy" };
+            var paste = new MenuItem { Header = "Paste" };
+            var selectAll = new MenuItem { Header = "Select All" };
 
-            MenuItem setBreakPoint = new MenuItem() { Header = "Set Breakpoint" };
+            var setBreakPoint = new MenuItem { Header = "Set Breakpoint" };
 
             //Initialize menu item events
-            cut.Click += delegate { this.Cut(); };
-            copy.Click += delegate { this.Copy(); };
-            paste.Click += delegate { this.Paste(); };
-            selectAll.Click += delegate { this.SelectAll(); };
+            cut.Click += delegate { Cut(); };
+            copy.Click += delegate { Copy(); };
+            paste.Click += delegate { Paste(); };
+            selectAll.Click += delegate { SelectAll(); };
             setBreakPoint.Click += SetBreakPoint_Click;
             //Add menu items to context menu
-            contextMenu.Items.Add(cut);
-            contextMenu.Items.Add(copy);
-            contextMenu.Items.Add(paste);
-            contextMenu.Items.Add(selectAll);
-            contextMenu.Items.Add(setBreakPoint);
+            EditorContntextMenu.Items.Add(cut);
+            EditorContntextMenu.Items.Add(copy);
+            EditorContntextMenu.Items.Add(paste);
+            EditorContntextMenu.Items.Add(selectAll);
+            EditorContntextMenu.Items.Add(setBreakPoint);
 
             //Initialize context menu
-            ContextMenu = contextMenu;
+            ContextMenu = EditorContntextMenu;
         }
 
         private void SetBreakPoint_Click(object sender, RoutedEventArgs e)
         {
-            int lineOffset = (Document.GetLineByOffset(CaretOffset).Offset);
+            var lineOffset = (Document.GetLineByOffset(CaretOffset).Offset);
             //var line = Document.GetLineByOffset(Document.GetLineByOffset(CaretOffset).Offset);
             //Select(line.Offset, line.Length);
 
             TextArea.TextView.LineTransformers.Add(new BreakPointColourizer(lineOffset));
         }
 
-        private void Editor_Drop(object sender, DragEventArgs e)
+        private static void Editor_Drop(object sender, DragEventArgs e)
         {
             var files = e.Data.GetData(DataFormats.FileDrop) as string[];
-            PluginHolder.instance.ParentWindow.OpenDocuments(files);
+            PluginHolder.Instance.ParentWindow.OpenDocuments(files);
         }
 
         private void Document_TextChanged(object sender, EventArgs e)
@@ -163,53 +164,45 @@ namespace JSharp
             UpdateFoldings();
         }
 
-        private void TextArea_TextCopied(object sender, TextEventArgs e)
+        private static void TextArea_TextCopied(object sender, TextEventArgs e)
         {
             //throw new NotImplementedException();
         }
 
         private void Editor_KeyDown(object sender, KeyEventArgs e)
         {
-            string wordContext = GetClosedWordToCursor();
-            if (e.Key == Key.Enter || e.Key == Key.Space)
+            if (e.Key != Key.Enter && e.Key != Key.Space) return;
+            var wordContext = GetClosedWordToCursor();
+            
+            if (!CompletionData.Any(x => x.Text.StartsWith(wordContext)) || _completionWindow != null)
             {
-                if (!CompletionData.Any(x => x.Text.StartsWith(wordContext)) || completionWindow != null)
-                {
-                    var com = new MyCompletionData(wordContext);
-                    CompletionData.Add(com);
-                }
+                var com = new MyCompletionData(wordContext);
+                CompletionData.Add(com);
             }
         }
         private void TextEditor_TextArea_TextEntered(object sender, TextCompositionEventArgs e)
         {
-            if(brackets.ContainsKey(e.Text))
+            if(_brackets.ContainsKey(e.Text))
             {
-                Document.Insert(CaretOffset, brackets[e.Text]);
+                Document.Insert(CaretOffset, _brackets[e.Text]);
                 CaretOffset--;
             }
 
-            string wordContext = GetClosedWordToCursor();
+            var wordContext = GetClosedWordToCursor();
 
             try
             {
                 if (CompletionData.Any(x => x.Text.StartsWith(wordContext)))
                 {
-                    if(completionWindow == null)
-                    {
-                        // Open code completion after the user has pressed dot:
-                        completionWindow = new EditorCompletionWindow(TextArea);
+                    if (_completionWindow != null) return;
+                    // Open code completion after the user has pressed dot:
+                    _completionWindow = new EditorCompletionWindow(TextArea);
 
-                        completionWindow.Show();
-                        completionWindow.Closed += delegate
-                        {
-                            completionWindow = null;
-                        };
-                    }
-                    else
+                    _completionWindow.Show();
+                    _completionWindow.Closed += delegate
                     {
-                        //Something
-                    }
-                    
+                        _completionWindow = null;
+                    };
                 }
                 else
                 {
@@ -222,23 +215,20 @@ namespace JSharp
             }
             catch (Exception)
             {
-
+                // ignored
             }
-          
-            
-            
         }
 
         private void TextEditor_TextArea_TextEntering(object sender, TextCompositionEventArgs e)
         {
-            if (e.Text.Length > 1 && completionWindow != null)
+            if (e.Text.Length > 1 && _completionWindow != null)
             {
                 string wordContext = GetClosedWordToCursor();
 
                 
                 if (!char.IsLetterOrDigit(e.Text[0]) && wordContext != "")
                 {
-                    if (!CompletionData.Any(x => x.Text.StartsWith(wordContext)) || completionWindow != null)
+                    if (!CompletionData.Any(x => x.Text.StartsWith(wordContext)) || _completionWindow != null)
                     {
                         var com = new MyCompletionData(wordContext);
                         CompletionData.Add(com);
@@ -255,8 +245,8 @@ namespace JSharp
 
             //Initialize document properties
             OpenedDocument = filename;
-            fileStream = File.Open(filename, FileMode.Open);
-            Load(fileStream);
+            _fileStream = File.Open(filename, FileMode.Open);
+            Load(_fileStream);
             SelectHighlighting(filename);
             InitializeFolding();
         }
@@ -264,10 +254,10 @@ namespace JSharp
         private void SelectHighlighting(string filename)
         {
             //Setup syntax highlighting
-            SyntaxHighlighting = highlightingManager.GetHighlightingFromExtension(new FileInfo(filename).Extension);
+            SyntaxHighlighting = _highlightingManager.GetHighlightingFromExtension(new FileInfo(filename).Extension);
             //Set up folding strategy
             var highlighting = HighlightingManager.Instance.HighlightingDefinitions.Where(x => x.Name.Contains("ml"));
-            foldingStrategy = highlighting.Contains(SyntaxHighlighting) ? new XmlFoldingStrategy() : (object)new BraceFoldingStrategy();
+            _foldingStrategy = highlighting.Contains(SyntaxHighlighting) ? new XmlFoldingStrategy() : (object)new BraceFoldingStrategy();
         }
 
         public void SaveDocument()
@@ -275,7 +265,7 @@ namespace JSharp
             if (IsUnoccupied()) return;
             try
             {
-                Save(fileStream);
+                Save(_fileStream);
             }
             catch (Exception e)
             {
@@ -283,45 +273,50 @@ namespace JSharp
             }
         }
 
-        public void SaveAs(string fileName)
+        private void SaveAs(string fileName)
         {
             if (fileName == null)
                 throw new ArgumentNullException(nameof(fileName));
 
-            fileStream.Close();
-            fileName = saveFileDialog.FileName;
-            fileStream = File.Open(fileName, FileMode.Open);
+            _fileStream.Close();
+            fileName = _saveFileDialog.FileName;
+            _fileStream = File.Open(fileName, FileMode.Open);
 
-            if (Properties.Settings.Default.RecentFiles == null)
+            if (Settings.Default.RecentFiles == null)
             {
-                Properties.Settings.Default.RecentFiles = new StringCollection();
+                Settings.Default.RecentFiles = new StringCollection();
             }
-            if (!Properties.Settings.Default.RecentFiles.Contains(fileName))
+            if (!Settings.Default.RecentFiles.Contains(fileName))
             {
-                Properties.Settings.Default.RecentFiles.Add(fileName);
-                Properties.Settings.Default.Save();
+                Settings.Default.RecentFiles.Add(fileName);
+                Settings.Default.Save();
             }
         }
 
         public void SaveAs()
         {
-            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                SaveAs(saveFileDialog.FileName);
+            if (_saveFileDialog.ShowDialog() == DialogResult.OK)
+                SaveAs(_saveFileDialog.FileName);
         }
 
         private void InitializeFolding()
         {
-            if (foldingManager == null)
-                foldingManager = FoldingManager.Install(TextArea);
+            if (_foldingManager == null)
+                _foldingManager = FoldingManager.Install(TextArea);
             UpdateFoldings();
         }
 
         private void UpdateFoldings()
         {
-            if (foldingStrategy is BraceFoldingStrategy braceFoldingStrategy)
-                braceFoldingStrategy.UpdateFoldings(foldingManager, Document);
-            else if (foldingStrategy is XmlFoldingStrategy xmlFoldingStrategy)
-                xmlFoldingStrategy.UpdateFoldings(foldingManager, Document);
+            switch (_foldingStrategy)
+            {
+                case BraceFoldingStrategy _:
+                    BraceFoldingStrategy.UpdateFoldings(_foldingManager, Document);
+                    break;
+                case XmlFoldingStrategy xmlFoldingStrategy:
+                    xmlFoldingStrategy.UpdateFoldings(_foldingManager, Document);
+                    break;
+            }
         }
     }
 }

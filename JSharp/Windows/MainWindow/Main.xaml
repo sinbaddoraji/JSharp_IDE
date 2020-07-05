@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:xcad="https://github.com/Dirkster99/AvalonDock" x:Name="window" x:Class="JSharp.Main"
+        xmlns:xcad="https://github.com/Dirkster99/AvalonDock" x:Name="Window" x:Class="JSharp.Windows.MainWindow.Main"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" 
         mc:Ignorable="d" SaveWindowPosition="True"   GlowBrush="Black" ShowIconOnTitleBar="True" TitleAlignment="Center" Title="JSharp"
         Height="450" Width="800" SizeToContent="Manual" WindowStartupLocation="CenterScreen" Background="White" Closing="Window_Closing" WindowState="Maximized">
@@ -12,8 +12,8 @@
 
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
-            <Menu DockPanel.Dock="Top" Background="Transparent" x:Name="menu">
-                <MenuItem x:Name="File" Header="File" Background="Transparent">
+            <Menu DockPanel.Dock="Top" Background="Transparent" x:Name="Menu">
+                <MenuItem Header="File" Background="Transparent">
                     <MenuItem x:Name="New" Header="New" Click="New_Click" />
                     <MenuItem x:Name="Open" Header="Open" InputGestureText="Ctrl+O" Click="Open_Click" />
                     <MenuItem x:Name="Save" Header="Save" InputGestureText="Ctrl+S" Click="Save_Click" />
@@ -38,19 +38,19 @@
                     <MenuItem Header="Goto Line" />
                 </MenuItem>
                 <MenuItem x:Name="Project" Header="Project"  DockPanel.Dock="Top" Background="Transparent">
-                    <MenuItem Header="Create Jar File" Command="" />
+                    <MenuItem Header="Create Jar File" />
                 </MenuItem>
 
                 <MenuItem x:Name="Build" Header="Build"  DockPanel.Dock="Top" Background="Transparent">
-                    <MenuItem Header="Build" Command="" />
-                    <MenuItem Header="Run" Command="" />
-                    <MenuItem Header="Run in CMD" Command="" />
+                    <MenuItem Header="Build"/>
+                    <MenuItem Header="Run"/>
+                    <MenuItem Header="Run in CMD" />
                 </MenuItem>
 
                 <MenuItem x:Name="Debug" Header="Debug"  DockPanel.Dock="Top" Background="Transparent">
-                    <MenuItem Header="Set Breakpoint" Command="" />
-                    <MenuItem Header="Step Into" Command="" />
-                    <MenuItem Header="Step Over" Command="" />
+                    <MenuItem Header="Set Breakpoint" />
+                    <MenuItem Header="Step Into"/>
+                    <MenuItem Header="Step Over"/>
                 </MenuItem>
 
                 <MenuItem x:Name="PluginMenu" Header="Tools" DockPanel.Dock="Top" Background="Transparent">
@@ -68,7 +68,7 @@
 
     <DockPanel LastChildFill="True" HorizontalAlignment="Stretch">
 
-        <ToolBar Grid.Row="1" DockPanel.Dock="Top" x:Name="toolBar">
+        <ToolBar DockPanel.Dock="Top" x:Name="ToolBar">
             <ToolBar.Resources>
                 <Style TargetType="{x:Type Image}">
                     <Style.Triggers>
@@ -79,8 +79,7 @@
                 </Style>
 
                 <Style TargetType="ToolBar">
-                    <Setter Property="Foreground" Value="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}" />
-                    <Setter Property="Background" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}" />
+                   <Setter Property="Background" Value="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}" />
                 </Style>
             </ToolBar.Resources>
             <ToolBar.BorderBrush>
@@ -115,14 +114,14 @@
             <Separator />
         </ToolBar>
 
-        <StatusBar Background="#FF007ACC" DockPanel.Dock="Bottom" Height="25" x:Name="statusBar">
-            <ComboBox x:Name="zoomValue" Width="41" SelectionChanged="ZoomValue_SelectionChanged" SelectedIndex="16" Height="20">
+        <StatusBar Background="#FF007ACC" DockPanel.Dock="Bottom" Height="25" x:Name="StatusBar">
+            <ComboBox x:Name="ZoomValue" Width="41" SelectionChanged="ZoomValue_SelectionChanged" SelectedIndex="16" Height="20">
             </ComboBox>
         </StatusBar>
 
-        <xcad:DockingManager Grid.Row="1"
-                           BorderBrush="Black" BorderThickness="1"
-                           x:Name="dockManager" Panel.ZIndex="2">
+        <xcad:DockingManager
+            BorderBrush="Black" BorderThickness="1"
+                           x:Name="DockManager" Panel.ZIndex="2">
 
             <xcad:DockingManager.DocumentHeaderTemplate>
                 <DataTemplate>
@@ -140,17 +139,17 @@
                     <xcad:LayoutPanel Orientation="Horizontal">
 
                         <xcad:LayoutAnchorablePaneGroup DockWidth="280" Orientation="Vertical">
-                            <xcad:LayoutAnchorablePane x:Name="leftPane"></xcad:LayoutAnchorablePane>
-                            <xcad:LayoutAnchorablePane x:Name="leftPane2"></xcad:LayoutAnchorablePane>
+                            <xcad:LayoutAnchorablePane x:Name="LeftPane"></xcad:LayoutAnchorablePane>
+                            <xcad:LayoutAnchorablePane x:Name="LeftPane2"></xcad:LayoutAnchorablePane>
                         </xcad:LayoutAnchorablePaneGroup>
 
                         <xcad:LayoutDocumentPaneGroup>
-                            <xcad:LayoutDocumentPane x:Name="documents" />
+                            <xcad:LayoutDocumentPane x:Name="DocumentPane" />
                         </xcad:LayoutDocumentPaneGroup>
 
                         <xcad:LayoutAnchorablePaneGroup DockWidth="280" Orientation="Vertical">
-                            <xcad:LayoutAnchorablePane x:Name="rightPane"></xcad:LayoutAnchorablePane>
-                            <xcad:LayoutAnchorablePane x:Name="rightPane2"></xcad:LayoutAnchorablePane>
+                            <xcad:LayoutAnchorablePane x:Name="RightPane"></xcad:LayoutAnchorablePane>
+                            <xcad:LayoutAnchorablePane x:Name="RightPane2"></xcad:LayoutAnchorablePane>
                         </xcad:LayoutAnchorablePaneGroup>
                     </xcad:LayoutPanel>
 

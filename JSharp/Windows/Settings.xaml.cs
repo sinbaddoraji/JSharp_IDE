@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace JSharp.MainWindow
@@ -52,7 +40,7 @@ namespace JSharp.MainWindow
             SetJdkPath(jdkBox.Text);
             SetDarkMode(darkTheme.IsChecked == true);
             Properties.Settings.Default.Save();
-            this.Close();
+            Close();
 
             MessageBox.Show("You may have to restart JSharp");
         }

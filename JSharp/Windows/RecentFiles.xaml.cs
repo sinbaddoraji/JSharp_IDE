@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using JSharp.PluginCore;
+using JSharp.Properties;
 
 namespace JSharp.Windows
 {
@@ -22,15 +14,15 @@ namespace JSharp.Windows
         public RecentFiles()
         {
             InitializeComponent();
-            recentList.ItemsSource = Properties.Settings.Default.RecentFiles;
+            recentList.ItemsSource = Settings.Default.RecentFiles;
             recentList.MouseDoubleClick += RecentList_MouseDoubleClick;
 
-            if(Properties.Settings.Default.DarkTheme)
+            if(Settings.Default.DarkTheme)
             {
-                this.Background = PluginHolder.instance.ParentWindow.Background;
-                this.Foreground = PluginHolder.instance.ParentWindow.Background;
-                recentList.Background = PluginHolder.instance.ParentWindow.Background;
-                recentList.Foreground = PluginHolder.instance.ParentWindow.Foreground;
+                Background = PluginHolder.Instance.ParentWindow.Background;
+                Foreground = PluginHolder.Instance.ParentWindow.Background;
+                recentList.Background = PluginHolder.Instance.ParentWindow.Background;
+                recentList.Foreground = PluginHolder.Instance.ParentWindow.Foreground;
             }
         }
 
@@ -38,8 +30,8 @@ namespace JSharp.Windows
         {
             try
             {
-                PluginHolder.instance.ParentWindow.OpenDocument((string)recentList.SelectedItem);
-                this.Close();
+                PluginHolder.Instance.ParentWindow.OpenDocument((string)recentList.SelectedItem);
+                Close();
             }
             catch (Exception)
             {
@@ -50,8 +42,8 @@ namespace JSharp.Windows
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.RecentFiles.Clear();
-            Properties.Settings.Default.Save();
+            Settings.Default.RecentFiles.Clear();
+            Settings.Default.Save();
         }
     }
 }

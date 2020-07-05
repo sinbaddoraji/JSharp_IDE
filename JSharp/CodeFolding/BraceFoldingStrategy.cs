@@ -1,8 +1,8 @@
-﻿using ICSharpCode.AvalonEdit.Document;
+﻿using System.Collections.Generic;
+using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
-using System.Collections.Generic;
 
-namespace JSharp
+namespace JSharp.CodeFolding
 {
     internal class BraceFoldingStrategy
     {
@@ -11,40 +11,41 @@ namespace JSharp
 		 * The original code can be found in the Avalon edit repository
 		 */
 
-        public void UpdateFoldings(FoldingManager manager, TextDocument document)
+        public static void UpdateFoldings(FoldingManager manager, TextDocument document)
         {
-            IEnumerable<NewFolding> newFoldings = CreateNewFoldings(document, out int firstErrorOffset);
+            var newFoldings = CreateNewFoldings(document, out var firstErrorOffset);
             manager.UpdateFoldings(newFoldings, firstErrorOffset);
         }
 
-        public IEnumerable<NewFolding> CreateNewFoldings(TextDocument document, out int firstErrorOffset)
+        private static IEnumerable<NewFolding> CreateNewFoldings(ITextSource document, out int firstErrorOffset)
         {
             firstErrorOffset = -1;
             return CreateNewFoldings(document);
         }
 
-        public IEnumerable<NewFolding> CreateNewFoldings(ITextSource document)
+        private static IEnumerable<NewFolding> CreateNewFoldings(ITextSource document)
         {
-            List<NewFolding> newFoldings = new List<NewFolding>();
-            Stack<int> startOffsets = new Stack<int>();
+            var newFoldings = new List<NewFolding>();
+            var startOffsets = new Stack<int>();
             for (int i = 0, lastNewLineOffset = 0; i < document.TextLength; i++)
             {
-                char c = document.GetCharAt(i);
-                if (c == '{')
+                var c = document.GetCharAt(i);
+                switch (c)
                 {
-                    startOffsets.Push(i);
-                }
-                else if (c == '\n' || c == '\r')
-                {
-                    lastNewLineOffset = i + 1;
-                }
-                else if (c == '}' && startOffsets.Count > 0)
-                {
-                    int startOffset = startOffsets.Pop();
+                    case '{':
+                        startOffsets.Push(i);
+                        break;
+                    case '\n':
+                    case '\r':
+                        lastNewLineOffset = i + 1;
+                        break;
+                    case '}' when startOffsets.Count > 0:
+                        var startOffset = startOffsets.Pop();
 
-                    //Create folding if completing } is not on the same line
-                    if (startOffset < lastNewLineOffset)
-                        newFoldings.Add(new NewFolding(startOffset, i + 1));
+                        //Create folding if completing } is not on the same line
+                        if (startOffset < lastNewLineOffset)
+                            newFoldings.Add(new NewFolding(startOffset, i + 1));
+                        break;
                 }
             }
             newFoldings.Sort((a, b) => a.StartOffset.CompareTo(b.StartOffset));

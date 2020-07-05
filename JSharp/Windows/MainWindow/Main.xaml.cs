@@ -1,13 +1,15 @@
-﻿using JSharp.MainWindow;
-using JSharp.Windows;
-using MahApps.Metro.Controls;
-using System;
-using System.Collections.Specialized;
+﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
+using JSharp.PluginCore;
+using JSharp.Properties;
+using JSharp.TextEditor;
+using MahApps.Metro.Controls;
 
-namespace JSharp
+namespace JSharp.Windows.MainWindow
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -22,17 +24,17 @@ namespace JSharp
         {
             InitializeComponent();
             LoadPlugins();
-            SetWindowTheme(Properties.Settings.Default.DarkTheme);
+            SetWindowTheme(Settings.Default.DarkTheme);
             AddInbuiltPanes();
             InitalizePanes();
             
             Editor.FilterOptions = "Java Files (*.java)|*.java|Other Files (*.*)|*.*";
-            openFileDialog = new System.Windows.Forms.OpenFileDialog()
+            openFileDialog = new OpenFileDialog
             {
                 Filter = Editor.FilterOptions
             };
 
-            for (int i = 1; i <= 100; i++) zoomValue.Items.Add(i);
+            for (int i = 1; i <= 100; i++) ZoomValue.Items.Add(i);
 
             var previouslyOpenedDocuments = GetOpenedFiles(true);
             OpenDocuments(previouslyOpenedDocuments);
@@ -67,7 +69,7 @@ namespace JSharp
 
         private void ZoomValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GetSelectedDocument().FontSize = (int)zoomValue.SelectedItem;
+            GetSelectedDocument().FontSize = (int)ZoomValue.SelectedItem;
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -75,10 +77,10 @@ namespace JSharp
             GetSelectedDocument().SaveDocument();
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             //Unload all registered plugins incase none managable objects were used in plugins
-            PluginHolder.instance.UnloadAllRegisteredPlugins();
+            PluginHolder.Instance.UnloadAllRegisteredPlugins();
 
             GetOpenedFiles(false);
         }
@@ -90,7 +92,7 @@ namespace JSharp
 
         private void SaveAll_Click(object sender, RoutedEventArgs e)
         {
-            Parallel.ForEach(documents.Children, document
+            Parallel.ForEach(DocumentPane.Children, document
                 =>
             { ((Editor)document.Content).SaveDocument(); });
         }
@@ -102,8 +104,8 @@ namespace JSharp
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            new Settings().ShowDialog();
-            SetWindowTheme(Properties.Settings.Default.DarkTheme);
+            new JSharp.MainWindow.Settings().ShowDialog();
+            SetWindowTheme(Settings.Default.DarkTheme);
         }
 
         private void Recents_Click(object sender, RoutedEventArgs e)

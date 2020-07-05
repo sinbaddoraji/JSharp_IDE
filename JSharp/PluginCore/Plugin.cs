@@ -7,22 +7,22 @@ namespace JSharp.PluginCore
         /// <summary>
         /// plug-in name
         /// </summary>
-        public string Name { get; set; } = "JSharp Plug-in";
+        public string Name { get; protected set; } = "JSharp Plug-in";
 
         /// <summary>
         /// plug-in description
         /// </summary>
-        public string Description { get; set; } = "Just a JSharp plug-in";
+        public string Description { get; protected set; } = "Just a JSharp plug-in";
 
         /// <summary>
         /// plug-in author
         /// </summary>
-        public string Author { get; set; } = "Osinachi Nwagboso";
+        public string Author { get; } = "Osinachi Nwagboso";
 
         /// <summary>
         /// Version of the plug-in
         /// </summary>
-        public string Version { get; set; } = "0.0.0.0";
+        public string Version { get; protected set; } = "0.0.0.0";
 
         /// <summary>
         /// 0, 1, 2 => left, right, down
@@ -37,7 +37,7 @@ namespace JSharp.PluginCore
         /// <summary>
         /// Is added to "Plug-ins" menu
         /// </summary>
-        public bool AddToMenu { get; set; }
+        public bool AddToMenu { get; protected set; }
 
         /// <summary>
         /// Is added to JSharp Tool-bar
@@ -48,11 +48,6 @@ namespace JSharp.PluginCore
         /// Add to right click menu
         /// </summary>
         public bool AddToContextMenu { get; set; }
-
-        /// <summary>
-        /// Has a physical window
-        /// </summary>
-        public bool HasWindow { get; set; }
 
         /// <summary>
         /// Exported tool-bars to the JSharp window
@@ -67,7 +62,7 @@ namespace JSharp.PluginCore
         /// <summary>
         /// Plug-in Parent window
         /// </summary>
-        public Main ParentWindow { get; set; }
+        public Windows.MainWindow.Main ParentWindow { get; set; }
 
         /// <summary>
         /// Initialize plug-ins

@@ -1,21 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using JSharp.PluginCore;
-
 
 namespace PluginList
     {
@@ -33,7 +18,6 @@ namespace PluginList
                 Description = "Built-In plugin for viewing JSharp plugins";
                 Version = "1.0.0.0";
 
-                HasWindow = true;
                 AddToMenu = true;
 
                 plugins[0] = pluginsMenuItem;
