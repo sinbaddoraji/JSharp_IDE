@@ -18,10 +18,14 @@ namespace JavaParser
 
         public int offset;
 
-        public Parser.StatementType statementType = Parser.StatementType.NormalStatement;
+        public Parser.StatementType statementType;
 
         public override string ToString()
         {
+            if(statementType == Parser.StatementType.Class)
+            {
+                return $"Class {name}";
+            }
             if(RawTokens == null)
             {
                 return startingKeyword;

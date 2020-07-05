@@ -1,268 +1,394 @@
 ﻿using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JavaParser
 {
     public class Parser
     {
-       
-        public ICharStream inputStream;
         public ITokenSource lexer;
-        public ITokenStream tokens;
+        private readonly List<string> Tokens = new List<string>();
+        private readonly List<Statement> _statements = new List<Statement>();
+        private readonly List<Statement> _importStatements = new List<Statement>();
+        private readonly List<Statement> _classStatements = new List<Statement>();
+        private readonly List<Statement> _nestedStatements = new List<Statement>();
+        private readonly List<Statement> _variables = new List<Statement>();
+        private readonly List<Statement> _methodStatements = new List<Statement>();
 
-        //Create class object (object that holds methods and that)
-
-        List<string> allTokensFound = new List<string>();
-
-        public enum StatementType { NormalStatement, Parameters, Method, Class, Variables, NestedStatement, ImportStatement, Brackets }
-
-        List<Statement> statements = new List<Statement>();
-        List<Statement> importStatements = new List<Statement>();
-        List<Statement> classStatements = new List<Statement>();
-        List<Statement> nestedStatements = new List<Statement>();
-        List<Statement> variables = new List<Statement>();
-        List<Statement> methodStatements = new List<Statement>();
+        public enum StatementType
+        {
+            NormalStatement,
+            Parameters,
+            Method,
+            Class,
+            Variables,
+            NestedStatement,
+            ImportStatement,
+            Brackets,
+            Error
+        }
 
         public Parser(ICharStream inputStream)
         {
-            this.inputStream = inputStream;
             lexer = new JavaLexer(inputStream);
 
-            while(true)
+            while (true)
             {
-                string currentToken = lexer.NextToken().Text.Trim();
+                var currentToken = lexer.NextToken().Text.Trim();
                 if (currentToken == "<EOF>") break;
 
                 //Ignore white space and comments
-                if(currentToken != "" && !currentToken.StartsWith(@"//") && !currentToken.StartsWith(@"/*"))
-                    allTokensFound.Add(currentToken);
+                if (currentToken != "" && !currentToken.StartsWith("//") && !currentToken.StartsWith("/*"))
+                    Tokens.Add(currentToken);
             }
 
-
-            int i = 0;
-            while (i < allTokensFound.Count)
+            for (var i = 0; i < Tokens.Count; i++)
             {
-                Statement currentStatement = GetNextStatement(ref i);
-                i++;
+                Statement statement = GetNextStatement(ref i);
+                Console.WriteLine(statement);
             }
-           
+            Console.ReadKey();
         }
-        void LogStatement(Statement statement, StatementType statementType)
-        {
-            Console.WriteLine(statement.ToString());
 
-            if(statements.Contains(statement))
+        private void LogStatement(Statement statement, StatementType statementType)
+        {
+            if (statement == null || _statements.Contains(statement))
             {
                 return;
             }
-            if (statement.RawTokens != null && statement.RawTokens.Count == 0)
+            if (statement.RawTokens?.Count == 0)
             {
                 statement.RawTokens.Add(statement.startingKeyword);
             }
-            else if(statement.startingKeyword == "")
+            else if (statement.startingKeyword?.Length == 0)
             {
                 statement.startingKeyword = statement.RawTokens[0];
             }
-            statements.Add(statement);
-                switch(statementType)
+
+            if(!_statements.Contains(statement))
+                _statements.Add(statement);
+
+            switch (statementType)
             {
                 case StatementType.Class:
-                    classStatements.Add(statement);
+                    if(!_classStatements.Contains(statement))
+                        _classStatements.Add(statement);
                     break;
 
                 case StatementType.Method:
-                    methodStatements.Add(statement);
+                    if(!_methodStatements.Contains(statement))
+                        _methodStatements.Add(statement);
                     break;
 
                 case StatementType.Variables:
-                    variables.Add(statement);
+                    if(!_variables.Contains(statement))
+                        _variables.Add(statement);
                     break;
 
                 case StatementType.NestedStatement:
-                    nestedStatements.Add(statement);
+                    _nestedStatements.Add(statement);
                     break;
 
                 case StatementType.ImportStatement:
-                    importStatements.Add(statement);
+                    _importStatements.Add(statement);
                     break;
+
+                case StatementType.NormalStatement:
+                    //Do Nothing
+                    break;
+
+                case StatementType.Parameters:
+                    //Do nothing
+                    break;
+
+                case StatementType.Brackets:
+                    //Do nothing
+                    break;
+
+                default: break;
+                    //throw new ArgumentOutOfRangeException(nameof(statementType), statementType, null);
             }
         }
 
-        void FillInnerStatements(ref Statement statement, string currentToken,ref int startingIndex)
+        private Statement GetStatement(ref int startingIndex, string startKeyword, string endKeyword, Statement parentStatement = null, bool recurse = true)
         {
-            StatementType statementType = GetStatementType(currentToken);
+            if (startingIndex >= Tokens.Count) return null;
 
-            if (statementType == StatementType.NormalStatement || statementType == StatementType.ImportStatement)
-            {
-                if(statement.RawTokens == null)
-                {
-                    statement.RawTokens = new List<string>();
-                }
-                statement.RawTokens.Add(currentToken);
-            }
-            else if (statementType == StatementType.NestedStatement)
-            {
-                statement.RawTokens.Add(currentToken);
+            for (; (startingIndex < Tokens.Count) &&
+                (Tokens[startingIndex] != startKeyword);
+                startingIndex++) { }
 
-                Statement childStatement = GetNestedStatement(ref startingIndex, currentToken);
-                if (childStatement.offset > startingIndex)
-                {
-                    startingIndex = childStatement.offset;
-                }
-                //statement.Children.Add(childStatement);
-
-            }
-
+            return startingIndex >= Tokens.Count
+                ? null : GetStatement(ref startingIndex, endKeyword, parentStatement, recurse);
         }
 
-        Statement GetStatement(ref int startingIndex, string startKeyword, string endKeyword, bool recurse)
+        private Statement GetStatement(ref int startingIndex, string endingKeyword, Statement parentStatement = null, bool recurse = true)
         {
-            while (allTokensFound[startingIndex] != startKeyword) startingIndex++;
-            var statement = GetStatement(ref startingIndex, endKeyword, recurse); ;
+            if (startingIndex >= Tokens.Count) return null;
+
+            var statement = new Statement();
+            var currentIndex = startingIndex;
+
+            for (; currentIndex < Tokens.Count; currentIndex++)
+            {
+                var currentToken = Tokens[currentIndex];
+
+                if (currentIndex != startingIndex)
+                {
+                    switch (GetStatementType(startingIndex))
+                    {
+                        case StatementType.NormalStatement:
+                            (statement.RawTokens ?? (statement.RawTokens = new List<string>())).Add(currentToken);
+                            break;
+
+                        case StatementType.ImportStatement:
+                            (statement.RawTokens ?? (statement.RawTokens = new List<string>())).Add(currentToken);
+
+                            break;
+
+                        case StatementType.NestedStatement:
+                            (statement.RawTokens ?? (statement.RawTokens = new List<string>())).Add(currentToken);
+
+                            Statement childStatement = GetNestedStatement(ref startingIndex, currentToken);
+                            if (childStatement.offset > startingIndex)
+                            {
+                                startingIndex = childStatement.offset;
+                            }
+
+                       (statement.Children ?? (statement.Children = new List<Statement>())).Add(childStatement);
+                            break;
+
+                        case StatementType.Brackets:
+
+                            (statement.RawTokens ?? (statement.RawTokens = new List<string>())).Add(currentToken);
+
+                            childStatement = GetStatement(ref startingIndex, "{", "}");
+                            if (childStatement.offset > startingIndex)
+                            {
+                                startingIndex = childStatement.offset;
+                            }
+
+                       (statement.Children ?? (statement.Children = new List<Statement>())).Add(childStatement);
+
+                            break;
+
+                        case StatementType.Class:
+                            statement.statementType = StatementType.Class;
+                            break;
+
+                        case StatementType.Parameters:
+                            //Do nothing
+                            break;
+
+                        case StatementType.Method:
+                            //Implement later
+                            break;
+
+                        case StatementType.Variables:
+                            (statement.RawTokens ?? (statement.RawTokens = new List<string>())).Add(currentToken);
+
+                            if (recurse)
+                            {
+                                while (GetStatementType(startingIndex) == StatementType.Variables) startingIndex--;
+                            }
+                            var s = GetStatement(ref startingIndex, ";", statement, false);
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+
+                if (currentIndex >= Tokens.Count) break;
+
+                if (statement.statementType == StatementType.Class)
+                {
+                    if (Tokens[currentIndex] == "{")
+                    {
+                        GetStatement(ref currentIndex, "{", "}", statement);
+                    }
+                    endingKeyword = "{";
+                    statement.startingKeyword = "class";
+                    statement.name = Tokens[currentIndex];
+                }
+                else if (currentToken == endingKeyword)
+                {
+                    break;
+                }
+            }
+
+            statement.offset = currentIndex;
+            if (statement.offset > startingIndex)
+            {
+                startingIndex = statement.offset;
+            }
+
+            LogStatement(statement, GetStatementType(startingIndex));
+
+            if(parentStatement != null)
+            {
+                (parentStatement.Children ?? (parentStatement.Children = new List<Statement>())).Add(statement);
+            }
             return statement;
         }
 
-        Statement GetStatement(ref int startingIndex, string endingKeyword, bool recurse)
+        private Statement GetNextStatement(ref int Startindex)
         {
-            Statement outputStatement = new Statement();
-
-            int currentIndex = startingIndex;
-            while(true)
-            {
-                string currentToken = allTokensFound[currentIndex];
-
-              FillInnerStatements(ref outputStatement, currentToken, ref currentIndex);
-
-                if (currentToken == endingKeyword) break;
-                currentIndex++;
-            }
-
-            outputStatement.offset = currentIndex;
-            if (outputStatement.offset > startingIndex)
-            {
-                startingIndex = outputStatement.offset;
-            }
-            LogStatement(outputStatement, GetStatementType(allTokensFound[startingIndex]));
-            return outputStatement;
-        }
-
-        Statement GetNextStatement(ref int Startindex)
-        {
-            string currentToken = allTokensFound[Startindex];
-            StatementType statementType = GetStatementType(currentToken);
+            string currentToken = Tokens[Startindex];
+            StatementType statementType = GetStatementType(Startindex);
 
             Statement outputStatement = null;
-            if (statementType == StatementType.NormalStatement || statementType == StatementType.ImportStatement)
+            if(Tokens[Startindex] == ";")
             {
-                outputStatement = GetStatement(ref Startindex, ";", false);
-                if (outputStatement.offset > Startindex)
-                {
-                    Startindex = outputStatement.offset;
-                }
+                return GetStatement(ref Startindex, ";");
             }
-            else if(statementType == StatementType.NestedStatement)
+            switch (statementType)
             {
-                outputStatement = GetNestedStatement(ref Startindex, currentToken);
-                if (outputStatement.offset > Startindex)
-                {
-                    Startindex = outputStatement.offset;
-                }
-            }
-            else if (statementType == StatementType.Parameters)
-            {
-                outputStatement = GetStatement(ref Startindex, "(", ")", false);
-                if (outputStatement.offset > Startindex)
-                {
-                    Startindex = outputStatement.offset;
-                }
-            }
-            else if (statementType == StatementType.Class)
-            {
-                outputStatement = GetClass(ref Startindex);
-                if (outputStatement.offset > Startindex)
-                {
-                    Startindex = outputStatement.offset;
-                }
+                case StatementType.NormalStatement:
+                    outputStatement = GetStatement(ref Startindex, ";");
+                    break;
+
+                case StatementType.ImportStatement:
+                    outputStatement = GetStatement(ref Startindex,"import", ";", null, false);
+                    break;
+
+                case StatementType.NestedStatement:
+                    outputStatement = GetNestedStatement(ref Startindex, currentToken);
+                    break;
+
+                case StatementType.Parameters:
+                    outputStatement = GetStatement(ref Startindex, "(", ")");
+                    break;
+
+                case StatementType.Class:
+                    outputStatement = GetClass(ref Startindex);
+                    break;
+
+                case StatementType.Method:
+                    //Implement later
+                    break;
+
+                case StatementType.Variables:
+                    //Implement later
+                    break;
+
+                case StatementType.Brackets:
+                    //Implement later
+                    break;
+
+                 default:
+                    throw new ArgumentOutOfRangeException();
             }
 
-            LogStatement(outputStatement, GetStatementType(allTokensFound[Startindex]));
+            if (outputStatement != null && outputStatement.offset > Startindex)
+                Startindex = outputStatement.offset;
+
+            LogStatement(outputStatement, GetStatementType(Startindex));
             return outputStatement;
         }
 
-        Statement GetNestedStatement(ref int StartIndex, string startingKeyword)
+        private Statement GetNestedStatement(ref int StartIndex, string startingKeyword)
         {
             StartIndex++;
 
-            Statement nestedStatement = new Statement();
-            nestedStatement.startingKeyword = startingKeyword;
-
-            nestedStatement.ParameterStatement = GetStatement(ref StartIndex, "(", ")", false);
-                //GetStatement(ref StartIndex, ")", false);
-
-            Statement brackets = GetStatement(ref StartIndex, "{", "}", true);
-
-            if (nestedStatement.Children == null)
+            Statement nestedStatement = new Statement
             {
-                nestedStatement.Children = new List<Statement>();
+                startingKeyword = startingKeyword,
+            };
+
+            if(startingKeyword != "try" && startingKeyword != "catch" && startingKeyword != "else")
+            {
+                nestedStatement.ParameterStatement = GetStatement(ref StartIndex, "(", ")");
             }
-            nestedStatement.Children.Add(brackets);
+
+            Statement brackets = GetStatement(ref StartIndex, "{", "}");
+            (nestedStatement.Children ?? (nestedStatement.Children = new List<Statement>())).Add(brackets);
 
             LogStatement(nestedStatement, StatementType.NestedStatement);
             return nestedStatement;
         }
 
-        Statement GetClass(ref int StartIndex)
+        private Statement GetClass(ref int StartIndex)
         {
             StartIndex++;
 
-            Statement classStatement = new Statement();
-            classStatement.startingKeyword = "class";
-            classStatement.name = allTokensFound[StartIndex];
-
-            Statement brackets = GetStatement(ref StartIndex, "{", "}", true);
-
-            if (classStatement.Children == null)
+            Statement classStatement = new Statement
             {
-                classStatement.Children = new List<Statement>();
-            }
-            classStatement.Children.Add(brackets);
+                startingKeyword = "class",
+                name = Tokens[StartIndex]
+            };
+
+            Statement brackets = GetStatement(ref StartIndex, "{", "}");
+            (classStatement.Children ?? (classStatement.Children = new List<Statement>())).Add(brackets);
 
             LogStatement(classStatement, StatementType.NestedStatement);
             return classStatement;
         }
 
-
-
-
-        StatementType GetStatementType(string token)
+        private StatementType GetStatementType(int tokenIndex)
         {
-            if(token == "import")
+            if (tokenIndex >= Tokens.Count) return StatementType.Error;
+
+            string previousToken = tokenIndex != 0 ? Tokens[tokenIndex - 1] : null;
+            //string nextToken = tokenIndex < Tokens.Count - 1 ? Tokens[tokenIndex + 1] : null;
+
+            switch (Tokens[tokenIndex])
             {
-                return StatementType.ImportStatement;
+                case "import":
+                    return StatementType.ImportStatement;
+
+                case "if":
+                case "else":
+                case "while":
+                case "for":
+                case "try":
+                case "do":
+                case "catch":
+                    return StatementType.NestedStatement;
+
+                case "public":
+                case "private":
+                case "protected":
+                case "static":
+                case "virtual":
+                    //
+                    return StatementType.Method;
+
+                case "(":
+                    return StatementType.Parameters;
+
+                case "{":
+                    return StatementType.Brackets;
+
+                case "=":
+                case "int":
+                case "String":
+                case "string":
+                case "char":
+                case "Integer":
+                case "float":
+                case "double":
+                case "byte":
+                case "short":
+                case "bool":
+                case "Boolean":
+                    return StatementType.Variables;
+
+                case ".":
+                    return StatementType.NormalStatement;
+
+                default:
+                    switch (previousToken)
+                    {
+                        case "class":
+                            return StatementType.Class;
+
+                        default:
+                            return StatementType.NormalStatement;
+                    }
             }
-            if (token == "class")
-            {
-                return StatementType.Class;
-            }
-            if (token == "if" || token == "while" || token == "for" || token == "catch")
-            {
-                return StatementType.NestedStatement;
-            }
-            if (token == "(")
-            {
-                return StatementType.Parameters;
-            }
-            if (token == "{")
-            {
-                return StatementType.Brackets;
-            }
-            return StatementType.NormalStatement;
+
+           
         }
     }
 }

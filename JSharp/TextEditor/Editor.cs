@@ -22,11 +22,11 @@ namespace JSharp
     public class Editor : TextEditor
     {
         private readonly System.Windows.Forms.SaveFileDialog saveFileDialog;
-        private CompletionWindow completionWindow;
+        private EditorCompletionWindow completionWindow;
 
         public static string FilterOptions { get; set; }
 
-        public string OpenedDocument { get; private set; }
+        public string OpenedDocument { get; private set; } = "Untitled";
 
         private object foldingStrategy;
         private FoldingManager foldingManager;
@@ -45,6 +45,32 @@ namespace JSharp
         private Dictionary<string, string> brackets;
 
         private InnerHighlightingManager highlightingManager;
+
+        private IList<ICompletionData> CompletionData => EditorCompletionWindow.CompletionList.CompletionData;
+
+        public string GetClosedWordToCursor()
+        {
+            int caretOffset = CaretOffset - 1;
+
+            int start; int end;
+
+            while(caretOffset > -1 && !char.IsWhiteSpace(Document.GetCharAt(caretOffset)))
+            {
+                caretOffset--;
+            }
+
+            caretOffset++;
+            start = caretOffset;
+            
+            while (caretOffset < Document.TextLength && !char.IsWhiteSpace(Document.GetCharAt(caretOffset)))
+            {
+                caretOffset++;
+            }
+
+            end = caretOffset;
+
+            return Document.GetText(start, end-start);
+        }
 
         public Editor()
         {
@@ -84,6 +110,8 @@ namespace JSharp
 
             highlightingManager = new InnerHighlightingManager();
             this.ShowLineNumbers = true;
+
+            EditorCompletionWindow.InitalizeCompletionData();
         }
 
         
@@ -142,18 +170,14 @@ namespace JSharp
 
         private void Editor_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Decimal || e.Key == Key.Tab)
+            string wordContext = GetClosedWordToCursor();
+            if (e.Key == Key.Enter || e.Key == Key.Space)
             {
-                // Open code completion after the user has pressed dot:
-                completionWindow = new CompletionWindow(TextArea);
-                IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
-                data.Add(new MyCompletionData("class"));
-                data.Add(new MyCompletionData("void"));
-                data.Add(new MyCompletionData("public"));
-                completionWindow.Show();
-                completionWindow.Closed += delegate {
-                    completionWindow = null;
-                };
+                if (!CompletionData.Any(x => x.Text.StartsWith(wordContext)) || completionWindow != null)
+                {
+                    var com = new MyCompletionData(wordContext);
+                    CompletionData.Add(com);
+                }
             }
         }
         private void TextEditor_TextArea_TextEntered(object sender, TextCompositionEventArgs e)
@@ -163,26 +187,72 @@ namespace JSharp
                 Document.Insert(CaretOffset, brackets[e.Text]);
                 CaretOffset--;
             }
+
+            string wordContext = GetClosedWordToCursor();
+
+            try
+            {
+                if (CompletionData.Any(x => x.Text.StartsWith(wordContext)))
+                {
+                    if(completionWindow == null)
+                    {
+                        // Open code completion after the user has pressed dot:
+                        completionWindow = new EditorCompletionWindow(TextArea);
+
+                        completionWindow.Show();
+                        completionWindow.Closed += delegate
+                        {
+                            completionWindow = null;
+                        };
+                    }
+                    else
+                    {
+                        //Something
+                    }
+                    
+                }
+                else
+                {
+                    if (!char.IsLetterOrDigit(e.Text[0]))
+                    {
+                        
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+
+            }
+          
+            
+            
         }
 
         private void TextEditor_TextArea_TextEntering(object sender, TextCompositionEventArgs e)
         {
-            if (e.Text.Length > 0 && completionWindow != null)
+            if (e.Text.Length > 1 && completionWindow != null)
             {
-                if (!char.IsLetterOrDigit(e.Text[0]))
+                string wordContext = GetClosedWordToCursor();
+
+                
+                if (!char.IsLetterOrDigit(e.Text[0]) && wordContext != "")
                 {
-                    // Whenever a non-letter is typed while the completion window is open,
-                    // insert the currently selected element.
-                    completionWindow.CompletionList.RequestInsertion(e);
-                    
+                    if (!CompletionData.Any(x => x.Text.StartsWith(wordContext)) || completionWindow != null)
+                    {
+                        var com = new MyCompletionData(wordContext);
+                        CompletionData.Add(com);
+                    }
+                    EditorCompletionWindow.CompletionList.RequestInsertion(e);
                 }
             }
-            // Do not set e.Handled=true.
-            // We still want to insert the character that was typed.
+            //e.Handled = true;
         }
 
         public void OpenDocument(string filename)
         {
+            if (filename == "Untitled") return;
+
             //Initialize document properties
             OpenedDocument = filename;
             fileStream = File.Open(filename, FileMode.Open);

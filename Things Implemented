@@ -15,3 +15,6 @@ JSharp supports automatic bracket or quote closing
 JSharp's highlighting scheme can be edited by their users
 
 JSharp uses a custom highlighting scheme for avalonEdit
+
+JSharp has basic code completion (Limitation: not yet intellisense)
+    It takes note of keywords used in coding session

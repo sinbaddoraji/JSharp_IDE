@@ -27,7 +27,7 @@ namespace JSharp.Code_Completion
 
         public object Description
         {
-            get { return "Description for " + this.Text; }
+            get { return ""; }
         }
 
         public double Priority => 1;
