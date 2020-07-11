@@ -17,10 +17,10 @@ import java.util.List;
  */
 public class JavaToolKit 
 {
-    private static String filePath;
-    private static Class classObject;
+    private String filePath;
+    private Class classObject;
    
-    private static Class getClassFromFile(File classFile) throws Exception 
+    private Class getClassFromFile(File classFile) throws Exception 
     {
         Object primativeClz;
         primativeClz = new Object();
@@ -31,16 +31,20 @@ public class JavaToolKit
         return primativeClz.getClass();
     }
     
-    public static Class getClass(String filePath) throws Exception
+    public Class getClass(String filePath) throws Exception
     {
         File file = new File(filePath);
         return getClassFromFile(file);
     }
     
-    public static void initializeJTK(String filePath) throws Exception
+    public void initializeJTK(String filePath) throws Exception
     {
-        JavaToolKit.filePath = filePath;
-        JavaToolKit.classObject = getClass(filePath);
+        this.filePath = filePath;
+        this.classObject = getClass(filePath);
     }
    
+    public Class GetClass(String className) throws ClassNotFoundException
+    {
+        return Class.forName(className);
+    }
 }

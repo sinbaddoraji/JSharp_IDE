@@ -11,6 +11,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -54,6 +55,21 @@
     <PackageReference Include="AvalonEdit" Version="6.0.1" />
     <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="4.0.0" />
     <PackageReference Include="MahApps.Metro" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="jni4net.n-0.8.8.0">
+      <HintPath>..\..\JNI\lib\jni4net.n-0.8.8.0.dll</HintPath>
+    </Reference>
+    <Reference Include="jni4net.n.w32.v20-0.8.8.0">
+      <HintPath>..\..\JNI\lib\jni4net.n.w32.v20-0.8.8.0.dll</HintPath>
+    </Reference>
+    <Reference Include="jni4net.n.w64.v20-0.8.8.0">
+      <HintPath>..\..\JNI\lib\jni4net.n.w64.v20-0.8.8.0.dll</HintPath>
+    </Reference>
+    <Reference Include="jni4net.n.w64.v40-0.8.8.0">
+      <HintPath>..\..\JNI\lib\jni4net.n.w64.v40-0.8.8.0.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

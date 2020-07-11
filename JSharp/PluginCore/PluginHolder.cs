@@ -35,7 +35,12 @@ namespace JSharp.PluginCore
             "JSharp.dll",
             "ControlzEx.dll",
             "MahApps.Metro.dll", 
-            "Microsoft.Xaml.Behaviors.dll"
+            "Microsoft.Xaml.Behaviors.dll",
+            "jni4net.n.w32.v20-0.8.8.0.dll",
+            "jni4net.n.w64.v20-0.8.8.0.dll",
+            "jni4net.n.w64.v40-0.8.8.0.dll",
+            "jni4net.n-0.8.8.0.dll"
+
         };
 
         /// <summary>

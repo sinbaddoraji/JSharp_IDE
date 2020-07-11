@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,7 +28,7 @@ namespace JSharp.Windows.MainWindow
             SetWindowTheme(Settings.Default.DarkTheme);
             AddInbuiltPanes();
             InitalizePanes();
-            
+
             Editor.FilterOptions = "Java Files (*.java)|*.java|Other Files (*.*)|*.*";
             openFileDialog = new OpenFileDialog
             {
@@ -35,6 +36,11 @@ namespace JSharp.Windows.MainWindow
             };
 
             for (int i = 1; i <= 100; i++) ZoomValue.Items.Add(i);
+
+            if(!File.Exists("jni4net.j-0.8.8.0.jar"))
+            {
+                File.WriteAllBytes("jni4net.j-0.8.8.0.jar", JSharp.Properties.Resources.jni4net_j_0_8_8_0);
+            }
 
             var previouslyOpenedDocuments = GetOpenedFiles(true);
             OpenDocuments(previouslyOpenedDocuments);

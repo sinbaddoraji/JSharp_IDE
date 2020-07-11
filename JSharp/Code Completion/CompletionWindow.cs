@@ -12,7 +12,7 @@ namespace JSharp.Code_Completion
 {
     public class EditorCompletionWindow : CompletionWindowBase
     {
-	    public static readonly CompletionList CompletionList = new CompletionList();
+	    public static readonly EditorCompletionList CompletionList = new EditorCompletionList();
 
 		private ToolTip _toolTip = new ToolTip();
 
@@ -20,7 +20,7 @@ namespace JSharp.Code_Completion
 
 	    public EditorCompletionWindow(TextArea textArea) : base(textArea)
         {
-            SizeToContent = SizeToContent.Height;
+            SizeToContent = SizeToContent.Height; 
 			MaxHeight = 300.0;
 			Width = 175.0;
 			Content = CompletionList;
@@ -35,19 +35,69 @@ namespace JSharp.Code_Completion
 			Background = CompletionList.Background;
 		}
 
-		public static void InitalizeCompletionData()
+		public static bool InitalizeCompletionData()
         {
-			if (_completionDataInitialized) return;
+			if (_completionDataInitialized) return true;
 			CompletionList.Background = PluginHolder.Instance.ParentWindow.Background;
 			CompletionList.Background = PluginHolder.Instance.ParentWindow.Foreground;
 
 			var data = CompletionList.CompletionData;
+			data.Add(new MyCompletionData("abstract"));
+			data.Add(new MyCompletionData("assert"));
+			data.Add(new MyCompletionData("boolean"));
+			data.Add(new MyCompletionData("break"));
+			data.Add(new MyCompletionData("byte"));
+			data.Add(new MyCompletionData("case"));
+			data.Add(new MyCompletionData("catch"));
+			data.Add(new MyCompletionData("char"));
 			data.Add(new MyCompletionData("class"));
+			data.Add(new MyCompletionData("const"));
+			data.Add(new MyCompletionData("continue"));
+			data.Add(new MyCompletionData("default"));
+			data.Add(new MyCompletionData("do"));
+			data.Add(new MyCompletionData("double"));
+			data.Add(new MyCompletionData("else"));
+			data.Add(new MyCompletionData("enum"));
+			data.Add(new MyCompletionData("extends"));
+			data.Add(new MyCompletionData("final"));
+			data.Add(new MyCompletionData("finally"));
+			data.Add(new MyCompletionData("void"));
+			data.Add(new MyCompletionData("float"));
+			data.Add(new MyCompletionData("for"));
 			data.Add(new MyCompletionData("void"));
 			data.Add(new MyCompletionData("public"));
-			data.Add(new MyCompletionData("bal.ballah("));
-
+			data.Add(new MyCompletionData("goto"));
+			data.Add(new MyCompletionData("if"));
+			data.Add(new MyCompletionData("implements"));
+			data.Add(new MyCompletionData("import"));
+			data.Add(new MyCompletionData("instanceof"));
+			data.Add(new MyCompletionData("int"));
+			data.Add(new MyCompletionData("interface"));
+			data.Add(new MyCompletionData("long"));
+			data.Add(new MyCompletionData("native"));
+			data.Add(new MyCompletionData("new"));
+			data.Add(new MyCompletionData("package"));
+			data.Add(new MyCompletionData("private"));
+			data.Add(new MyCompletionData("protected"));
+			data.Add(new MyCompletionData("public"));
+			data.Add(new MyCompletionData("return"));
+			data.Add(new MyCompletionData("short"));
+			data.Add(new MyCompletionData("static"));
+			data.Add(new MyCompletionData("strictfp"));
+			data.Add(new MyCompletionData("super"));
+			data.Add(new MyCompletionData("switch"));
+			data.Add(new MyCompletionData("synchronized"));
+			data.Add(new MyCompletionData("this"));
+			data.Add(new MyCompletionData("throw"));
+			data.Add(new MyCompletionData("throws"));
+			data.Add(new MyCompletionData("transient"));
+			data.Add(new MyCompletionData("try"));
+			data.Add(new MyCompletionData("void"));
+			data.Add(new MyCompletionData("volatile"));
+			data.Add(new MyCompletionData("while"));
 			_completionDataInitialized = true;
+
+			return false;
 		}
 
 

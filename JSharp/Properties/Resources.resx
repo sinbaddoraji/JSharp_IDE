@@ -136,8 +136,14 @@
   <data name="Java_LightMode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\bin\Debug\net46\Resources\Java-LightMode.xshd;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="jni4net_j_0_8_8_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\jni4net.j-0.8.8.0.jar;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Open" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Packages" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Packages;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Paste" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Paste.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

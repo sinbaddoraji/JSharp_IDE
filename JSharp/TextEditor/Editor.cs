@@ -22,6 +22,10 @@ using DragEventArgs = System.Windows.DragEventArgs;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MenuItem = System.Windows.Controls.MenuItem;
 using MessageBox = System.Windows.MessageBox;
+using System.Threading;
+using net.sf.jni4net;
+using System.IO.Packaging;
+using java.lang;
 
 namespace JSharp.TextEditor
 {
@@ -50,7 +54,7 @@ namespace JSharp.TextEditor
 
         private readonly InnerHighlightingManager _highlightingManager;
 
-        private static IList<ICompletionData> CompletionData => EditorCompletionWindow.CompletionList.CompletionData;
+        private static EditorCompletionList CompletionList => EditorCompletionWindow.CompletionList;
 
         private string GetClosedWordToCursor(int from)
         {
@@ -123,8 +127,36 @@ namespace JSharp.TextEditor
             _highlightingManager = new InnerHighlightingManager();
             ShowLineNumbers = true;
 
-            EditorCompletionWindow.InitalizeCompletionData();
+            bool initalized = EditorCompletionWindow.InitalizeCompletionData();
+            if(!initalized)
+            {
+                BridgeSetup bridgeSetup = new BridgeSetup(true);
+                bridgeSetup.AddClassPath(".");
+                bridgeSetup.AddClassPath("work");
+                Bridge.CreateJVM(bridgeSetup);
+                Bridge.RegisterAssembly(typeof(Thread).Assembly);
+
+                string[] javaLang = new[] {"Boolean", "Byte", "Class", "Double", "Enum", "Exception", "Float", "Integer", "Long", "Math", "Number", "Object", "Override", "Process", "Short", "String", "Thread", "Void", "System", "StrictMath"};
+                for (int i = 0; i < javaLang.Length; i++)
+                {
+                    AddCompletionData($"java.lang.{javaLang[i]}");
+                }
+                if (!Directory.Exists("Resources"))
+                {
+                    Directory.CreateDirectory("Resources");
+                }
+                if (!File.Exists("Resources\\Packages.bal"))
+                {
+                    File.WriteAllBytes("Resources\\Packages.bal", Properties.Resources.Packages);
+                }
+
+                foreach (var imports in File.ReadLines("Resources\\Packages.bal"))
+                {
+                    AddCompletionData(imports);
+                }
+            }
         }
+
 
         
 
@@ -185,10 +217,10 @@ namespace JSharp.TextEditor
             if (e.Key != Key.Enter && e.Key != Key.Space) return;
             var wordContext = GetClosedWordToCursor(CaretOffset);
 
-            if (!CompletionData.Any(x => x.Text.StartsWith(wordContext)) && _completionWindow == null && wordContext.Length > 0)
+            if (!CompletionList.CompletionData.Any(x => x.Text.StartsWith(wordContext)) && _completionWindow == null && wordContext.Length > 0)
             {
                 var com = new MyCompletionData(wordContext);
-                CompletionData.Add(com);
+                CompletionList.CompletionData.Add(com);
             }
         }
         private void TextEditor_TextArea_TextEntered(object sender, TextCompositionEventArgs e)
@@ -203,51 +235,64 @@ namespace JSharp.TextEditor
 
             try
             {
-                if (CompletionData.Any(x => x.Text.StartsWith(wordContext)))
+                if (CompletionList.CompletionData.Any(x => x.Text.StartsWith(wordContext)))
                 {
-                    if (_completionWindow != null) return;
-                    if (wordContext.Length < 1) return;
-                    // Open code completion after the user has pressed dot:
-                    _completionWindow = new EditorCompletionWindow(TextArea);
-
-                    _completionWindow.Show();
-                    _completionWindow.Closed += delegate
-                    {
-                        _completionWindow = null;
-                    };
+                    InitializeCompletionWindow(wordContext);
                 }
                 else
                 {
-                    if (!char.IsLetterOrDigit(e.Text[0]))
-                    {
-                        
-                    }
+                    _completionWindow?.Close();
+                    //AddCompletionData(wordContext, false);
                 }
-
             }
-            catch (Exception)
+            catch (System.Exception)
             {
                 // ignored
             }
         }
 
+        private void InitializeCompletionWindow(string wordContext)
+        {
+            if (_completionWindow != null || (wordContext.Length < 1)) { return; }
+            // Open code completion after the user has pressed dot:
+            _completionWindow = new EditorCompletionWindow(TextArea);
+
+            _completionWindow.Show();
+            _completionWindow.Closed += delegate
+            {
+                _completionWindow = null;
+
+                try
+                {
+                    if (EditorCompletionWindow.CompletionList != null)
+                        EditorCompletionWindow.CompletionList.SelectItem(string.Empty);
+                }
+                catch (System.Exception)
+                {
+                }
+
+            };
+        }
+
         private void TextEditor_TextArea_TextEntering(object sender, TextCompositionEventArgs e)
         {
-            if (e.Text.Length > 1 && _completionWindow != null)
+            string wordContext = GetClosedWordToCursor(CaretOffset);
+            if(e.Text[0] == '.' && EditorCompletionWindow.CompletionList.SelectedItem.Text.Length < 1)
             {
-                string wordContext = GetClosedWordToCursor(CaretOffset);
-
-                
+                InitializeCompletionWindow(wordContext);
+            }
+            if (e.Text[0] == ';')
+            {
+                AddCompletionData(wordContext);
+                EditorCompletionWindow.CompletionList.RequestInsertion(e);
+            }
+            else if (e.Text.Length > 1 && _completionWindow != null)
+            {
                 if (!char.IsLetterOrDigit(e.Text[0]) && wordContext != "")
                 {
-                    if (!CompletionData.Any(x => x.Text.StartsWith(wordContext)) && _completionWindow == null)
+                    if (!CompletionList.Contains(wordContext) && _completionWindow == null)
                     {
-                        var com = new MyCompletionData(wordContext);
-                        CompletionData.Add(com);
-                    }
-                    else if(_completionWindow == null)
-                    {
-                        _completionWindow.Close();
+                        AddCompletionData(wordContext);
                     }
                     else
                     {
@@ -260,6 +305,59 @@ namespace JSharp.TextEditor
                 }
             }
             //e.Handled = true;
+        }
+
+        private void AddCompletion_Data(string data)
+        {
+            if (CompletionList.Contains(data)) return;
+            data = data.Trim();
+            if (data.Length < 1) return;
+
+            CompletionList.Add(data);
+        }
+
+        private void AddCompletionData(string data)
+        {
+            try
+            {
+                AddCompletion_Data(data);
+
+                java.lang.Class c = java.lang.Class.forName(data);
+                
+                if (c == null) return;
+
+                string name = c.getName();
+                string simpleName = c.getSimpleName().ToString();
+
+                java.lang.reflect.Method[] methods = c.getMethods();
+                java.lang.reflect.Field[] properties = c.getFields();
+                java.lang.Class[] interfaces = c.getInterfaces();
+
+                AddCompletion_Data(name);
+                AddCompletion_Data(simpleName);
+
+                foreach (java.lang.Class inter in interfaces)
+                {
+                    AddCompletion_Data(inter.getName());
+                    AddCompletion_Data(inter.getSimpleName());
+                }
+
+                foreach (java.lang.reflect.Method method in methods)
+                {
+                    AddCompletion_Data(simpleName + "." + method.getName() + "(");
+                    AddCompletion_Data(name + "." + method.getName() + "(");
+                }
+
+                foreach (java.lang.reflect.Field field in properties)
+                {
+                    AddCompletion_Data(simpleName + "." + field.getName());
+                    AddCompletion_Data(name + "." + field.getName());
+                }
+            }
+            catch (System.Exception)
+            {
+
+            }
         }
 
         public void OpenDocument(string filename)
@@ -290,7 +388,7 @@ namespace JSharp.TextEditor
             {
                 Save(_fileStream);
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 MessageBox.Show(e.Message);
             }

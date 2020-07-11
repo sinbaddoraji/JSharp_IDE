@@ -20,7 +20,9 @@ JSharp has basic code completion (Limitation: not yet intellisense)
     It takes note of keywords used in coding session
     It hints at basic Java syntax
 
+JSharp plugins can be written in both java (using JNI) or c#
+
 
 Limitations:
 
-    Auto complete only gives surface level suggestions
+    Only has autocomplete not intellisense: It suggest code but not so intelligentlyy
