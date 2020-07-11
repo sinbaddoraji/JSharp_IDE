@@ -135,13 +135,12 @@ namespace JSharp.Windows.MainWindow
                 
                 
                 Background = Background;
-                
-                //WindowTitleBrush = new SolidColorBrush(Colors.White);
+
+                Menu.Background = Background;
                 Color fontColour = (Color)ColorConverter.ConvertFromString("#FFDCDCDC");
                 TitleForeground = new SolidColorBrush(fontColour);
                 
                 ThemeManager.Current.ChangeTheme(this, "Light.Cyan");
-                Background = WindowTitleBrush;
                 ThemeManager.Current.SyncTheme();
             }
         }

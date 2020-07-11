@@ -16,20 +16,10 @@ namespace JSharp.Code_Completion
 
 		private ToolTip _toolTip = new ToolTip();
 
-	    private bool CloseAutomatically
-		{
-			get;
-	    }
-
-		protected override bool CloseOnFocusLost => CloseAutomatically;
-
-	    private static bool CloseWhenCaretAtBeginning => false;
-
 	    private static bool _completionDataInitialized;
 
 	    public EditorCompletionWindow(TextArea textArea) : base(textArea)
         {
-	        CloseAutomatically = true;
             SizeToContent = SizeToContent.Height;
 			MaxHeight = 300.0;
 			Width = 175.0;
@@ -38,9 +28,11 @@ namespace JSharp.Code_Completion
 			MinWidth = 30.0;
 			_toolTip.PlacementTarget = this;
 			_toolTip.Placement = PlacementMode.Right;
-			_toolTip.Closed += toolTip_Closed;
+			_toolTip.Closed += ToolTip_Closed;
 			AttachEvents();
 
+			CompletionList.Background = PluginCore.PluginHolder.Instance.ParentWindow.Background;
+			Background = CompletionList.Background;
 		}
 
 		public static void InitalizeCompletionData()
@@ -60,41 +52,27 @@ namespace JSharp.Code_Completion
 
 
 
-		private void toolTip_Closed(object sender, RoutedEventArgs e)
+		private void ToolTip_Closed(object sender, RoutedEventArgs e)
 		{
-			if (_toolTip != null)
-			{
-				_toolTip.Content = null;
-			}
+			if (_toolTip != null) _toolTip.Content = null;
 		}
 
 		private void CompletionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var selectedItem = CompletionList.SelectedItem;
 			if (selectedItem == null) return;
-			
-			var description = selectedItem.Description;
-			if (description != null)
-			{
-				if (description is string text)
-				{
-					_toolTip.Content = new TextBlock
-					{
-						Text = text,
-						TextWrapping = TextWrapping.Wrap
-					};
-				}
-				else
-				{
-					_toolTip.Content = description;
-				}
-				_toolTip.IsOpen = true;
-			}
-			else
-			{
-				_toolTip.IsOpen = false;
-			}
-		}
+
+            if (selectedItem.Description != null)
+            {
+                _toolTip.Content = selectedItem.Description is string text ?
+                    new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap } : selectedItem.Description;
+                _toolTip.IsOpen = true;
+            }
+            else
+            {
+                _toolTip.IsOpen = false;
+            }
+        }
 
 		private void CompletionList_InsertionRequested(object sender, EventArgs e)
 		{
@@ -107,8 +85,8 @@ namespace JSharp.Code_Completion
 			CompletionList.InsertionRequested += CompletionList_InsertionRequested;
 			CompletionList.SelectionChanged += CompletionList_SelectionChanged;
 			TextArea.Caret.PositionChanged += CaretPositionChanged;
-            TextArea.MouseWheel += textArea_MouseWheel;
-            TextArea.PreviewTextInput += textArea_PreviewTextInput;
+            TextArea.MouseWheel += TextArea_MouseWheel;
+            TextArea.PreviewTextInput += TextArea_PreviewTextInput;
 		}
 
 		protected override void DetachEvents()
@@ -116,8 +94,8 @@ namespace JSharp.Code_Completion
 			CompletionList.InsertionRequested -= CompletionList_InsertionRequested;
 			CompletionList.SelectionChanged -= CompletionList_SelectionChanged;
 			TextArea.Caret.PositionChanged -= CaretPositionChanged;
-			TextArea.MouseWheel -= textArea_MouseWheel;
-			TextArea.PreviewTextInput -= textArea_PreviewTextInput;
+			TextArea.MouseWheel -= TextArea_MouseWheel;
+			TextArea.PreviewTextInput -= TextArea_PreviewTextInput;
 			base.DetachEvents();
 		}
 
@@ -138,46 +116,34 @@ namespace JSharp.Code_Completion
 			}
 		}
 
-		private void textArea_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		private void TextArea_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
 			e.Handled = RaiseEventPair(this, PreviewTextInputEvent, TextInputEvent, new TextCompositionEventArgs(e.Device, e.TextComposition));
 		}
 
-		private void textArea_MouseWheel(object sender, MouseWheelEventArgs e)
+		private void TextArea_MouseWheel(object sender, MouseWheelEventArgs e)
 		{
 			e.Handled = RaiseEventPair(GetScrollEventTarget(), PreviewMouseWheelEvent, MouseWheelEvent, new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta));
 		}
 
 		private UIElement GetScrollEventTarget()
 		{
-			if (CompletionList == null)
-			{
-				return this;
-			}
-			return (UIElement)(CompletionList.ScrollViewer ?? CompletionList.ListBox ?? ((object)CompletionList));
-		}
+            return CompletionList == null ? this :
+				(UIElement)(CompletionList.ScrollViewer ?? CompletionList.ListBox ?? ((object)CompletionList));
+        }
 
-		private void CaretPositionChanged(object sender, EventArgs e)
+        private void CaretPositionChanged(object sender, EventArgs e)
 		{
 			var offset = TextArea.Caret.Offset;
 			if (offset == StartOffset)
 			{
-				if (CloseAutomatically && CloseWhenCaretAtBeginning)
-				{
-					Close();
-				}
-				else
-				{
-					CompletionList.SelectItem(string.Empty);
-				}
+				Close();
+				CompletionList.SelectItem(string.Empty);
 				return;
 			}
 			if (offset < StartOffset || offset > EndOffset)
 			{
-				if (CloseAutomatically)
-				{
-					Close();
-				}
+				Close();
 				return;
 			}
 			var document = TextArea.Document;

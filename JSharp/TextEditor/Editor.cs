@@ -52,9 +52,9 @@ namespace JSharp.TextEditor
 
         private static IList<ICompletionData> CompletionData => EditorCompletionWindow.CompletionList.CompletionData;
 
-        private string GetClosedWordToCursor()
+        private string GetClosedWordToCursor(int from)
         {
-            var caretOffset = CaretOffset - 1;
+            var caretOffset = from - 1;
 
             while(caretOffset > -1 && !char.IsWhiteSpace(Document.GetCharAt(caretOffset)))
             {
@@ -71,7 +71,18 @@ namespace JSharp.TextEditor
 
             var end = caretOffset;
 
-            return Document.GetText(start, end-start);
+            return Document.GetText(start, end-start).Trim();
+        }
+
+        private string GetPreviousWord(int from)
+        {
+            var caretOffset = from - 1;
+
+            while (caretOffset > -1 && !char.IsWhiteSpace(Document.GetCharAt(caretOffset)))
+            {
+                caretOffset--;
+            }
+            return GetPreviousWord(from);
         }
 
         public Editor()
@@ -172,9 +183,9 @@ namespace JSharp.TextEditor
         private void Editor_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter && e.Key != Key.Space) return;
-            var wordContext = GetClosedWordToCursor();
-            
-            if (!CompletionData.Any(x => x.Text.StartsWith(wordContext)) || _completionWindow != null)
+            var wordContext = GetClosedWordToCursor(CaretOffset);
+
+            if (!CompletionData.Any(x => x.Text.StartsWith(wordContext)) && _completionWindow == null && wordContext.Length > 0)
             {
                 var com = new MyCompletionData(wordContext);
                 CompletionData.Add(com);
@@ -188,13 +199,14 @@ namespace JSharp.TextEditor
                 CaretOffset--;
             }
 
-            var wordContext = GetClosedWordToCursor();
+            var wordContext = GetClosedWordToCursor(CaretOffset);
 
             try
             {
                 if (CompletionData.Any(x => x.Text.StartsWith(wordContext)))
                 {
                     if (_completionWindow != null) return;
+                    if (wordContext.Length < 1) return;
                     // Open code completion after the user has pressed dot:
                     _completionWindow = new EditorCompletionWindow(TextArea);
 
@@ -223,17 +235,28 @@ namespace JSharp.TextEditor
         {
             if (e.Text.Length > 1 && _completionWindow != null)
             {
-                string wordContext = GetClosedWordToCursor();
+                string wordContext = GetClosedWordToCursor(CaretOffset);
 
                 
                 if (!char.IsLetterOrDigit(e.Text[0]) && wordContext != "")
                 {
-                    if (!CompletionData.Any(x => x.Text.StartsWith(wordContext)) || _completionWindow != null)
+                    if (!CompletionData.Any(x => x.Text.StartsWith(wordContext)) && _completionWindow == null)
                     {
                         var com = new MyCompletionData(wordContext);
                         CompletionData.Add(com);
                     }
-                    EditorCompletionWindow.CompletionList.RequestInsertion(e);
+                    else if(_completionWindow == null)
+                    {
+                        _completionWindow.Close();
+                    }
+                    else
+                    {
+                        if(wordContext.Length > 0)
+                        {
+                            EditorCompletionWindow.CompletionList.RequestInsertion(e);
+                        }
+                    }
+                    
                 }
             }
             //e.Handled = true;
