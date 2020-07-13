@@ -18,7 +18,7 @@ namespace JSharp.Code_Completion
 
         public object Description => Text;
 
-        public double Priority => 1;
+        public double Priority { get; set; }
 
         public void Complete(TextArea textArea, ISegment completionSegment,
             EventArgs insertionRequestEventArgs)
