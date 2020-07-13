@@ -42,6 +42,13 @@ namespace JSharp.Windows.MainWindow
                 File.WriteAllBytes("jni4net.j-0.8.8.0.jar", JSharp.Properties.Resources.jni4net_j_0_8_8_0);
             }
 
+            if(JSharp.Properties.Settings.Default.JdkPath.Length < 1)
+            {
+                System.Windows.Forms.MessageBox.Show("JDK path currently empty");
+                new JSharp.MainWindow.Settings().ShowDialog();
+                SetWindowTheme(Settings.Default.DarkTheme);
+            }
+
             var previouslyOpenedDocuments = GetOpenedFiles(true);
             OpenDocuments(previouslyOpenedDocuments);
 

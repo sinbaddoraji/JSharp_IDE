@@ -89,6 +89,8 @@ namespace JSharp.TextEditor
             return GetPreviousWord(from);
         }
 
+        string[] classList;
+
         public Editor()
         {
             //Initialize objects
@@ -136,23 +138,18 @@ namespace JSharp.TextEditor
                 Bridge.CreateJVM(bridgeSetup);
                 Bridge.RegisterAssembly(typeof(Thread).Assembly);
 
-                string[] javaLang = new[] {"Boolean", "Byte", "Class", "Double", "Enum", "Exception", "Float", "Integer", "Long", "Math", "Number", "Object", "Override", "Process", "Short", "String", "Thread", "Void", "System", "StrictMath"};
-                for (int i = 0; i < javaLang.Length; i++)
+                classList = File.ReadAllLines($@"{Settings.Default.JdkPath}\jre\lib\classlist");
+                foreach (var item in classList)
                 {
-                    AddCompletionData($"java.lang.{javaLang[i]}");
-                }
-                if (!Directory.Exists("Resources"))
-                {
-                    Directory.CreateDirectory("Resources");
-                }
-                if (!File.Exists("Resources\\Packages.bal"))
-                {
-                    File.WriteAllBytes("Resources\\Packages.bal", Properties.Resources.Packages);
-                }
-
-                foreach (var imports in File.ReadLines("Resources\\Packages.bal"))
-                {
-                    AddCompletionData(imports);
+                    if(item.Contains("lang"))
+                    {
+                        AddCompletionData(item.Replace("/", "."));
+                    }
+                    else
+                    {
+                        AddCompletion_Data(item.Replace("/", "."));
+                    }
+                    
                 }
             }
         }
@@ -283,7 +280,10 @@ namespace JSharp.TextEditor
             }
             if (e.Text[0] == ';')
             {
-                AddCompletionData(wordContext);
+                if(classList.Contains(wordContext.Replace(".","/")))
+                {
+                    AddCompletionData(wordContext);
+                }
                 EditorCompletionWindow.CompletionList.RequestInsertion(e);
             }
             else if (e.Text.Length > 1 && _completionWindow != null)
@@ -333,25 +333,21 @@ namespace JSharp.TextEditor
                 java.lang.reflect.Field[] properties = c.getFields();
                 java.lang.Class[] interfaces = c.getInterfaces();
 
-                AddCompletion_Data(name);
                 AddCompletion_Data(simpleName);
 
                 foreach (java.lang.Class inter in interfaces)
                 {
-                    AddCompletion_Data(inter.getName());
                     AddCompletion_Data(inter.getSimpleName());
                 }
 
                 foreach (java.lang.reflect.Method method in methods)
                 {
                     AddCompletion_Data(simpleName + "." + method.getName() + "(");
-                    AddCompletion_Data(name + "." + method.getName() + "(");
                 }
 
                 foreach (java.lang.reflect.Field field in properties)
                 {
                     AddCompletion_Data(simpleName + "." + field.getName());
-                    AddCompletion_Data(name + "." + field.getName());
                 }
             }
             catch (System.Exception)

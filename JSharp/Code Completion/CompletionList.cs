@@ -17,6 +17,8 @@ namespace JSharp.Code_Completion
             {
                 this.CompletionData.Add(new MyCompletionData(data));
                 AutoCompleteStrings.Add(data);
+
+               
             }
         }
 

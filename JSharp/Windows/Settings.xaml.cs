@@ -33,11 +33,11 @@ namespace JSharp.MainWindow
         {
             InitializeComponent();
             darkTheme.IsChecked = GetDarkMode();
+            jdkBox.Text = Properties.Settings.Default.JdkPath;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            SetJdkPath(jdkBox.Text);
             SetDarkMode(darkTheme.IsChecked == true);
             Properties.Settings.Default.Save();
             Close();
@@ -52,6 +52,7 @@ namespace JSharp.MainWindow
                 if (folderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     SetJdkPath(folderDialog.SelectedPath);
+                    jdkBox.Text = folderDialog.SelectedPath;
                 }
             }
         }
