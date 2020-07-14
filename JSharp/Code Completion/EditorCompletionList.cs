@@ -11,13 +11,7 @@ namespace JSharp.Code_Completion
 {
     public class EditorCompletionList: CompletionList
     {
-        List<string> AutoCompleteStrings = new List<string>();
-        static char[] alphabets;
-
-        static EditorCompletionList()
-        {
-            alphabets = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
-        }
+        private readonly List<string> AutoCompleteStrings = new List<string>();
 
         public void Add(string data, bool isImportant = false)
         {
@@ -25,50 +19,30 @@ namespace JSharp.Code_Completion
             {
                 AutoCompleteStrings.Add(data);
 
+                //Get predicted index of input in the list using binary search
                 int binraySearchIndex = AutoCompleteStrings.BinarySearch(data);
-                if (binraySearchIndex < 0)
-                {
-                    binraySearchIndex = ~binraySearchIndex;
-                    AutoCompleteStrings.Insert(binraySearchIndex, data);
-                }
+                if (binraySearchIndex < 0) binraySearchIndex = ~binraySearchIndex;
+
+                //Insert text at predicted index
+                AutoCompleteStrings.Insert(binraySearchIndex, data);
 
                 int insertionIndex = binraySearchIndex;
                 MyCompletionData newCompletionData = new MyCompletionData(data);
 
-                if(!data.StartsWith("."))
-                {
-                    newCompletionData.Priority++;
-                }
-                if(isImportant)
-                {
-                    newCompletionData.Priority += 4;
-                }
-                if(insertionIndex >= AutoCompleteStrings.Count || insertionIndex >= CompletionData.Count)
-                {
-                    this.CompletionData.Add(newCompletionData);
-                }
-                else
-                {
-                    CompletionData.Insert(insertionIndex, newCompletionData);
-                }
-                
+                if(!data.StartsWith(".")) newCompletionData.Priority++;
+                if (isImportant) newCompletionData.Priority += 10;
 
-                //var newCompletionData = new ObservableCollection<ICompletionData>(CompletionData.OrderBy(x => x.Text));
+                //Add to completion data
+                if (insertionIndex >= AutoCompleteStrings.Count || insertionIndex >= CompletionData.Count)
+                    CompletionData.Add(newCompletionData);
+                else
+                    CompletionData.Insert(insertionIndex, newCompletionData);
             }
         }
 
         public bool Contains(string data)
         {
-            try
-            {
-                return AutoCompleteStrings.IndexOf(data) != -1;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            
+            return AutoCompleteStrings.IndexOf(data) != -1;
         }
-
     }
 }

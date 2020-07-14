@@ -37,6 +37,8 @@ Frameworks Used:
 
 Avalon Dock => Used for docking 
 Avalon Edit => Used for text editor 
+Jni4net => Used for running java code from c#
+MahApps.Metro => Used to create the window
 
 Notes:
 

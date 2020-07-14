@@ -37,15 +37,25 @@ namespace JSharp.Windows.MainWindow
 
             for (int i = 1; i <= 100; i++) ZoomValue.Items.Add(i);
 
-            if(!File.Exists("jni4net.j-0.8.8.0.jar"))
+            if (!File.Exists("jni4net.j-0.8.8.0.jar"))
             {
                 File.WriteAllBytes("jni4net.j-0.8.8.0.jar", JSharp.Properties.Resources.jni4net_j_0_8_8_0);
             }
 
-            if(JSharp.Properties.Settings.Default.JdkPath.Length < 1)
+            if (!File.Exists($@"{Settings.Default.JdkPath}\jre\lib\classlist"))
             {
-                System.Windows.Forms.MessageBox.Show("JDK path currently empty");
-                new JSharp.MainWindow.Settings().ShowDialog();
+                string javaPath = GetJavaInstallationPath();
+                if(Directory.Exists(javaPath))
+                {
+                    Properties.Settings.Default.JdkPath = javaPath;
+                    Properties.Settings.Default.Save();
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("JDK path currently empty");
+                    new JSharp.MainWindow.Settings().ShowDialog();
+                }
+                
                 SetWindowTheme(Settings.Default.DarkTheme);
             }
 
@@ -62,7 +72,20 @@ namespace JSharp.Windows.MainWindow
             }
         }
 
-       
+        private string GetJavaInstallationPath()
+        {
+            string environmentPath = Environment.GetEnvironmentVariable("JAVA_HOME");
+            if (!string.IsNullOrEmpty(environmentPath)) return environmentPath;
+
+            const string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
+            using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
+            {
+                using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(rk.GetValue("CurrentVersion").ToString()))
+                    return key.GetValue("JavaHome").ToString();
+            }
+        }
+
+
 
         private void SelectedContent_Closed(object sender, EventArgs e)
         {

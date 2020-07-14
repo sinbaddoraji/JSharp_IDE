@@ -25,4 +25,4 @@ JSharp plugins can be written in both java (using JNI) or c#
 
 Limitations:
 
-    Only has autocomplete not intellisense: It suggest code but not so intelligentlyy
+    Only has autocomplete not intellisense: It suggest code but not so intelligently

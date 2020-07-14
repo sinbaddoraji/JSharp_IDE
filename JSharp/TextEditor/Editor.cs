@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -55,28 +54,22 @@ namespace JSharp.TextEditor
 
         private static EditorCompletionList CompletionList => EditorCompletionWindow.CompletionList;
 
-        private readonly IEnumerable<string> classList;
+        private readonly IEnumerable<string> _classList;
 
         private string GetClosedWordToCursor(int from)
         {
             var caretOffset = from - 1;
 
             while(caretOffset > -1 && !char.IsWhiteSpace(Document.GetCharAt(caretOffset)))
-            {
                 caretOffset--;
-            }
 
             caretOffset++;
             var start = caretOffset;
             
             while (caretOffset < Document.TextLength && !char.IsWhiteSpace(Document.GetCharAt(caretOffset)))
-            {
                 caretOffset++;
-            }
 
-            var end = caretOffset;
-
-            return Document.GetText(start, end-start).Trim();
+            return Document.GetText(start, caretOffset - start).Trim();
         }
         
 
@@ -118,8 +111,7 @@ namespace JSharp.TextEditor
             _highlightingManager = new InnerHighlightingManager();
             ShowLineNumbers = true;
 
-            bool initalized = EditorCompletionWindow.InitalizeCompletionData();
-            if(!initalized)
+            if(!EditorCompletionWindow.InitalizeCompletionData())
             {
                 BridgeSetup bridgeSetup = new BridgeSetup(true);
                 bridgeSetup.AddClassPath(".");
@@ -127,13 +119,25 @@ namespace JSharp.TextEditor
                 Bridge.CreateJVM(bridgeSetup);
                 Bridge.RegisterAssembly(typeof(Thread).Assembly);
 
-                classList = File.ReadAllLines($@"{Settings.Default.JdkPath}\jre\lib\classlist").Select(x => x.Replace("/", "."));
-                foreach (string item in classList)
-                {
-                    if(item.Contains("lang")) AddCompletionData(item);
-                    else AddCompletion_Data(item);
 
+                if (!File.Exists("jni4net.j-0.8.8.0.jar"))
+                {
+                    File.WriteAllBytes("jni4net.j-0.8.8.0.jar", JSharp.Properties.Resources.jni4net_j_0_8_8_0);
                 }
+
+                if (!File.Exists($@"{Settings.Default.JdkPath}\jre\lib\classlist"))
+                {
+                    System.Windows.Forms.MessageBox.Show("JDK path currently empty");
+                    new JSharp.MainWindow.Settings().ShowDialog();
+                }
+                _classList = File.ReadAllLines($@"{Settings.Default.JdkPath}\jre\lib\classlist").Select(x => x.Replace("/", "."));
+                foreach (string item in _classList)
+                {
+                    if (item.Contains("lang")) AddCompletionData(item);
+                    else AddCompletion_Data(item);
+                }
+
+
             }
         }
 
@@ -211,13 +215,9 @@ namespace JSharp.TextEditor
             var wordContext = GetClosedWordToCursor(CaretOffset);
 
             if (CompletionList.CompletionData.Any(x => x.Text.StartsWith(wordContext)) && !CompletionList.Contains(wordContext))
-            {
                 InitializeCompletionWindow(wordContext);
-            }
             else
-            {
                 _completionWindow?.Close();
-            }
         }
 
         private void InitializeCompletionWindow(string wordContext)
@@ -239,39 +239,27 @@ namespace JSharp.TextEditor
         {
             string wordContext = GetClosedWordToCursor(CaretOffset);
             if(e.Text[0] == '.' && EditorCompletionWindow.CompletionList.SelectedItem.Text.Length < 1)
-            {
                 InitializeCompletionWindow(wordContext);
-            }
+
             if (e.Text[0] == ';')
             {
-                if(classList.Contains(wordContext.Replace(".","/")))
-                {
+                if(_classList.Contains(wordContext.Replace(".","/")))
                     AddCompletionData(wordContext);
-                }
+
                 EditorCompletionWindow.CompletionList.RequestInsertion(e);
             }
-            else if (e.Text.Length > 1 && _completionWindow != null)
+            else if (e.Text.Length > 1 && _completionWindow != null && !char.IsLetterOrDigit(e.Text[0]) && wordContext != "")
             {
-                if (!char.IsLetterOrDigit(e.Text[0]) && wordContext != "")
-                {
-                    if (!CompletionList.Contains(wordContext) && _completionWindow == null)
-                    {
-                        AddCompletionData(wordContext);
-                    }
-                    else if (wordContext.Length > 0 && !CompletionList.Contains(wordContext))
-                    {
-                        EditorCompletionWindow.CompletionList.RequestInsertion(e);
-                    }
-                    
-                }
+                if (!CompletionList.Contains(wordContext) && _completionWindow == null)
+                    AddCompletionData(wordContext);
+                else if (wordContext.Length > 0 && !CompletionList.Contains(wordContext))
+                    EditorCompletionWindow.CompletionList.RequestInsertion(e);
             }
-            //e.Handled = true;
         }
 
         private void AddCompletion_Data(string data)
         {
             if (CompletionList.Contains(data)) return;
-            data = data.Trim();
             if (data.Length < 1) return;
 
             CompletionList.Add(data);
@@ -279,38 +267,27 @@ namespace JSharp.TextEditor
 
         private void AddCompletionData(string data)
         {
-            try
+            AddCompletion_Data(data);
+
+            java.lang.Class c = java.lang.Class.forName(data);
+
+            if (c == null) return;
+            AddCompletion_Data(c.getSimpleName());
+
+            Parallel.ForEach(c.getInterfaces(), inter =>
             {
-                AddCompletion_Data(data);
-
-                java.lang.Class c = java.lang.Class.forName(data);
-                
-                if (c == null) return;
-
-                string name = c.getName();
-                string simpleName = c.getSimpleName().ToString();
-
-                AddCompletion_Data(simpleName);
-
-                Parallel.ForEach(c.getInterfaces(), inter =>
+                lock (CompletionList)
                 {
-                    lock(CompletionList)
-                    {
-                        AddCompletion_Data(inter.getSimpleName());
-                    }
-                });
-                Parallel.ForEach(c.getMethods(), method =>
-                {
-                    lock(CompletionList)
-                    {
-                        AddCompletion_Data(simpleName + "." + method.getName() + "(");
-                    }
-                });
-            }
-            catch (System.Exception)
+                    AddCompletion_Data(inter.getSimpleName());
+                }
+            });
+            Parallel.ForEach(c.getMethods(), method =>
             {
-
-            }
+                lock (CompletionList)
+                {
+                    AddCompletion_Data(c.getSimpleName() + "." + method.getName() + "(");
+                }
+            });
         }
 
         public void OpenDocument(string filename)
@@ -357,9 +334,8 @@ namespace JSharp.TextEditor
             _fileStream = File.Open(fileName, FileMode.Open);
 
             if (Settings.Default.RecentFiles == null)
-            {
                 Settings.Default.RecentFiles = new StringCollection();
-            }
+
             if (!Settings.Default.RecentFiles.Contains(fileName))
             {
                 Settings.Default.RecentFiles.Add(fileName);

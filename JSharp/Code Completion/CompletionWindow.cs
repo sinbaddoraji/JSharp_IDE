@@ -21,9 +21,9 @@ namespace JSharp.Code_Completion
 
 	    public EditorCompletionWindow(TextArea textArea) : base(textArea)
         {
-            SizeToContent = SizeToContent.Height; 
+            SizeToContent = SizeToContent.Height;
 			MaxHeight = 300.0;
-			Width = 175.0;
+			Width = 400;
 			Content = CompletionList;
 			MinHeight = 15.0;
 			MinWidth = 30.0;
@@ -31,16 +31,11 @@ namespace JSharp.Code_Completion
 			_toolTip.Placement = PlacementMode.Right;
 			_toolTip.Closed += ToolTip_Closed;
 			AttachEvents();
-
-			CompletionList.Background = PluginCore.PluginHolder.Instance.ParentWindow.Background;
-			Background = CompletionList.Background;
 		}
 
 		public static bool InitalizeCompletionData()
         {
 			if (_completionDataInitialized) return true;
-			CompletionList.Background = PluginHolder.Instance.ParentWindow.Background;
-			CompletionList.Background = PluginHolder.Instance.ParentWindow.Foreground;
 
 			string[] keywords = new[]
 			{
