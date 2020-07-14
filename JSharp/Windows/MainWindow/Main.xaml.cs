@@ -23,6 +23,10 @@ namespace JSharp.Windows.MainWindow
 
         public Main()
         {
+            if (!File.Exists("jni4net.j-0.8.8.0.jar"))
+            {
+                File.WriteAllBytes("jni4net.j-0.8.8.0.jar", JSharp.Properties.Resources.jni4net_j_0_8_8_0);
+            }
             InitializeComponent();
             LoadPlugins();
             SetWindowTheme(Settings.Default.DarkTheme);
@@ -37,10 +41,7 @@ namespace JSharp.Windows.MainWindow
 
             for (int i = 1; i <= 100; i++) ZoomValue.Items.Add(i);
 
-            if (!File.Exists("jni4net.j-0.8.8.0.jar"))
-            {
-                File.WriteAllBytes("jni4net.j-0.8.8.0.jar", JSharp.Properties.Resources.jni4net_j_0_8_8_0);
-            }
+            
 
             if (!File.Exists($@"{Settings.Default.JdkPath}\jre\lib\classlist"))
             {
