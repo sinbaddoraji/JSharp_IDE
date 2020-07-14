@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -41,60 +42,34 @@ namespace JSharp.Code_Completion
 			CompletionList.Background = PluginHolder.Instance.ParentWindow.Background;
 			CompletionList.Background = PluginHolder.Instance.ParentWindow.Foreground;
 
-			var data = CompletionList.CompletionData;
-			CompletionList.Add("abstract",true);
-			CompletionList.Add("assert",true);
-			CompletionList.Add("boolean",true);
-			CompletionList.Add("break",true);
-			CompletionList.Add("byte",true);
-			CompletionList.Add("case",true);
-			CompletionList.Add("catch",true);
-			CompletionList.Add("char",true);
-			CompletionList.Add("class",true);
-			CompletionList.Add("const",true);
-			CompletionList.Add("continue",true);
-			CompletionList.Add("default",true);
-			CompletionList.Add("do",true);
-			CompletionList.Add("double",true);
-			CompletionList.Add("else",true);
-			CompletionList.Add("enum",true);
-			CompletionList.Add("extends",true);
-			CompletionList.Add("final",true);
-			CompletionList.Add("finally",true);
-			CompletionList.Add("void",true);
-			CompletionList.Add("float",true);
-			CompletionList.Add("for",true);
-			CompletionList.Add("void",true);
-			CompletionList.Add("public",true);
-			CompletionList.Add("goto",true);
-			CompletionList.Add("if",true);
-			CompletionList.Add("implements",true);
-			CompletionList.Add("import",true);
-			CompletionList.Add("instanceof",true);
-			CompletionList.Add("int",true);
-			CompletionList.Add("interface",true);
-			CompletionList.Add("long",true);
-			CompletionList.Add("native",true);
-			CompletionList.Add("new",true);
-			CompletionList.Add("package",true);
-			CompletionList.Add("private",true);
-			CompletionList.Add("protected",true);
-			CompletionList.Add("public",true);
-			CompletionList.Add("return",true);
-			CompletionList.Add("short",true);
-			CompletionList.Add("static",true);
-			CompletionList.Add("strictfp",true);
-			CompletionList.Add("super",true);
-			CompletionList.Add("switch",true);
-			CompletionList.Add("synchronized",true);
-			CompletionList.Add("this",true);
-			CompletionList.Add("throw",true);
-			CompletionList.Add("throws",true);
-			CompletionList.Add("transient",true);
-			CompletionList.Add("try",true);
-			CompletionList.Add("void",true);
-			CompletionList.Add("volatile",true);
-			CompletionList.Add("while",true);
+			string[] keywords = new[]
+			{
+				"abstract", "assert", 
+				"boolean", "break", "byte",
+				"case", "catch", "char", "class", "const", "continue",
+				"default", "do", "double",
+				"else", "enum", "extends",
+				"final", "finally", "float", "for",
+				"goto",
+				"if", "implements", "import", "instanceof", "int", "interface",
+				"long",
+				"native", "new",
+				"package", "private", "protected", "public",
+				"return",
+				"short", "static", "strictfp", "super", "switch", "synchronized",
+				"this", "throw", "throws", "transient", "try",
+				"void", "volatile",
+				"while"
+			};
+
+			Parallel.ForEach(keywords, key =>
+			{
+				lock(CompletionList)
+                {
+					CompletionList.Add(key, true);
+                }
+			});
+
 			_completionDataInitialized = true;
 
 			return false;

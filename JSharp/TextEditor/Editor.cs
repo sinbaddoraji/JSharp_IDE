@@ -16,16 +16,15 @@ using JSharp.Code_Completion;
 using JSharp.Highlighting;
 using JSharp.PluginCore;
 using JSharp.Properties;
+using System.Threading;
+using net.sf.jni4net;
+using System.Threading.Tasks;
 using ContextMenu = System.Windows.Controls.ContextMenu;
 using DataFormats = System.Windows.DataFormats;
 using DragEventArgs = System.Windows.DragEventArgs;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MenuItem = System.Windows.Controls.MenuItem;
 using MessageBox = System.Windows.MessageBox;
-using System.Threading;
-using net.sf.jni4net;
-using System.IO.Packaging;
-using java.lang;
 
 namespace JSharp.TextEditor
 {
@@ -56,6 +55,8 @@ namespace JSharp.TextEditor
 
         private static EditorCompletionList CompletionList => EditorCompletionWindow.CompletionList;
 
+        private readonly IEnumerable<string> classList;
+
         private string GetClosedWordToCursor(int from)
         {
             var caretOffset = from - 1;
@@ -77,19 +78,7 @@ namespace JSharp.TextEditor
 
             return Document.GetText(start, end-start).Trim();
         }
-
-        private string GetPreviousWord(int from)
-        {
-            var caretOffset = from - 1;
-
-            while (caretOffset > -1 && !char.IsWhiteSpace(Document.GetCharAt(caretOffset)))
-            {
-                caretOffset--;
-            }
-            return GetPreviousWord(from);
-        }
-
-        string[] classList;
+        
 
         public Editor()
         {
@@ -138,24 +127,15 @@ namespace JSharp.TextEditor
                 Bridge.CreateJVM(bridgeSetup);
                 Bridge.RegisterAssembly(typeof(Thread).Assembly);
 
-                classList = File.ReadAllLines($@"{Settings.Default.JdkPath}\jre\lib\classlist");
-                foreach (var item in classList)
+                classList = File.ReadAllLines($@"{Settings.Default.JdkPath}\jre\lib\classlist").Select(x => x.Replace("/", "."));
+                foreach (string item in classList)
                 {
-                    if(item.Contains("lang"))
-                    {
-                        AddCompletionData(item.Replace("/", "."));
-                    }
-                    else
-                    {
-                        AddCompletion_Data(item.Replace("/", "."));
-                    }
-                    
+                    if(item.Contains("lang")) AddCompletionData(item);
+                    else AddCompletion_Data(item);
+
                 }
             }
         }
-
-
-        
 
         private void InitalizeContextMenu()
         {
@@ -230,44 +210,28 @@ namespace JSharp.TextEditor
 
             var wordContext = GetClosedWordToCursor(CaretOffset);
 
-            try
+            if (CompletionList.CompletionData.Any(x => x.Text.StartsWith(wordContext)) && !CompletionList.Contains(wordContext))
             {
-                if (CompletionList.CompletionData.Any(x => x.Text.StartsWith(wordContext)))
-                {
-                    InitializeCompletionWindow(wordContext);
-                }
-                else
-                {
-                    _completionWindow?.Close();
-                    //AddCompletionData(wordContext, false);
-                }
+                InitializeCompletionWindow(wordContext);
             }
-            catch (System.Exception)
+            else
             {
-                // ignored
+                _completionWindow?.Close();
             }
         }
 
         private void InitializeCompletionWindow(string wordContext)
         {
             if (_completionWindow != null || (wordContext.Length < 1)) { return; }
-            // Open code completion after the user has pressed dot:
+
+            //Initialize code completion window
             _completionWindow = new EditorCompletionWindow(TextArea);
 
             _completionWindow.Show();
             _completionWindow.Closed += delegate
             {
                 _completionWindow = null;
-
-                try
-                {
-                    if (EditorCompletionWindow.CompletionList != null)
-                        EditorCompletionWindow.CompletionList.SelectItem(string.Empty);
-                }
-                catch (System.Exception)
-                {
-                }
-
+                EditorCompletionWindow.CompletionList?.SelectItem(string.Empty);
             };
         }
 
@@ -294,12 +258,9 @@ namespace JSharp.TextEditor
                     {
                         AddCompletionData(wordContext);
                     }
-                    else
+                    else if (wordContext.Length > 0 && !CompletionList.Contains(wordContext))
                     {
-                        if(wordContext.Length > 0)
-                        {
-                            EditorCompletionWindow.CompletionList.RequestInsertion(e);
-                        }
+                        EditorCompletionWindow.CompletionList.RequestInsertion(e);
                     }
                     
                 }
@@ -329,26 +290,22 @@ namespace JSharp.TextEditor
                 string name = c.getName();
                 string simpleName = c.getSimpleName().ToString();
 
-                java.lang.reflect.Method[] methods = c.getMethods();
-                java.lang.reflect.Field[] properties = c.getFields();
-                java.lang.Class[] interfaces = c.getInterfaces();
-
                 AddCompletion_Data(simpleName);
 
-                foreach (java.lang.Class inter in interfaces)
+                Parallel.ForEach(c.getInterfaces(), inter =>
                 {
-                    AddCompletion_Data(inter.getSimpleName());
-                }
-
-                foreach (java.lang.reflect.Method method in methods)
+                    lock(CompletionList)
+                    {
+                        AddCompletion_Data(inter.getSimpleName());
+                    }
+                });
+                Parallel.ForEach(c.getMethods(), method =>
                 {
-                    AddCompletion_Data(simpleName + "." + method.getName() + "(");
-                }
-
-                foreach (java.lang.reflect.Field field in properties)
-                {
-                    AddCompletion_Data(simpleName + "." + field.getName());
-                }
+                    lock(CompletionList)
+                    {
+                        AddCompletion_Data(simpleName + "." + method.getName() + "(");
+                    }
+                });
             }
             catch (System.Exception)
             {

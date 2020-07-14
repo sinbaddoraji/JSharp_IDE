@@ -12,10 +12,11 @@ namespace JSharp.Code_Completion
     public class EditorCompletionList: CompletionList
     {
         List<string> AutoCompleteStrings = new List<string>();
+        static char[] alphabets;
 
-        public EditorCompletionList()
+        static EditorCompletionList()
         {
-            
+            alphabets = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
         }
 
         public void Add(string data, bool isImportant = false)
@@ -23,15 +24,15 @@ namespace JSharp.Code_Completion
             if(!AutoCompleteStrings.Contains(data))
             {
                 AutoCompleteStrings.Add(data);
-                AutoCompleteStrings.Sort();
 
                 int binraySearchIndex = AutoCompleteStrings.BinarySearch(data);
                 if (binraySearchIndex < 0)
                 {
-                    AutoCompleteStrings.Insert(~binraySearchIndex, data);
+                    binraySearchIndex = ~binraySearchIndex;
+                    AutoCompleteStrings.Insert(binraySearchIndex, data);
                 }
 
-                int insertionIndex = AutoCompleteStrings.IndexOf(data);
+                int insertionIndex = binraySearchIndex;
                 MyCompletionData newCompletionData = new MyCompletionData(data);
 
                 if(!data.StartsWith("."))
@@ -42,7 +43,7 @@ namespace JSharp.Code_Completion
                 {
                     newCompletionData.Priority += 4;
                 }
-                if(insertionIndex >= AutoCompleteStrings.Count)
+                if(insertionIndex >= AutoCompleteStrings.Count || insertionIndex >= CompletionData.Count)
                 {
                     this.CompletionData.Add(newCompletionData);
                 }
@@ -51,7 +52,6 @@ namespace JSharp.Code_Completion
                     CompletionData.Insert(insertionIndex, newCompletionData);
                 }
                 
-                
 
                 //var newCompletionData = new ObservableCollection<ICompletionData>(CompletionData.OrderBy(x => x.Text));
             }
@@ -59,7 +59,16 @@ namespace JSharp.Code_Completion
 
         public bool Contains(string data)
         {
-            return AutoCompleteStrings.Contains(data);
+            try
+            {
+                return AutoCompleteStrings.IndexOf(data) != -1;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            
         }
+
     }
 }
