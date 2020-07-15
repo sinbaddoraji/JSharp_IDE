@@ -26,7 +26,15 @@ namespace JSharp.Inbuilt_Panes
                 : IsDirectory ? new DirectoryInfo(FullPath).Name
                             : new FileInfo(FullPath).Name;
 
-            ParentDirectory = Directory.GetParent(FullPath).FullName;
+            try
+            {
+                ParentDirectory = Directory.GetParent(FullPath).FullName;
+            }
+            catch (System.Exception)
+            {
+                ParentDirectory = FullPath;
+            }
+            
 
             ImageSource = IsDirectory ? "/JSharp;component/Images/folder.png" : null;
         }

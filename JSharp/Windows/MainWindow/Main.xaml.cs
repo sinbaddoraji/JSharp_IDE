@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -148,6 +149,36 @@ namespace JSharp.Windows.MainWindow
         private void Recents_Click(object sender, RoutedEventArgs e)
         {
             (new RecentFiles()).ShowDialog();
+        }
+
+
+        private void BuildClick_1(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Process.Start($"javac {((Editor)SelectedDocumentFrame.Content).OpenedDocument}");
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private void RunInCmdClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Process.Start($"java {((Editor)SelectedDocumentFrame.Content).OpenedDocument}");
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private void DockManager_ActiveContentChanged(object sender, EventArgs e)
+        {
+           //this.Title = GetSelectedFile(true);
         }
     }
 }

@@ -35,6 +35,7 @@ namespace JSharp.TextEditor
         public static string FilterOptions { get; set; }
 
         public string OpenedDocument { get; private set; } = "Untitled";
+        public string OpenedDocumentShortName;
 
         private object _foldingStrategy;
         private FoldingManager _foldingManager;
@@ -136,10 +137,10 @@ namespace JSharp.TextEditor
                     if (item.Contains("lang")) AddCompletionData(item);
                     else AddCompletion_Data(item);
                 }
-
-
             }
+            SyntaxHighlighting = _highlightingManager.GetHighlightingFromExtension(".java");
         }
+
 
         private void InitalizeContextMenu()
         {
@@ -196,6 +197,7 @@ namespace JSharp.TextEditor
         private void Editor_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter && e.Key != Key.Space) return;
+            if (SyntaxHighlighting != _highlightingManager.GetHighlightingFromExtension(".java")) return;
             var wordContext = GetClosedWordToCursor(CaretOffset);
 
             if (!CompletionList.CompletionData.Any(x => x.Text.StartsWith(wordContext)) && _completionWindow == null && wordContext.Length > 0)
@@ -211,6 +213,7 @@ namespace JSharp.TextEditor
                 Document.Insert(CaretOffset, _brackets[e.Text]);
                 CaretOffset--;
             }
+            if (SyntaxHighlighting != _highlightingManager.GetHighlightingFromExtension(".java")) return;
 
             var wordContext = GetClosedWordToCursor(CaretOffset);
 
@@ -237,6 +240,8 @@ namespace JSharp.TextEditor
 
         private void TextEditor_TextArea_TextEntering(object sender, TextCompositionEventArgs e)
         {
+            if (SyntaxHighlighting != _highlightingManager.GetHighlightingFromExtension(".java")) return;
+
             string wordContext = GetClosedWordToCursor(CaretOffset);
             if(e.Text[0] == '.' && EditorCompletionWindow.CompletionList.SelectedItem.Text.Length < 1)
                 InitializeCompletionWindow(wordContext);
@@ -296,6 +301,7 @@ namespace JSharp.TextEditor
 
             //Initialize document properties
             OpenedDocument = filename;
+            OpenedDocumentShortName = new FileInfo(OpenedDocument).Name;
             _fileStream = File.Open(filename, FileMode.Open);
             Load(_fileStream);
             SelectHighlighting(filename);

@@ -42,9 +42,9 @@
                 </MenuItem>
 
                 <MenuItem x:Name="Build" Header="Build"  DockPanel.Dock="Top" Background="Transparent">
-                    <MenuItem Header="Build"/>
+                    <MenuItem Header="Build" Click="BuildClick_1"/>
                     <MenuItem Header="Run"/>
-                    <MenuItem Header="Run in CMD" />
+                    <MenuItem Header="Run in CMD" Click="RunInCmdClick" />
                 </MenuItem>
 
                 <MenuItem x:Name="Debug" Header="Debug"  DockPanel.Dock="Top" Background="Transparent">
@@ -115,11 +115,10 @@
         </ToolBar>
 
         <StatusBar Background="#FF007ACC" DockPanel.Dock="Bottom" Height="25" x:Name="StatusBar">
-            <ComboBox x:Name="ZoomValue" Width="41" SelectionChanged="ZoomValue_SelectionChanged" SelectedIndex="16" Height="20">
-            </ComboBox>
+            <ComboBox x:Name="ZoomValue" Width="41" SelectionChanged="ZoomValue_SelectionChanged" SelectedIndex="16" Height="26"/>
         </StatusBar>
 
-        <xcad:DockingManager
+        <xcad:DockingManager ActiveContentChanged="DockManager_ActiveContentChanged"
             BorderBrush="Black" BorderThickness="1"
                            x:Name="DockManager" Panel.ZIndex="2">
 

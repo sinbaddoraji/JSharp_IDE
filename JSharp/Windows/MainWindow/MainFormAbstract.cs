@@ -72,16 +72,13 @@ namespace JSharp.Windows.MainWindow
 
         public Inbuilt_Panes.FileExplorer fileExplorer;
 
-        public string GetSelectedFile
+        public string GetSelectedFile(bool shortName)
         {
-            get
-            {
-                if (DocumentPane.SelectedContent == null) return "JSharp";
+            if (DocumentPane.SelectedContent == null) return "JSharp";
 
-                var o = DocumentPane.SelectedContent.Content;
-                if (o.GetType() != typeof(Editor)) return "JSharp";
-                return ((Editor)o).OpenedDocument;
-            }
+            var o = DocumentPane.SelectedContent.Content;
+            if (o.GetType() != typeof(Editor)) return "JSharp";
+            return shortName ? ((Editor)o).OpenedDocumentShortName : ((Editor)o).OpenedDocument;
         }
 
         public Editor GetSelectedDocument()
