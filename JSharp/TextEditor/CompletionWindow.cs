@@ -116,9 +116,7 @@ namespace JSharp.Code_Completion
 			}
 			var document = TextArea.Document;
 			if (document != null)
-			{
 				CompletionList.SelectItem(document.GetText(StartOffset, offset - StartOffset));
-			}
 		}
 
     }

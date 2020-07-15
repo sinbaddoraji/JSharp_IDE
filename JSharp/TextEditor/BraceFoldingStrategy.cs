@@ -6,11 +6,6 @@ namespace JSharp.CodeFolding
 {
     internal class BraceFoldingStrategy
     {
-        /*
-		 * This class is a slightly modified brace folding strategy.
-		 * The original code can be found in the Avalon edit repository
-		 */
-
         public static void UpdateFoldings(FoldingManager manager, TextDocument document)
         {
             var newFoldings = CreateNewFoldings(document, out var firstErrorOffset);
@@ -29,8 +24,7 @@ namespace JSharp.CodeFolding
             var startOffsets = new Stack<int>();
             for (int i = 0, lastNewLineOffset = 0; i < document.TextLength; i++)
             {
-                var c = document.GetCharAt(i);
-                switch (c)
+                switch (document.GetCharAt(i))
                 {
                     case '{':
                         startOffsets.Push(i);

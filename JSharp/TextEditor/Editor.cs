@@ -112,6 +112,7 @@ namespace JSharp.TextEditor
             _highlightingManager = new InnerHighlightingManager();
             ShowLineNumbers = true;
 
+
             if(!EditorCompletionWindow.InitalizeCompletionData())
             {
                 BridgeSetup bridgeSetup = new BridgeSetup(true);
