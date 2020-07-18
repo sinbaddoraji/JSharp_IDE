@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Collections.ObjectModel;
+using JSharp.TextEditor;
 
 namespace JSharp.Code_Completion
 {

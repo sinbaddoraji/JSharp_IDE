@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <UseWPF>true</UseWPF>
     <StartupObject>JSharp.App</StartupObject>
     <ApplicationIcon>JSIcon.ico</ApplicationIcon>
@@ -53,8 +53,9 @@
 
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.0.1" />
-    <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="4.0.0" />
-    <PackageReference Include="MahApps.Metro" Version="2.0.1" />
+    <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="4.30.0" />
+    <PackageReference Include="MahApps.Metro" Version="2.1.1" />
+    <PackageReference Include="Simple.Wpf.Terminal" Version="2.3.15" />
   </ItemGroup>
 
   <ItemGroup>

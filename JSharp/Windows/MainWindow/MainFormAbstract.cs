@@ -149,6 +149,8 @@ namespace JSharp.Windows.MainWindow
         #region Pane Related Functions
 
         FindReplace findReplacePane;
+        JSharpTerminal _terminal;
+
         private void AddInbuiltPanes()
         {
             //LowerPaneItems.Add(new Pane(new CommandPrompt(), "Command prompt"));
@@ -158,6 +160,9 @@ namespace JSharp.Windows.MainWindow
 
             findReplacePane = new FindReplace();
             AddPane(new Pane(findReplacePane, "Find and Replace"), 1);
+
+            _terminal = new JSharpTerminal();
+            AddPane(new Pane(_terminal, "Terminal"), 4);
         }
 
         private void InitalizePanes()
@@ -193,7 +198,6 @@ namespace JSharp.Windows.MainWindow
         {
             if (pane == null) return;
             LayoutAnchorable lA = new LayoutAnchorable { Title = pane.title };
-            
             lA.Content = pane.content;
             ((UserControl)pane.content).HorizontalAlignment = HorizontalAlignment.Stretch;
             ((UserControl)pane.content).VerticalAlignment = VerticalAlignment.Stretch;

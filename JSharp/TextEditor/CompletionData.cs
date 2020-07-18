@@ -4,7 +4,7 @@ using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 
-namespace JSharp.Code_Completion
+namespace JSharp.TextEditor
 {
     public class MyCompletionData : ICompletionData
     {

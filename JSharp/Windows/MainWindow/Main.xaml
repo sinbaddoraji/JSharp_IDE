@@ -152,7 +152,7 @@
                         </xcad:LayoutAnchorablePaneGroup>
                     </xcad:LayoutPanel>
 
-                    <xcad:LayoutAnchorablePaneGroup DockHeight="280">
+                    <xcad:LayoutAnchorablePaneGroup DockHeight="180">
                         <xcad:LayoutAnchorablePane x:Name="LowerPane"></xcad:LayoutAnchorablePane>
                         <xcad:LayoutAnchorablePane x:Name="LowerPane2"></xcad:LayoutAnchorablePane>
                     </xcad:LayoutAnchorablePaneGroup>

@@ -2,22 +2,31 @@
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
 
-namespace JSharp.CodeFolding
+namespace JSharp.TextEditor
 {
-    internal class BraceFoldingStrategy
+    internal static class BraceFoldingStrategy
     {
+        /// <summary>
+        /// Update code foldings
+        /// </summary>
         public static void UpdateFoldings(FoldingManager manager, TextDocument document)
         {
             var newFoldings = CreateNewFoldings(document, out var firstErrorOffset);
             manager.UpdateFoldings(newFoldings, firstErrorOffset);
         }
 
+        /// <summary>
+        /// Create new code foldings
+        /// </summary>
         private static IEnumerable<NewFolding> CreateNewFoldings(ITextSource document, out int firstErrorOffset)
         {
             firstErrorOffset = -1;
             return CreateNewFoldings(document);
         }
 
+        /// <summary>
+        /// Create new code foldings
+        /// </summary>
         private static IEnumerable<NewFolding> CreateNewFoldings(ITextSource document)
         {
             var newFoldings = new List<NewFolding>();

@@ -10,7 +10,6 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
-using JSharp.CodeFolding;
 using JSharp.Code_Completion;
 using JSharp.Highlighting;
 using JSharp.PluginCore;
@@ -55,7 +54,7 @@ namespace JSharp.TextEditor
 
         private static EditorCompletionList CompletionList => EditorCompletionWindow.CompletionList;
 
-        private readonly IEnumerable<string> _classList;
+        private static IEnumerable<string> _classList;
 
         private string GetClosedWordToCursor(int from)
         {
@@ -79,7 +78,6 @@ namespace JSharp.TextEditor
             //Initialize objects
             _saveFileDialog = new SaveFileDialog {Filter = FilterOptions};
             _foldingManager = FoldingManager.Install(TextArea);
-            _foldingStrategy = new BraceFoldingStrategy();
 
             //Initialize default properties
             ShowLineNumbers = true;
@@ -122,16 +120,6 @@ namespace JSharp.TextEditor
                 Bridge.RegisterAssembly(typeof(Thread).Assembly);
 
 
-                if (!File.Exists("jni4net.j-0.8.8.0.jar"))
-                {
-                    File.WriteAllBytes("jni4net.j-0.8.8.0.jar", JSharp.Properties.Resources.jni4net_j_0_8_8_0);
-                }
-
-                if (!File.Exists($@"{Settings.Default.JdkPath}\jre\lib\classlist"))
-                {
-                    System.Windows.Forms.MessageBox.Show("JDK path currently empty");
-                    new JSharp.MainWindow.Settings().ShowDialog();
-                }
                 _classList = File.ReadAllLines($@"{Settings.Default.JdkPath}\jre\lib\classlist").Select(x => x.Replace("/", "."));
                 foreach (string item in _classList)
                 {
@@ -315,7 +303,7 @@ namespace JSharp.TextEditor
             SyntaxHighlighting = _highlightingManager.GetHighlightingFromExtension(new FileInfo(filename).Extension);
             //Set up folding strategy
             var highlighting = HighlightingManager.Instance.HighlightingDefinitions.Where(x => x.Name.Contains("ml"));
-            _foldingStrategy = highlighting.Contains(SyntaxHighlighting) ? new XmlFoldingStrategy() : (object)new BraceFoldingStrategy();
+            _foldingStrategy = highlighting.Contains(SyntaxHighlighting) ? new XmlFoldingStrategy() : null;
         }
 
         public void SaveDocument()
@@ -325,7 +313,7 @@ namespace JSharp.TextEditor
             {
                 Save(_fileStream);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.Message);
             }
@@ -367,7 +355,7 @@ namespace JSharp.TextEditor
         {
             switch (_foldingStrategy)
             {
-                case BraceFoldingStrategy _:
+                default:
                     BraceFoldingStrategy.UpdateFoldings(_foldingManager, Document);
                     break;
                 case XmlFoldingStrategy xmlFoldingStrategy:

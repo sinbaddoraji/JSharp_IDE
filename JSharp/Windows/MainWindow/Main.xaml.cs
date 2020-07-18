@@ -24,10 +24,6 @@ namespace JSharp.Windows.MainWindow
 
         public Main()
         {
-            if (!File.Exists("jni4net.j-0.8.8.0.jar"))
-            {
-                File.WriteAllBytes("jni4net.j-0.8.8.0.jar", JSharp.Properties.Resources.jni4net_j_0_8_8_0);
-            }
             InitializeComponent();
             LoadPlugins();
             SetWindowTheme(Settings.Default.DarkTheme);
@@ -35,32 +31,10 @@ namespace JSharp.Windows.MainWindow
             InitalizePanes();
 
             Editor.FilterOptions = "Java Files (*.java)|*.java|Other Files (*.*)|*.*";
-            openFileDialog = new OpenFileDialog
-            {
-                Filter = Editor.FilterOptions
-            };
+            openFileDialog = new OpenFileDialog { Filter = Editor.FilterOptions };
 
             for (int i = 1; i <= 100; i++) ZoomValue.Items.Add(i);
-
             
-
-            if (!File.Exists($@"{Settings.Default.JdkPath}\jre\lib\classlist"))
-            {
-                string javaPath = GetJavaInstallationPath();
-                if(Directory.Exists(javaPath))
-                {
-                    Properties.Settings.Default.JdkPath = javaPath;
-                    Properties.Settings.Default.Save();
-                }
-                else
-                {
-                    System.Windows.Forms.MessageBox.Show("JDK path currently empty");
-                    new JSharp.MainWindow.Settings().ShowDialog();
-                }
-                
-                SetWindowTheme(Settings.Default.DarkTheme);
-            }
-
             var previouslyOpenedDocuments = GetOpenedFiles(true);
             OpenDocuments(previouslyOpenedDocuments);
 
@@ -74,18 +48,7 @@ namespace JSharp.Windows.MainWindow
             }
         }
 
-        private string GetJavaInstallationPath()
-        {
-            string environmentPath = Environment.GetEnvironmentVariable("JAVA_HOME");
-            if (!string.IsNullOrEmpty(environmentPath)) return environmentPath;
-
-            const string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
-            using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
-            {
-                using (Microsoft.Win32.RegistryKey key = rk.OpenSubKey(rk.GetValue("CurrentVersion").ToString()))
-                    return key.GetValue("JavaHome").ToString();
-            }
-        }
+        
 
 
 

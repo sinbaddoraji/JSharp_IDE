@@ -5,10 +5,14 @@ using System.Windows.Input;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
+using JSharp.Code_Completion;
 
-namespace JSharp.Code_Completion
+namespace JSharp.TextEditor
 {
-    public class EditorCompletionWindow : CompletionWindowBase
+	/// <summary>
+	/// Completion window for text editor
+	/// </summary>
+	public class EditorCompletionWindow : CompletionWindowBase
     {
 	    public static readonly EditorCompletionList CompletionList = new EditorCompletionList();
 

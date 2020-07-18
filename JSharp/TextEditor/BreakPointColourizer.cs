@@ -2,7 +2,7 @@
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 
-namespace JSharp
+namespace JSharp.TextEditor
 {
     internal class BreakPointColourizer : DocumentColorizingTransformer
     {
