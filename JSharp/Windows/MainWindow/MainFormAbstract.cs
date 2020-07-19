@@ -5,20 +5,18 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
 using AvalonDock.Layout;
 using AvalonDock.Themes;
 using ControlzEx.Theming;
-using ICSharpCode.AvalonEdit.Highlighting;
 using JSharp.Inbuilt_Panes;
 using JSharp.PluginCore;
 using JSharp.Properties;
 using JSharp.TextEditor;
 using MahApps.Metro.Controls;
-using net.sf.jni4net;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using MessageBox = System.Windows.MessageBox;
 using UserControl = System.Windows.Controls.UserControl;
@@ -29,7 +27,7 @@ namespace JSharp.Windows.MainWindow
     {
         /*
          * This class contains all the abstract definitions for the main window
-         * Note: public properties, objects and so on are public for plugin access and control
+         * Note: public properties, objects and so on are public for plug-in access and control
          */
 
         /*Property Declarations*/
@@ -41,8 +39,10 @@ namespace JSharp.Windows.MainWindow
         private readonly ObservableCollection<Pane> RightPaneItemsDown = new ObservableCollection<Pane>();
         private readonly ObservableCollection<Pane> BottomPaneItemsLeft = new ObservableCollection<Pane>();
         private readonly ObservableCollection<Pane> BottomPaneItemsRight = new ObservableCollection<Pane>();
-        //Dialogs
+        //Dialogues
         private readonly OpenFileDialog openFileDialog;
+
+        public string ProjectFolder;
 
         //Document Related Properties
         private IEnumerable<string> OpenedFiles
@@ -70,7 +70,7 @@ namespace JSharp.Windows.MainWindow
             
         }
 
-        public Inbuilt_Panes.FileExplorer fileExplorer;
+        public FileExplorer fileExplorer;
 
         public string GetSelectedFile(bool shortName)
         {
@@ -101,8 +101,6 @@ namespace JSharp.Windows.MainWindow
 
         private LayoutContent SelectedDocumentFrame => DocumentPane.SelectedContent;
 
-        private IOrderedEnumerable<IHighlightingDefinition> HighlightCollection { get; set; }
-
         #region WindowSettings
 
         public void SetWindowTheme(bool darkMode)
@@ -115,11 +113,6 @@ namespace JSharp.Windows.MainWindow
                 ThemeManager.Current.SyncTheme();
                 Background = DockManager.Background;
                 Foreground = new SolidColorBrush(Colors.White);
-                //Setup menu colors
-               // menu.Background = Background;
-                //menu.Foreground = Foreground;
-                //Setup editor colors
-                
                 Editor.TextBackground = Background;
                 Editor.TextForeground = Foreground;
                 WindowTitleBrush = Background;
@@ -149,9 +142,9 @@ namespace JSharp.Windows.MainWindow
         #region Pane Related Functions
 
         FindReplace findReplacePane;
-        JSharpTerminal _terminal;
+        //JSharpTerminal _terminal;
 
-        private void AddInbuiltPanes()
+        private Task<bool> AddInbuiltPanes()
         {
             //LowerPaneItems.Add(new Pane(new CommandPrompt(), "Command prompt"));
             fileExplorer = new Inbuilt_Panes.FileExplorer();
@@ -161,11 +154,13 @@ namespace JSharp.Windows.MainWindow
             findReplacePane = new FindReplace();
             AddPane(new Pane(findReplacePane, "Find and Replace"), 1);
 
-            _terminal = new JSharpTerminal();
-            AddPane(new Pane(_terminal, "Terminal"), 4);
+            //_terminal = new JSharpTerminal();
+            //AddPane(new Pane(_terminal, "Terminal"), 4);
+
+            return Task.FromResult(true);
         }
 
-        private void InitalizePanes()
+        private Task<bool> InitalizePanes()
         {
             foreach (var pane in LeftPaneItemsUp)
             {
@@ -192,6 +187,7 @@ namespace JSharp.Windows.MainWindow
                 AddPane(pane, 5);
             }
             AddDocumentPage("untitled");//Add Default Page
+            return Task.FromResult(true);
         }
 
         public void AddPane(Pane pane, int paneLocation)
@@ -306,13 +302,13 @@ namespace JSharp.Windows.MainWindow
 
         #region Plug-in Related Functions
 
-        private void LoadPlugin(Plugin plugin)
+        private void LoadPlugin(IPlugin plugin)
         {
             if (plugin.IsBackgroundPlugin)
                 return;
 
             var paneControls = plugin.GetPaneControls();
-            if (paneControls != null && paneControls.Length > 0)
+            if (paneControls?.Length > 0)
             {
                 for (int i = 0; i < paneControls.Length; i++)
                 {
@@ -333,7 +329,7 @@ namespace JSharp.Windows.MainWindow
 
             for (int i = 0; i < MenuItems.Length; i++)
             {
-                //Add menu items either to context menu or plugins menu
+                //Add menu items either to context menu or plug-ins menu
                 if (!plugin.AddToContextMenu && !plugin.AddToMenu) break;
 
                 if (plugin.AddToContextMenu)
@@ -344,17 +340,19 @@ namespace JSharp.Windows.MainWindow
             }
         }
 
-        private void LoadPlugins()
+        private Task<bool> LoadPlugins()
         {
             PluginHolder.Instance = new PluginHolder { ParentWindow = this };
             PluginHolder.Instance.Load();
 
-            foreach (Plugin plugin in PluginHolder.Instance.RegisteredPlugins)
+            foreach (IPlugin plugin in PluginHolder.Instance.RegisteredPlugins)
             {
                 LoadPlugin(plugin);
             }
+
+            return Task.FromResult(true);
         }
 
-        #endregion Plugin Related Functions
+        #endregion Plug-in Related Functions
     }
 }

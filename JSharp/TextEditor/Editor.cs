@@ -23,6 +23,7 @@ using DragEventArgs = System.Windows.DragEventArgs;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MenuItem = System.Windows.Controls.MenuItem;
 using MessageBox = System.Windows.MessageBox;
+using java.lang.reflect;
 
 namespace JSharp.TextEditor
 {
@@ -38,8 +39,6 @@ namespace JSharp.TextEditor
 
         private object _foldingStrategy;
         private FoldingManager _foldingManager;
-
-        private Stream _fileStream;
 
         public static readonly ContextMenu EditorContntextMenu = new ContextMenu();
 
@@ -120,11 +119,11 @@ namespace JSharp.TextEditor
                 Bridge.RegisterAssembly(typeof(Thread).Assembly);
 
 
-                _classList = File.ReadAllLines($@"{Settings.Default.JdkPath}\jre\lib\classlist").Select(x => x.Replace("/", "."));
+                _classList = File.ReadAllLines($@"{Settings.Default.JdkPath}\jre\lib\classlist").Select(x => x.Replace("/", ".")).Where(x => !x.Contains("$"));
                 foreach (string item in _classList)
                 {
-                    if (item.Contains("lang")) AddCompletionData(item);
-                    else AddCompletion_Data(item);
+                    if (item.Contains("lang") || item.Contains("util")) AddCompletionData(item);
+                    //else AddCompletion_Data(item);
                 }
             }
             SyntaxHighlighting = _highlightingManager.GetHighlightingFromExtension(".java");
@@ -206,7 +205,7 @@ namespace JSharp.TextEditor
 
             var wordContext = GetClosedWordToCursor(CaretOffset);
 
-            if (CompletionList.CompletionData.Any(x => x.Text.StartsWith(wordContext)) && !CompletionList.Contains(wordContext))
+            if (CompletionList.CompletionData.Any(x => x.Text.StartsWith(wordContext)))
                 InitializeCompletionWindow(wordContext);
             else
                 _completionWindow?.Close();
@@ -232,7 +231,12 @@ namespace JSharp.TextEditor
             if (SyntaxHighlighting != _highlightingManager.GetHighlightingFromExtension(".java")) return;
 
             string wordContext = GetClosedWordToCursor(CaretOffset);
-            if(e.Text[0] == '.' && EditorCompletionWindow.CompletionList.SelectedItem.Text.Length < 1)
+
+            if(EditorCompletionWindow.CompletionList.SelectedItem == null && _completionWindow != null)
+            {
+                _completionWindow.Close();
+            }
+            else if(e.Text[0] == '.' && EditorCompletionWindow.CompletionList.SelectedItem.Text.Length < 1)
                 InitializeCompletionWindow(wordContext);
 
             if (e.Text[0] == ';')
@@ -241,6 +245,10 @@ namespace JSharp.TextEditor
                     AddCompletionData(wordContext);
 
                 EditorCompletionWindow.CompletionList.RequestInsertion(e);
+            }
+            else if(e.Text[0] == '\n')
+            {
+                _completionWindow.Close();
             }
             else if (e.Text.Length > 1 && _completionWindow != null && !char.IsLetterOrDigit(e.Text[0]) && wordContext != "")
             {
@@ -267,19 +275,26 @@ namespace JSharp.TextEditor
 
             if (c == null) return;
             AddCompletion_Data(c.getSimpleName());
+            
 
-            Parallel.ForEach(c.getInterfaces(), inter =>
+            Parallel.ForEach(c.getDeclaredFields(), field =>
             {
                 lock (CompletionList)
                 {
-                    AddCompletion_Data(inter.getSimpleName());
+                    if(Modifier.isPublic(field.getModifiers()))
+                    {
+                        AddCompletion_Data(c.getSimpleName() + "." + field.getName());
+                    }
                 }
             });
-            Parallel.ForEach(c.getMethods(), method =>
+            Parallel.ForEach(c.getDeclaredMethods(), method =>
             {
                 lock (CompletionList)
                 {
-                    AddCompletion_Data(c.getSimpleName() + "." + method.getName() + "(");
+                    if (Modifier.isPublic(method.getModifiers()))
+                    {
+                        AddCompletion_Data(c.getSimpleName() + "." + method.getName() + "(");
+                    }
                 }
             });
         }
@@ -291,8 +306,7 @@ namespace JSharp.TextEditor
             //Initialize document properties
             OpenedDocument = filename;
             OpenedDocumentShortName = new FileInfo(OpenedDocument).Name;
-            _fileStream = File.Open(filename, FileMode.Open);
-            Load(_fileStream);
+            Load(filename);
             SelectHighlighting(filename);
             InitializeFolding();
         }
@@ -311,7 +325,7 @@ namespace JSharp.TextEditor
             if (IsUnoccupied()) return;
             try
             {
-                Save(_fileStream);
+                Save(OpenedDocument);
             }
             catch (Exception e)
             {
@@ -324,9 +338,8 @@ namespace JSharp.TextEditor
             if (fileName == null)
                 throw new ArgumentNullException(nameof(fileName));
 
-            _fileStream.Close();
             fileName = _saveFileDialog.FileName;
-            _fileStream = File.Open(fileName, FileMode.Open);
+            File.WriteAllText(fileName, Text);
 
             if (Settings.Default.RecentFiles == null)
                 Settings.Default.RecentFiles = new StringCollection();

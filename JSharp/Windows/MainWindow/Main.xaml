@@ -15,6 +15,7 @@
             <Menu DockPanel.Dock="Top" Background="Transparent" x:Name="Menu">
                 <MenuItem Header="File" Background="Transparent">
                     <MenuItem x:Name="New" Header="New" Click="New_Click" />
+                    <MenuItem x:Name="Open_Project_Folder" Header="Open Project Folder" Click="Open_Project_Folder_Click" />
                     <MenuItem x:Name="Open" Header="Open" InputGestureText="Ctrl+O" Click="Open_Click" />
                     <MenuItem x:Name="Save" Header="Save" InputGestureText="Ctrl+S" Click="Save_Click" />
                     <MenuItem x:Name="SaveAs" Header="Save As" Click="SaveAs_Click" />
@@ -35,7 +36,7 @@
                     <MenuItem Header="Paste" Command="Paste" />
                     <MenuItem Header="Delete" Command="Delete" />
                     <Separator />
-                    <MenuItem Header="Goto Line" />
+                    <MenuItem Header="Go-to Line" Click="Goto_Click" />
                 </MenuItem>
                 <MenuItem x:Name="Project" Header="Project"  DockPanel.Dock="Top" Background="Transparent">
                     <MenuItem Header="Create Jar File" />
@@ -43,8 +44,10 @@
 
                 <MenuItem x:Name="Build" Header="Build"  DockPanel.Dock="Top" Background="Transparent">
                     <MenuItem Header="Build" Click="BuildClick_1"/>
-                    <MenuItem Header="Run"/>
-                    <MenuItem Header="Run in CMD" Click="RunInCmdClick" />
+                    <MenuItem Header="Build Project" Click="BuildProject_Click"/>
+                    <MenuItem Header="Run" Click="Run_Click" />
+                    <MenuItem Header="Run Project" Click="BuildProject_Click" />
+                    <MenuItem Header="Build and Run" Click="BuildAndRun_Click"></MenuItem>
                 </MenuItem>
 
                 <MenuItem x:Name="Debug" Header="Debug"  DockPanel.Dock="Top" Background="Transparent">
@@ -58,11 +61,9 @@
                 </MenuItem>
 
                 <MenuItem  Header="Help" DockPanel.Dock="Top" Background="Transparent">
-                    <MenuItem  Header="View Help" DockPanel.Dock="Top" />
                     <MenuItem  Header="About JSharp" DockPanel.Dock="Top" />
                 </MenuItem>
             </Menu>
-
         </mah:WindowCommands>
         </mah:MetroWindow.LeftWindowCommands>
 

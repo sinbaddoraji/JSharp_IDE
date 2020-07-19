@@ -23,7 +23,7 @@ namespace JSharp.PluginCore
         /// <summary>
         /// A list of all valid registered plug-ins connected to JSharp
         /// </summary>
-        public List<Plugin> RegisteredPlugins { get; }
+        public List<IPlugin> RegisteredPlugins { get; }
 
         /// <summary>
         /// A list of executables in root folder known not to be plug-in files
@@ -39,8 +39,10 @@ namespace JSharp.PluginCore
             "jni4net.n.w32.v20-0.8.8.0.dll",
             "jni4net.n.w64.v20-0.8.8.0.dll",
             "jni4net.n.w64.v40-0.8.8.0.dll",
-            "jni4net.n-0.8.8.0.dll"
-
+            "jni4net.n-0.8.8.0.dll",
+            "Simple.Wpf.Terminal.Common.dll",
+            "Simple.Wpf.Terminal.dll",
+            "Simple.Wpf.Terminal.Themes.dll"
         };
 
         /// <summary>
@@ -48,7 +50,7 @@ namespace JSharp.PluginCore
         /// </summary>
         public PluginHolder()
         {
-            RegisteredPlugins = new List<Plugin>();
+            RegisteredPlugins = new List<IPlugin>();
         }
 
         /// <summary>
@@ -62,19 +64,19 @@ namespace JSharp.PluginCore
         /// <summary>
         /// Load JSharp plug-in from path
         /// </summary>
-        private void LoadPlugin(string pluginPath)
+        private Task<bool> LoadPlugin(string pluginPath)
         {
             try
             {
-                if (_exludedFiles.Contains(Path.GetFileName(pluginPath))) return;
+                if (_exludedFiles.Contains(Path.GetFileName(pluginPath))) return Task.FromResult(true);
 
                 var asm = Assembly.LoadFile(pluginPath);
 
                 var objType = asm.GetExportedTypes().First(x => x.Name == "Entry");
 
-                if (objType == null) return;
+                if (objType == null) return Task.FromResult(true);
                 
-                var ipi = (Plugin)Activator.CreateInstance(objType);
+                var ipi = (IPlugin)Activator.CreateInstance(objType);
                 ipi.ParentWindow = ParentWindow;
                 RegisteredPlugins.Add(ipi);
                 ipi.Init();
@@ -83,12 +85,14 @@ namespace JSharp.PluginCore
             {
                 MessageBox.Show(exception.Message);
             }
+
+            return Task.FromResult(true);
         }
 
         /// <summary>
         /// Load plug-in holder instance
         /// </summary>
-        public void Load()
+        public async void Load()
         {
             var pluginPath = Directory.GetParent(Environment.GetCommandLineArgs()[0]) + @"\";
 
@@ -96,7 +100,7 @@ namespace JSharp.PluginCore
 
             foreach (var plugin in Directory.EnumerateFiles(pluginPath, "*.dll"))
             {
-                LoadPlugin(plugin);
+                await LoadPlugin(plugin).ConfigureAwait(false);
             }
         }
     }

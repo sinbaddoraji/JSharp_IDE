@@ -2,81 +2,81 @@
 
 namespace JSharp.PluginCore
 {
-    public abstract class Plugin
+    public interface IPlugin
     {
         /// <summary>
         /// plug-in name
         /// </summary>
-        public string Name { get; protected set; } = "JSharp Plug-in";
+        string Name { get; set; }
 
         /// <summary>
         /// plug-in description
         /// </summary>
-        public string Description { get; protected set; } = "Just a JSharp plug-in";
+        string Description { get; set; }
 
         /// <summary>
         /// plug-in author
         /// </summary>
-        public string Author { get; } = "Osinachi Nwagboso";
+        string Author { get; set; }
 
         /// <summary>
         /// Version of the plug-in
         /// </summary>
-        public string Version { get; protected set; } = "0.0.0.0";
+        string Version { get; set; }
 
         /// <summary>
         /// 0, 1, 2 => left, right, down
         /// </summary>
-        public int PaneLocation { get; set; } = 0;
+        int PaneLocation { get; set; }
 
         /// <summary>
         /// Runs in background
         /// </summary>
-        public bool IsBackgroundPlugin { get; set; }
+        bool IsBackgroundPlugin { get; set; }
 
         /// <summary>
         /// Is added to "Plug-ins" menu
         /// </summary>
-        public bool AddToMenu { get; protected set; }
+        bool AddToMenu { get; set; }
 
         /// <summary>
         /// Is added to JSharp Tool-bar
         /// </summary>
-        public bool IsAddedToToolBar { get; set; }
+        bool IsAddedToToolBar { get; set; }
 
         /// <summary>
         /// Add to right click menu
         /// </summary>
-        public bool AddToContextMenu { get; set; }
+        bool AddToContextMenu { get; set; }
 
         /// <summary>
         /// Exported tool-bars to the JSharp window
         /// </summary>
-        public abstract object[] GetToolbarItems();
+        object[] GetToolbarItems();
 
         /// <summary>
         /// Exported menu items to the JSharp window
         /// </summary>
-        public abstract MenuItem[] GetMenuItems();
+        MenuItem[] GetMenuItems();
 
         /// <summary>
         /// Plug-in Parent window
         /// </summary>
-        public Windows.MainWindow.Main ParentWindow { get; set; }
+        Windows.MainWindow.Main ParentWindow { get; set; }
 
         /// <summary>
         /// Initialize plug-ins
         /// </summary>
-        public abstract UserControl[] GetPaneControls(); // User control within pane
+        UserControl[] GetPaneControls(); // User control within pane
 
         /// <summary>
         /// Initialize plug-ins
         /// </summary>
-        public abstract void Init();
+        void Init();
 
         /// <summary>
         /// Unload plug-ins
         /// </summary>
-        public abstract void Unload();
+        void Unload();
     }
 }

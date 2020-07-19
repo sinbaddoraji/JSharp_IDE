@@ -1,5 +1,7 @@
 JSharp has a flexible UI using the Avalon Dock framework
 
+    JSharp supports opening doucments side-by-side
+
 JSharp supports syntax highlighting using The AvalonEditor
 
 JSharp supports plugins (PluginCore is built along side JSharp)
@@ -20,9 +22,12 @@ JSharp has basic code completion (Limitation: not yet intellisense)
     It takes note of keywords used in coding session
     It hints at basic Java syntax
 
+JSharp allows java development without the use of projects
+
 JSharp plugins can be written in both java (using JNI) or c#
 
 
 Limitations:
 
     Only has autocomplete not intellisense: It suggest code but not so intelligently
+    JSharp is not universal (It does not run on all platforms)

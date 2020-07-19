@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,14 +20,10 @@ namespace JSharp.Windows.MainWindow
         /*
          * This handles the events of the main window (Strictly)
          */
-
         public Main()
         {
             InitializeComponent();
-            LoadPlugins();
-            SetWindowTheme(Settings.Default.DarkTheme);
-            AddInbuiltPanes();
-            InitalizePanes();
+            Initalize();
 
             Editor.FilterOptions = "Java Files (*.java)|*.java|Other Files (*.*)|*.*";
             openFileDialog = new OpenFileDialog { Filter = Editor.FilterOptions };
@@ -48,9 +43,13 @@ namespace JSharp.Windows.MainWindow
             }
         }
 
-        
-
-
+        private async void Initalize()
+        {
+            await LoadPlugins().ConfigureAwait(false);
+            SetWindowTheme(Settings.Default.DarkTheme);
+            await AddInbuiltPanes().ConfigureAwait(false);
+            await InitalizePanes().ConfigureAwait(false);
+        }
 
         private void SelectedContent_Closed(object sender, EventArgs e)
         {
@@ -82,7 +81,6 @@ namespace JSharp.Windows.MainWindow
         {
             //Unload all registered plugins incase none managable objects were used in plugins
             PluginHolder.Instance.UnloadAllRegisteredPlugins();
-
             GetOpenedFiles(false);
         }
 
@@ -94,8 +92,7 @@ namespace JSharp.Windows.MainWindow
         private void SaveAll_Click(object sender, RoutedEventArgs e)
         {
             Parallel.ForEach(DocumentPane.Children, document
-                =>
-            { ((Editor)document.Content).SaveDocument(); });
+                => ((Editor)document.Content).SaveDocument());
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
@@ -111,37 +108,54 @@ namespace JSharp.Windows.MainWindow
 
         private void Recents_Click(object sender, RoutedEventArgs e)
         {
-            (new RecentFiles()).ShowDialog();
+            new RecentFiles().ShowDialog();
         }
-
 
         private void BuildClick_1(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                Process.Start($"javac {((Editor)SelectedDocumentFrame.Content).OpenedDocument}");
-            }
-            catch (Exception)
-            {
-
-            }
+            DebugCore.Compile(this.GetSelectedFile(false));
         }
 
-        private void RunInCmdClick(object sender, RoutedEventArgs e)
+        private void Run_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                Process.Start($"java {((Editor)SelectedDocumentFrame.Content).OpenedDocument}");
-            }
-            catch (Exception)
-            {
+            DebugCore.RunFile(this.GetSelectedFile(false));
+        }
 
-            }
+        private void BuildAndRun_Click(object sender, RoutedEventArgs e)
+        {
+            DebugCore.CompileProject(true);
+        }
+
+        private void RunProject_Click(object sender, RoutedEventArgs e)
+        {
+            DebugCore.RunProject();
+            
+        }
+        private void BuildProject_Click(object sender, RoutedEventArgs e)
+        {
+            DebugCore.CompileProject(false);
         }
 
         private void DockManager_ActiveContentChanged(object sender, EventArgs e)
         {
            //this.Title = GetSelectedFile(true);
+        }
+
+        private void Open_Project_Folder_Click(object sender, RoutedEventArgs e)
+        {
+            using(FolderBrowserDialog f = new FolderBrowserDialog())
+            {
+                if(f.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    ProjectFolder = f.SelectedPath;
+                    fileExplorer.SetDirectory(ProjectFolder);
+                }
+            }
+        }
+
+        private void Goto_Click(object sender, RoutedEventArgs e)
+        {
+            new GotoDialog().ShowDialog();
         }
     }
 }

@@ -22,15 +22,13 @@ JSharp should have documentation for plugin development
 
 *JSharp should be fast and easy to use
 
-JSharp should be able to compile java files without the need for projects
-
-JSharp should have a built in command prompt (For running programs)
+*JSharp should be able to compile java files without the need for projects
 
 JSharp should have a java debugger 
   The java debugger should be able to identify breakpoints
   The java debugger should be able to step into code (line by line)
   
-JSharp should be recolourable (not as important)
+*JSharp should be themeable
 
 
 Frameworks Used:

@@ -7,8 +7,8 @@
   <Color name="String" foreground="#FFE0580E"  />
   <Color name="Character" foreground="Magenta"  />
   <Color name="Comment" foreground="#FF57B74A" />
-  <Color name="Punctuation" foreground="Black" />
-  <Color name="AccessKeywords" foreground="Black" />
+  <Color name="Punctuation" foreground="White" />
+  <Color name="AccessKeywords" foreground="White" />
   <Color name="OperatorKeywords" foreground="#009404" />
   <Color name="SelectionStatements" foreground="#009404" />
   <Color name="IterationStatements" foreground="#009404"  />
@@ -20,9 +20,9 @@
   <Color name="Modifiers" foreground="#FF009FFF" />
   <Color name="AccessModifiers" foreground="#FF009FFF"  />
   <Color name="Package" foreground="#FF009FFF"  />
-  <Color name="Literals" foreground="Black"  />
+  <Color name="Literals" foreground="White"  />
   <Color name="CommentTags" foreground="#FF57B74A"  fontStyle="italic" />
-  <Color name="JavaDocTags" foreground="DarkGray"  fontStyle="italic" />
+  <Color name="JavaDocTags" foreground="Gray"  fontStyle="italic" />
   <RuleSet ignoreCase="false">
     <Rule color="Punctuation">
       [?,.()\[\]{}+\-/%*&lt;&gt;^!|]+
