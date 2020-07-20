@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using AvalonDock.Layout;
 using JSharp.PluginCore;
 using JSharp.Properties;
 using JSharp.TextEditor;
@@ -29,9 +32,18 @@ namespace JSharp.Windows.MainWindow
             openFileDialog = new OpenFileDialog { Filter = Editor.FilterOptions };
 
             for (int i = 1; i <= 100; i++) ZoomValue.Items.Add(i);
-            
-            var previouslyOpenedDocuments = GetOpenedFiles(true);
-            OpenDocuments(previouslyOpenedDocuments);
+
+            foreach (string file in (IList)Settings.Default.OpenedFiles)
+            {
+                try
+                {
+                    OpenDocument(file);
+                }
+                catch (Exception e)
+                {
+                    //MessageBox.Show(e.Message);
+                }
+            }
 
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
@@ -41,6 +53,8 @@ namespace JSharp.Windows.MainWindow
                     OpenDocument(args[i]);
                 }
             }
+
+            
         }
 
         private async void Initalize()
@@ -69,7 +83,9 @@ namespace JSharp.Windows.MainWindow
 
         private void ZoomValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GetSelectedDocument().FontSize = (int)ZoomValue.SelectedItem;
+            var selectedDocument = GetSelectedDocument();
+            if(selectedDocument != null)
+                selectedDocument.FontSize = (int)ZoomValue.SelectedItem;
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -81,18 +97,32 @@ namespace JSharp.Windows.MainWindow
         {
             //Unload all registered plugins incase none managable objects were used in plugins
             PluginHolder.Instance.UnloadAllRegisteredPlugins();
-            GetOpenedFiles(false);
+
+            SaveAllDocuments();
+
+            Settings.Default.OpenedFiles.Clear();
+            foreach (var document in DocumentPane.Children)
+            {
+                var child = ((Editor)document.Content);
+                
+                if(child.OpenedDocument != null)
+                    Settings.Default.OpenedFiles.Add(child.OpenedDocument);
+            }
+
+            Settings.Default.Save();
         }
 
         private void New_Click(object sender, RoutedEventArgs e)
         {
-            AddDocumentPage("untitled");
+            Editor edit = new Editor();
+            edit.SaveAs();
+
+            AddDocumentPage(edit.OpenedDocumentShortName, edit);
         }
 
         private void SaveAll_Click(object sender, RoutedEventArgs e)
         {
-            Parallel.ForEach(DocumentPane.Children, document
-                => ((Editor)document.Content).SaveDocument());
+            SaveAllDocuments();
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)

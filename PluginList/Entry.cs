@@ -1,49 +1,43 @@
-﻿using System.Windows;
+﻿using JSharp.PluginCore;
+using JSharp.Windows.MainWindow;
 using System.Windows.Controls;
-using JSharp.PluginCore;
 
 namespace PluginList
+{
+    public class Entry : IPlugin
     {
-        public class Entry : Plugin
+        private readonly MenuItem pluginsMenuItem = new MenuItem();
+        private readonly MenuItem[] plugins = new MenuItem[1];
+
+        public string Name { get; set; } = "Plugins";
+        public string Description { get; set; } = "Built-In plugin for viewing JSharp plugins";
+        public string Author { get; set; } = "Osinachi Nwagboso";
+        public string Version { get; set; } = "1.0.0.0";
+        public int PaneLocation { get; set; } = -1;
+        public bool IsBackgroundPlugin { get; set; } = false;
+        public bool AddToMenu { get; set; } = true;
+        public bool IsAddedToToolBar { get; set; } = false;
+        public bool AddToContextMenu { get; set; } = false;
+        public Main ParentWindow { get; set; }
+        public static Main Parent;
+
+        public MenuItem[] GetMenuItems() => plugins;
+
+        public UserControl[] GetPaneControls() => null;
+
+        public object[] GetToolbarItems() => null;
+
+        public void Init()
         {
-            ViewPluginsWindow viewPluginsWindow;
-            MenuItem pluginsMenuItem = new MenuItem();
-            MenuItem[] plugins = new MenuItem[1];
+            plugins[0] = pluginsMenuItem;
+            pluginsMenuItem.Header = "Show Plugins";
+            pluginsMenuItem.Click += delegate { new ViewPluginsWindow().ShowDialog(); };
 
-            public override MenuItem[] GetMenuItems() => plugins;
-
-            public override void Init()
-            {
-                Name = "Plugins";
-                Description = "Built-In plugin for viewing JSharp plugins";
-                Version = "1.0.0.0";
-
-                AddToMenu = true;
-
-                plugins[0] = pluginsMenuItem;
-                pluginsMenuItem.Header = "Show Plugins";
-                pluginsMenuItem.Click += PluginsMenuItem_Click;
-            }
-
-            private void PluginsMenuItem_Click(object sender, RoutedEventArgs e)
-            {
-                new ViewPluginsWindow().ShowDialog();
-            }
-
-            public override void Unload()
-            {
-            }
-
-            public override object[] GetToolbarItems()
-            {
-                return null;
-            }
-
-        public override UserControl[] GetPaneControls()
-        {
-            return new UserControl[] { };
+            Parent = ParentWindow;
         }
+
+        public void Unload() { }
     }
-    }
+}
 
 

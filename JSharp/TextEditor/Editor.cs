@@ -34,7 +34,8 @@ namespace JSharp.TextEditor
 
         public static string FilterOptions { get; set; }
 
-        public string OpenedDocument { get; private set; } = "Untitled";
+
+        public string OpenedDocument { get; private set; }
         public string OpenedDocumentShortName;
 
         private object _foldingStrategy;
@@ -301,7 +302,7 @@ namespace JSharp.TextEditor
 
         public void OpenDocument(string filename)
         {
-            if (filename == "Untitled") return;
+            if (filename == null) return;
 
             //Initialize document properties
             OpenedDocument = filename;
@@ -322,7 +323,9 @@ namespace JSharp.TextEditor
 
         public void SaveDocument()
         {
-            if (IsUnoccupied()) return;
+            if (IsUnoccupied())
+                return;
+
             try
             {
                 Save(OpenedDocument);
@@ -339,7 +342,11 @@ namespace JSharp.TextEditor
                 throw new ArgumentNullException(nameof(fileName));
 
             fileName = _saveFileDialog.FileName;
+            OpenedDocument = fileName;
+            OpenedDocumentShortName = new FileInfo(OpenedDocument).Name;
+
             File.WriteAllText(fileName, Text);
+            Load(fileName);
 
             if (Settings.Default.RecentFiles == null)
                 Settings.Default.RecentFiles = new StringCollection();

@@ -44,33 +44,14 @@ namespace JSharp.Windows.MainWindow
 
         public string ProjectFolder;
 
-        //Document Related Properties
-        private IEnumerable<string> OpenedFiles
-        {
-            get
-            {
-                foreach (var document in DocumentPane.Children)
-                {
-                    yield return ((Editor)document.Content).OpenedDocument;
-                }
-            }
-        }
-
-        public StringCollection GetOpenedFiles(bool fromSettings)
-        {
-            if(fromSettings) return Settings.Default.OpenedFiles;
-            StringCollection stringCollection = new StringCollection();
-            foreach (var str in OpenedFiles)
-            {
-                stringCollection.Add(str);
-            }
-            Settings.Default.OpenedFiles = stringCollection;
-            Settings.Default.Save();
-            return Settings.Default.OpenedFiles;
-            
-        }
-
         public FileExplorer fileExplorer;
+        public FindReplace findReplacePane;
+        public LayoutAnchorablePane[] panes;
+
+        //Document Related Properties
+        private IEnumerable<string> OpenedFiles => DocumentPane.Children.Select(document => ((Editor)document.Content).OpenedDocument);
+
+        public List<IPlugin> RegisteredPlugins => PluginHolder.Instance.RegisteredPlugins;
 
         public string GetSelectedFile(bool shortName)
         {
@@ -141,9 +122,6 @@ namespace JSharp.Windows.MainWindow
 
         #region Pane Related Functions
 
-        FindReplace findReplacePane;
-        //JSharpTerminal _terminal;
-
         private Task<bool> AddInbuiltPanes()
         {
             //LowerPaneItems.Add(new Pane(new CommandPrompt(), "Command prompt"));
@@ -162,31 +140,37 @@ namespace JSharp.Windows.MainWindow
 
         private Task<bool> InitalizePanes()
         {
-            foreach (var pane in LeftPaneItemsUp)
+            for (int i = 0; i < LeftPaneItemsUp.Count; i++)
             {
+                Pane pane = LeftPaneItemsUp[i];
                 AddPane(pane, 0);
             }
-            foreach (var pane in LeftPaneItemsDown)
+            for (int i = 0; i < LeftPaneItemsDown.Count; i++)
             {
+                Pane pane = LeftPaneItemsDown[i];
                 AddPane(pane, 1);
             }
-            foreach (var pane in RightPaneItemsUp)
+            for (int i = 0; i < RightPaneItemsUp.Count; i++)
             {
+                Pane pane = RightPaneItemsUp[i];
                 AddPane(pane, 2);
             }
-            foreach (var pane in RightPaneItemsDown)
+            for (int i = 0; i < RightPaneItemsDown.Count; i++)
             {
+                Pane pane = RightPaneItemsDown[i];
                 AddPane(pane, 3);
             }
-            foreach (var pane in BottomPaneItemsLeft)
+            for (int i = 0; i < BottomPaneItemsLeft.Count; i++)
             {
+                Pane pane = BottomPaneItemsLeft[i];
                 AddPane(pane, 4);
             }
-            foreach (var pane in BottomPaneItemsRight)
+            for (int i = 0; i < BottomPaneItemsRight.Count; i++)
             {
+                Pane pane = BottomPaneItemsRight[i];
                 AddPane(pane, 5);
             }
-            AddDocumentPage("untitled");//Add Default Page
+
             return Task.FromResult(true);
         }
 
@@ -195,10 +179,15 @@ namespace JSharp.Windows.MainWindow
             if (pane == null) return;
             LayoutAnchorable lA = new LayoutAnchorable { Title = pane.title };
             lA.Content = pane.content;
+            
             ((UserControl)pane.content).HorizontalAlignment = HorizontalAlignment.Stretch;
             ((UserControl)pane.content).VerticalAlignment = VerticalAlignment.Stretch;
 
-            new[] { LeftPane, LeftPane2, RightPane, RightPane2, LowerPane, LowerPane2 }[paneLocation].Children.Add(lA);
+            if(panes == null)
+            {
+                panes = new[] { LeftPane, LeftPane2, RightPane, RightPane2, LowerPane, LowerPane2 };
+            }
+            panes[paneLocation].Children.Add(lA);
         }
 
         #endregion Pane Related Functions
@@ -215,36 +204,32 @@ namespace JSharp.Windows.MainWindow
 
             ((Editor)newDocument.Content).HorizontalAlignment = HorizontalAlignment.Stretch;
             ((Editor)newDocument.Content).VerticalAlignment = VerticalAlignment.Stretch;
-            
-           
+
+            ((Editor)newDocument.Content).DocumentChanged += delegate
+            {
+                newDocument.Title = ((Editor)newDocument.Content).OpenedDocumentShortName;
+            };
+
+            newDocument.IsSelectedChanged += NewDocument_IsSelectedChanged;
 
             DocumentPane.Children.Add(newDocument);
-            SelectTab((int) DocumentPane.IndexOfChild(newDocument));
+            SelectTab(DocumentPane.IndexOfChild(newDocument));
+        }
+
+        private void NewDocument_IsSelectedChanged(object sender, EventArgs e)
+        {
+            var doc = (LayoutDocument)sender;
+            if(doc.IsSelected)
+            {
+                string data = ((Editor)doc.Content).OpenedDocumentShortName;
+                Title = data != null ? $"JSharp ({data})" : "JSharp";
+            }
         }
 
         public void OpenDocuments(string[] filenames)
         {
             foreach (var file in filenames)
             {
-                try
-                {
-                    OpenDocument(file);
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show(e.Message);
-                }
-            }
-        }
-
-        private void OpenDocuments(StringCollection previouslyOpenedDocuments)
-        {
-            IList list = previouslyOpenedDocuments;
-            if (list == null || list.Count < 1) return;
-
-            for (int i = 0; i < list.Count; i++)
-            {
-                string file = (string)list[i];
                 try
                 {
                     OpenDocument(file);
@@ -288,14 +273,17 @@ namespace JSharp.Windows.MainWindow
             ex.OpenDocument(filename);
         }
 
+        private void SaveAllDocuments()
+        {
+            foreach (var document in DocumentPane.Children)
+            {
+                ((Editor)document.Content).SaveDocument();
+            }
+        }
+
         public void SelectTab(int index)
         {
             DocumentPane.SelectedContentIndex = index;
-        }
-
-        public void SelectTab(string filename)
-        {
-            //SelectTab(documents.Children.IndexOf(tab));
         }
 
         #endregion Document Related Functions

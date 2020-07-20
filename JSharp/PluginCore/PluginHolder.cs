@@ -66,25 +66,16 @@ namespace JSharp.PluginCore
         /// </summary>
         private Task<bool> LoadPlugin(string pluginPath)
         {
-            try
-            {
-                if (_exludedFiles.Contains(Path.GetFileName(pluginPath))) return Task.FromResult(true);
+            if (_exludedFiles.Contains(Path.GetFileName(pluginPath))) return Task.FromResult(true);
 
-                var asm = Assembly.LoadFile(pluginPath);
+            var objType = Assembly.LoadFile(pluginPath).GetExportedTypes().First(x => x.Name == "Entry");
 
-                var objType = asm.GetExportedTypes().First(x => x.Name == "Entry");
+            if (objType == null) return Task.FromResult(true);
 
-                if (objType == null) return Task.FromResult(true);
-                
-                var ipi = (IPlugin)Activator.CreateInstance(objType);
-                ipi.ParentWindow = ParentWindow;
-                RegisteredPlugins.Add(ipi);
-                ipi.Init();
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.Message);
-            }
+            var ipi = (IPlugin)Activator.CreateInstance(objType);
+            ipi.ParentWindow = ParentWindow;
+            RegisteredPlugins.Add(ipi);
+            ipi.Init();
 
             return Task.FromResult(true);
         }
