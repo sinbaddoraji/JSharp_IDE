@@ -1,12 +1,12 @@
 This read me file is currently being used as a milestone tracker. Things marked with "*" are currently implemented features.
 
-# JSharp => A replacement for the JGrasp IDE 
+# JSharp => A minimalist java IDE written in c# as possible replacement IDE for minimalist coders
 
 *JSharp should have a flexible User Interface like Visual Studio.
 
 *JSharp should have a text editor with Syntax Highlighting
 
-JSharp should support auto complete for Java
+*JSharp should support auto complete for Java
 
 *JSharp should have a plugin 
 
@@ -24,12 +24,16 @@ JSharp should have documentation for plugin development
 
 *JSharp should be able to compile java files without the need for projects
 
-JSharp should have a java debugger 
-  The java debugger should be able to identify breakpoints
+*JSharp should have a java debugger 
+  The java debugger should be able to identify breakpoints -> Failed
   The java debugger should be able to step into code (line by line)
   
 *JSharp should be themeable
 
+Resources Needed to run JSharp:
+
+  Microsoft .net framework 4.8
+  Java development kit version 1.8.0_251 or higher
 
 Frameworks Used:
 
@@ -39,6 +43,5 @@ Jni4net => Used for running java code from c#
 MahApps.Metro => Used to create the window
 
 Notes:
-
 
 JSharp was initially written in .net core but it was rewritten in the normal .net framework to make it work on other platforms using mono

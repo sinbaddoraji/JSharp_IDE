@@ -26,8 +26,12 @@ JSharp allows java development without the use of projects
 
 JSharp plugins can be written in both java (using JNI) or c#
 
+JSharp has a basic debugger
+
 
 Limitations:
 
     Only has autocomplete not intellisense: It suggest code but not so intelligently
     JSharp is not universal (It does not run on all platforms)
+    JSharp's debugger is at a basic functionality
+    JSharp does not have an in-text debugger (The user is not notified about syntax errors till compilation)

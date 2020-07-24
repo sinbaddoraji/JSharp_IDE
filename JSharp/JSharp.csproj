@@ -64,6 +64,9 @@
     <Reference Include="jni4net.n.w32.v20-0.8.8.0">
       <HintPath>..\..\JNI\lib\jni4net.n.w32.v20-0.8.8.0.dll</HintPath>
     </Reference>
+    <Reference Include="jni4net.n.w32.v40-0.8.8.0">
+      <HintPath>..\JNI4dotnet\lib\jni4net.n.w32.v40-0.8.8.0.dll</HintPath>
+    </Reference>
     <Reference Include="jni4net.n.w64.v20-0.8.8.0">
       <HintPath>..\..\JNI\lib\jni4net.n.w64.v20-0.8.8.0.dll</HintPath>
     </Reference>

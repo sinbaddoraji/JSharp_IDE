@@ -40,6 +40,7 @@
                 </MenuItem>
                 <MenuItem x:Name="Project" Header="Project"  DockPanel.Dock="Top" Background="Transparent">
                     <MenuItem Header="Create Jar File" />
+                    <MenuItem Header="Add ClassPath" />
                 </MenuItem>
 
                 <MenuItem x:Name="Build" Header="Build"  DockPanel.Dock="Top" Background="Transparent">
@@ -47,6 +48,7 @@
                     <MenuItem Header="Build Project" Click="BuildProject_Click"/>
                     <MenuItem Header="Run" Click="Run_Click" />
                     <MenuItem Header="Run Project" Click="BuildProject_Click" />
+                    <MenuItem Header="Run in debugger"  />
                     <MenuItem Header="Build and Run" Click="BuildAndRun_Click"></MenuItem>
                 </MenuItem>
 

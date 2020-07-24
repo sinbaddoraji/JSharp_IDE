@@ -1,4 +1,5 @@
-﻿using System;
+﻿using com.sun.source.util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -35,14 +36,6 @@ namespace JSharp.PluginCore
             "JSharp.dll",
             "ControlzEx.dll",
             "MahApps.Metro.dll", 
-            "Microsoft.Xaml.Behaviors.dll",
-            "jni4net.n.w32.v20-0.8.8.0.dll",
-            "jni4net.n.w64.v20-0.8.8.0.dll",
-            "jni4net.n.w64.v40-0.8.8.0.dll",
-            "jni4net.n-0.8.8.0.dll",
-            "Simple.Wpf.Terminal.Common.dll",
-            "Simple.Wpf.Terminal.dll",
-            "Simple.Wpf.Terminal.Themes.dll"
         };
 
         /// <summary>
@@ -66,7 +59,7 @@ namespace JSharp.PluginCore
         /// </summary>
         private Task<bool> LoadPlugin(string pluginPath)
         {
-            if (_exludedFiles.Contains(Path.GetFileName(pluginPath))) return Task.FromResult(true);
+            if (_exludedFiles.Contains(Path.GetFileName(pluginPath)) || pluginPath.StartsWith("IKVM")) return Task.FromResult(true);
 
             var objType = Assembly.LoadFile(pluginPath).GetExportedTypes().First(x => x.Name == "Entry");
 

@@ -340,3 +340,5 @@ ASALocalRun/
 healthchecksdb
 /JToolKit/JavaToolKit/nbproject/private/
 /JToolKit/JavaToolKit/build/
+/debugger/build/
+/debugger/dist/
