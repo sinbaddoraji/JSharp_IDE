@@ -33,17 +33,26 @@ namespace JSharp.Windows.MainWindow
 
             for (int i = 1; i <= 100; i++) ZoomValue.Items.Add(i);
 
-            foreach (string file in (IList)Settings.Default.OpenedFiles)
+            if(Settings.Default.OpenedFiles == null)
             {
-                try
+                Settings.Default.OpenedFiles = new System.Collections.Specialized.StringCollection();
+                Settings.Default.Save();
+            }
+            else
+            {
+                foreach (string file in (IList)Settings.Default.OpenedFiles)
                 {
-                    OpenDocument(file);
-                }
-                catch (Exception e)
-                {
-                    //MessageBox.Show(e.Message);
+                    try
+                    {
+                        OpenDocument(file);
+                    }
+                    catch (Exception e)
+                    {
+                        //MessageBox.Show(e.Message);
+                    }
                 }
             }
+            
 
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)

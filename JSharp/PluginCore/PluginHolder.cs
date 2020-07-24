@@ -1,5 +1,4 @@
-﻿using com.sun.source.util;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -35,7 +34,8 @@ namespace JSharp.PluginCore
             "ICSharpCode.AvalonEdit.dll", 
             "JSharp.dll",
             "ControlzEx.dll",
-            "MahApps.Metro.dll", 
+            "MahApps.Metro.dll",
+            "Microsoft.Xaml.Behaviors.dll"
         };
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace JSharp.PluginCore
         /// </summary>
         private Task<bool> LoadPlugin(string pluginPath)
         {
-            if (_exludedFiles.Contains(Path.GetFileName(pluginPath)) || pluginPath.StartsWith("IKVM")) return Task.FromResult(true);
+            if (_exludedFiles.Contains(Path.GetFileName(pluginPath)) || pluginPath.Contains("jni4net")) return Task.FromResult(true);
 
             var objType = Assembly.LoadFile(pluginPath).GetExportedTypes().First(x => x.Name == "Entry");
 
