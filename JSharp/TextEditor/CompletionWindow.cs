@@ -21,7 +21,7 @@ namespace JSharp.TextEditor
 	    public EditorCompletionWindow(TextArea textArea) : base(textArea)
         {
             SizeToContent = SizeToContent.Height;
-			MaxHeight = 300.0;
+			MaxHeight = 150.0;
 			Width = 400;
 			Content = CompletionList;
 			MinHeight = 15.0;

@@ -127,16 +127,24 @@ namespace JSharp.Windows.MainWindow
             //LowerPaneItems.Add(new Pane(new CommandPrompt(), "Command prompt"));
             fileExplorer = new Inbuilt_Panes.FileExplorer();
             fileExplorer.SetDirectory(Environment.CurrentDirectory);
-            AddPane(new Pane(fileExplorer, "File Explorer"), 0);
+            AddPane(new Pane(fileExplorer, "File Explorer"), (int)PaneLocations.UpperLeft);
 
             findReplacePane = new FindReplace();
-            AddPane(new Pane(findReplacePane, "Find and Replace"), 1);
+            AddPane(new Pane(findReplacePane, "Find and Replace"), (int)PaneLocations.LowerLeft);
+
+            UserControl OutputWindow = new UserControl
+            {
+                Content = DebugCore.OutputTextbox
+            };
+            AddPane(new Pane(OutputWindow, "Output Window"), (int)PaneLocations.BottomLeft);
 
             //_terminal = new JSharpTerminal();
             //AddPane(new Pane(_terminal, "Terminal"), 4);
 
             return Task.FromResult(true);
         }
+
+        private enum PaneLocations { UpperLeft, LowerLeft, UpperRight, LowerRight, BottomLeft, BottomRight }
 
         private Task<bool> InitalizePanes()
         {

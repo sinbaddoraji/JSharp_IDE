@@ -175,6 +175,11 @@ namespace JSharp.Windows.MainWindow
             DebugCore.CompileProject(false);
         }
 
+        private void DebugRun_Click(object sender, RoutedEventArgs e)
+        {
+            DebugCore.RunInDebugger(this.GetSelectedFile(false));
+        }
+
         private void DockManager_ActiveContentChanged(object sender, EventArgs e)
         {
            //this.Title = GetSelectedFile(true);
@@ -195,6 +200,11 @@ namespace JSharp.Windows.MainWindow
         private void Goto_Click(object sender, RoutedEventArgs e)
         {
             new GotoDialog().ShowDialog();
+        }
+
+        private void ClassAnalyser_click(object sender, RoutedEventArgs e)
+        {
+            new ClassAnalyser().ShowDialog();
         }
     }
 }

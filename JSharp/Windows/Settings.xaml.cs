@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using JSharp.PluginCore;
+using JSharp.Windows.MainWindow;
+using System.IO;
+using System.Windows;
 using System.Windows.Forms;
 using MessageBox = System.Windows.Forms.MessageBox;
 
@@ -42,7 +45,14 @@ namespace JSharp.MainWindow
             Properties.Settings.Default.Save();
             Close();
 
-            MessageBox.Show("You may have to restart JSharp");
+            if (PluginHolder.Instance.ParentWindow == null && jdkBox.Text != "JDK path can not be found")
+            {
+                new Main();
+            }
+            else
+            {
+                MessageBox.Show("You may have to restart JSharp");
+            }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -51,8 +61,16 @@ namespace JSharp.MainWindow
             {
                 if (folderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    SetJdkPath(folderDialog.SelectedPath);
-                    jdkBox.Text = folderDialog.SelectedPath;
+                    if(Directory.Exists(folderDialog.SelectedPath + "\\bin"))
+                    {
+                        SetJdkPath(folderDialog.SelectedPath);
+                        jdkBox.Text = folderDialog.SelectedPath;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid JDK path");
+                    }
+                  
                 }
             }
         }

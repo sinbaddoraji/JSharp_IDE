@@ -81,6 +81,16 @@ namespace JSharp.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] debugger {
+            get {
+                object obj = ResourceManager.GetObject("debugger", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Delete {
@@ -116,16 +126,6 @@ namespace JSharp.Properties {
         internal static byte[] Java_LightMode {
             get {
                 object obj = ResourceManager.GetObject("Java_LightMode", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] jni4net_j_0_8_8_0 {
-            get {
-                object obj = ResourceManager.GetObject("jni4net_j_0_8_8_0", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -197,6 +197,16 @@ namespace JSharp.Properties {
             get {
                 object obj = ResourceManager.GetObject("Save", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] tools {
+            get {
+                object obj = ResourceManager.GetObject("tools", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         

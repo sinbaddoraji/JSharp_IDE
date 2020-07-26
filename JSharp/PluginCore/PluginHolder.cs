@@ -59,7 +59,7 @@ namespace JSharp.PluginCore
         /// </summary>
         private Task<bool> LoadPlugin(string pluginPath)
         {
-            if (_exludedFiles.Contains(Path.GetFileName(pluginPath)) || pluginPath.Contains("jni4net")) return Task.FromResult(true);
+            if (_exludedFiles.Contains(Path.GetFileName(pluginPath)) || pluginPath.Contains("IKVM")) return Task.FromResult(true);
 
             var objType = Assembly.LoadFile(pluginPath).GetExportedTypes().First(x => x.Name == "Entry");
 

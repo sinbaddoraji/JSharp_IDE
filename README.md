@@ -34,6 +34,13 @@ Resources Needed to run JSharp:
 
   Microsoft .net framework 4.8
   Java development kit version 1.8.0_251 or higher
+  2GB ram or more
+  70MB hard disk space (Minimum)
+
+How to Build:
+  Get JNI4Net dlls from http://jni4net.com/ and refrence them in the project
+  Build
+
 
 Frameworks Used:
 

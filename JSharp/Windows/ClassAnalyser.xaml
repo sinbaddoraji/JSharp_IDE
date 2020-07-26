@@ -1,0 +1,24 @@
+﻿<Window x:Class="JSharp.Windows.ClassAnalyser"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JSharp.Windows"
+        mc:Ignorable="d"
+        Title="ClassAnalyse" Height="450" Width="800">
+    <StackPanel>
+        <Menu>
+            <MenuItem Header="File">
+                <MenuItem Header ="Open Class" Click="MenuItem_Click"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <Label Content="Class Name: " x:Name="classNameLabel"></Label>
+        <Label Content="Parent Package: " x:Name="parentNameLabel"></Label>
+        <Separator></Separator>
+        <Label Content="Declared Fields"></Label>
+        <ListView Height="132" Margin="0,0,-0.4,0" x:Name="declearedFieldsBox" VerticalAlignment="Stretch"></ListView>
+        <Separator></Separator>
+        <Label Content="Declared Methods"></Label>
+        <ListView Height="118" Margin="0,0,-0.4,0" x:Name="declearedMethodsBox" VerticalAlignment="Stretch"></ListView> 
+    </StackPanel>
+</Window>

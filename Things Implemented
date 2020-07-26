@@ -28,6 +28,8 @@ JSharp plugins can be written in both java (using JNI) or c#
 
 JSharp has a basic debugger
 
+JSharp automatically finds file encoding
+
 
 Limitations:
 

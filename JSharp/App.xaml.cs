@@ -12,18 +12,25 @@ namespace JSharp
     {
         public App()
         {
+            if(!File.Exists("debugger.jar"))
+                File.WriteAllBytes("debugger.jar", JSharp.Properties.Resources.debugger);
+
+            if (!Directory.Exists("lib"))
+                Directory.CreateDirectory("lib");
+
+            if (!File.Exists("lib\\tools.jar"))
+                File.WriteAllBytes("lib\\tools.jar", JSharp.Properties.Resources.tools);
 
             if (!File.Exists($@"{JSharp.Properties.Settings.Default.JdkPath}\jre\lib\classlist"))
             {
                 System.Windows.Forms.MessageBox.Show("JDK path currently empty");
                 new MainWindow.Settings().ShowDialog();
             }
-
-            if (!File.Exists("jni4net.j-0.8.8.0.jar"))
-                File.WriteAllBytes("jni4net.j-0.8.8.0.jar", JSharp.Properties.Resources.jni4net_j_0_8_8_0);
-
-            //Initialize editor settings
-            new Editor();
+            else
+            {
+                //Initialize editor settings
+                new Editor();
+            }
         }
     }
 }

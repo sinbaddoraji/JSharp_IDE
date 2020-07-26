@@ -48,18 +48,16 @@
                     <MenuItem Header="Build Project" Click="BuildProject_Click"/>
                     <MenuItem Header="Run" Click="Run_Click" />
                     <MenuItem Header="Run Project" Click="BuildProject_Click" />
-                    <MenuItem Header="Run in debugger"  />
                     <MenuItem Header="Build and Run" Click="BuildAndRun_Click"></MenuItem>
                 </MenuItem>
 
                 <MenuItem x:Name="Debug" Header="Debug"  DockPanel.Dock="Top" Background="Transparent">
-                    <MenuItem Header="Set Breakpoint" />
-                    <MenuItem Header="Step Into"/>
-                    <MenuItem Header="Step Over"/>
+                    <MenuItem Header="Run in debugger" Click="DebugRun_Click" />
                 </MenuItem>
 
                 <MenuItem x:Name="PluginMenu" Header="Tools" DockPanel.Dock="Top" Background="Transparent">
                     <MenuItem Header="View Settings" Click="Settings_Click"/>
+                    <MenuItem Header="Class Analyser" Click="ClassAnalyser_click"/>
                 </MenuItem>
 
                 <MenuItem  Header="Help" DockPanel.Dock="Top" Background="Transparent">

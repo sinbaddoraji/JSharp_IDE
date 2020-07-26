@@ -15,7 +15,6 @@ using JSharp.Highlighting;
 using JSharp.PluginCore;
 using JSharp.Properties;
 using System.Threading;
-using net.sf.jni4net;
 using System.Threading.Tasks;
 using ContextMenu = System.Windows.Controls.ContextMenu;
 using DataFormats = System.Windows.DataFormats;
@@ -110,24 +109,24 @@ namespace JSharp.TextEditor
             _highlightingManager = new InnerHighlightingManager();
             ShowLineNumbers = true;
 
-
+            SyntaxHighlighting = _highlightingManager.GetHighlightingFromExtension(".java");
+           
             if(!EditorCompletionWindow.InitalizeCompletionData())
             {
-                BridgeSetup bridgeSetup = new BridgeSetup(true);
-                bridgeSetup.AddClassPath(".");
-                bridgeSetup.AddClassPath("work");
-                Bridge.CreateJVM(bridgeSetup);
-                Bridge.RegisterAssembly(typeof(Thread).Assembly);
-
 
                 _classList = File.ReadAllLines($@"{Settings.Default.JdkPath}\jre\lib\classlist").Select(x => x.Replace("/", ".")).Where(x => !x.Contains("$"));
                 foreach (string item in _classList)
                 {
-                    if (item.Contains("lang") || item.Contains("util")) AddCompletionData(item);
-                    //else AddCompletion_Data(item);
+                    try
+                    {
+                        if (item.Contains("lang")) AddCompletionData(item);
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
             }
-            SyntaxHighlighting = _highlightingManager.GetHighlightingFromExtension(".java");
+            
         }
 
 
@@ -247,7 +246,7 @@ namespace JSharp.TextEditor
 
                 EditorCompletionWindow.CompletionList.RequestInsertion(e);
             }
-            else if(e.Text[0] == '\n')
+            else if(e.Text[0] == '\n' && _completionWindow != null)
             {
                 _completionWindow.Close();
             }
@@ -328,7 +327,7 @@ namespace JSharp.TextEditor
 
             try
             {
-                Save(OpenedDocument);
+                File.WriteAllText(OpenedDocument, this.Text);
             }
             catch (Exception e)
             {
