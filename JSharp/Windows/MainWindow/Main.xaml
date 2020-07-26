@@ -57,7 +57,6 @@
 
                 <MenuItem x:Name="PluginMenu" Header="Tools" DockPanel.Dock="Top" Background="Transparent">
                     <MenuItem Header="View Settings" Click="Settings_Click"/>
-                    <MenuItem Header="Class Analyser" Click="ClassAnalyser_click"/>
                 </MenuItem>
 
                 <MenuItem  Header="Help" DockPanel.Dock="Top" Background="Transparent">

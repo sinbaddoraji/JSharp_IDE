@@ -59,6 +59,7 @@
     <PackageReference Include="AvalonEdit" Version="6.0.1" />
     <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="4.30.0" />
     <PackageReference Include="IKVM.OpenJDK.Core" Version="7.2.4630.5" />
+    <PackageReference Include="IKVM.OpenJDK.Util" Version="7.2.4630.5" />
     <PackageReference Include="IKVM.Reflection" Version="7.2.4630.5" />
     <PackageReference Include="IKVM.Runtime" Version="7.2.4630.5" />
     <PackageReference Include="MahApps.Metro" Version="2.1.1" />

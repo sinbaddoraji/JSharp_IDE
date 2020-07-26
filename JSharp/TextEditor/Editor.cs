@@ -53,7 +53,7 @@ namespace JSharp.TextEditor
 
         private static EditorCompletionList CompletionList => EditorCompletionWindow.CompletionList;
 
-        private static IEnumerable<string> _classList;
+        public static IEnumerable<string> _classList;
 
         private string GetClosedWordToCursor(int from)
         {
