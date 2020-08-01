@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace JSharp.PluginCore
 {
@@ -28,14 +27,19 @@ namespace JSharp.PluginCore
         /// <summary>
         /// A list of executables in root folder known not to be plug-in files
         /// </summary>
-        private readonly string[] _exludedFiles = { 
-            "AvalonDock.Themes.VS2013.dll", 
-            "AvalonDock.dll", 
-            "ICSharpCode.AvalonEdit.dll", 
+        private readonly string[] _exludedFiles = {
+            "AvalonDock.Themes.VS2013.dll",
+            "AvalonDock.dll",
+            "ICSharpCode.AvalonEdit.dll",
             "JSharp.dll",
             "ControlzEx.dll",
             "MahApps.Metro.dll",
-            "Microsoft.Xaml.Behaviors.dll"
+            "Microsoft.Xaml.Behaviors.dll",
+            "IKVM.OpenJDK.Core.dll",
+            "IKVM.OpenJDK.Util.dll",
+            "IKVM.OpenJDK.XML.API.dll",
+            "IKVM.Reflection.dll",
+            "IKVM.Runtime.dll"
         };
 
         /// <summary>
@@ -51,7 +55,7 @@ namespace JSharp.PluginCore
         /// </summary>
         public void UnloadAllRegisteredPlugins()
         {
-            Parallel.ForEach(RegisteredPlugins, plugin => { plugin.Unload(); });
+            Parallel.ForEach(RegisteredPlugins, plugin => plugin.Unload());
         }
 
         /// <summary>
@@ -59,7 +63,7 @@ namespace JSharp.PluginCore
         /// </summary>
         private Task<bool> LoadPlugin(string pluginPath)
         {
-            if (_exludedFiles.Contains(Path.GetFileName(pluginPath)) || pluginPath.Contains("IKVM")) return Task.FromResult(true);
+            if (_exludedFiles.Contains(Path.GetFileName(pluginPath))) return Task.FromResult(true);
 
             var objType = Assembly.LoadFile(pluginPath).GetExportedTypes().First(x => x.Name == "Entry");
 

@@ -157,7 +157,7 @@ namespace JSharp.Windows.MainWindow
 
         private void Run_Click(object sender, RoutedEventArgs e)
         {
-            DebugCore.RunFile(this.GetSelectedFile(false));
+            DebugCore.Run(this.GetSelectedFile(false));
         }
 
         private void BuildAndRun_Click(object sender, RoutedEventArgs e)

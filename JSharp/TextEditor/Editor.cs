@@ -14,7 +14,6 @@ using JSharp.Code_Completion;
 using JSharp.Highlighting;
 using JSharp.PluginCore;
 using JSharp.Properties;
-using System.Threading;
 using System.Threading.Tasks;
 using ContextMenu = System.Windows.Controls.ContextMenu;
 using DataFormats = System.Windows.DataFormats;
@@ -55,6 +54,7 @@ namespace JSharp.TextEditor
 
         public static IEnumerable<string> _classList;
 
+        public int closestWordOffset;
         private string GetClosedWordToCursor(int from)
         {
             var caretOffset = from - 1;
@@ -63,7 +63,7 @@ namespace JSharp.TextEditor
                 caretOffset--;
 
             caretOffset++;
-            var start = caretOffset;
+            var start = closestWordOffset = caretOffset;
             
             while (caretOffset < Document.TextLength && !char.IsWhiteSpace(Document.GetCharAt(caretOffset)))
                 caretOffset++;
@@ -120,6 +120,7 @@ namespace JSharp.TextEditor
                     try
                     {
                         if (item.Contains("lang")) AddCompletionData(item);
+                        else AddCompletion_Data(item);
                     }
                     catch (Exception)
                     {
@@ -216,7 +217,17 @@ namespace JSharp.TextEditor
             if (_completionWindow != null || (wordContext.Length < 1)) { return; }
 
             //Initialize code completion window
-            _completionWindow = new EditorCompletionWindow(TextArea);
+            _completionWindow = new EditorCompletionWindow(this);
+            if(EditorCompletionWindow.CompletionList.Contains(wordContext))
+            {
+                EditorCompletionWindow.CompletionList?.SelectItem(wordContext);
+            }
+            var firstMatch = CompletionList.CompletionData.First(x => x.Text.StartsWith(wordContext));
+            if (firstMatch != null && EditorCompletionWindow.CompletionList.ListBox != null)
+            {
+                int index = EditorCompletionWindow.CompletionList.ListBox.Items.IndexOf(firstMatch);
+                EditorCompletionWindow.CompletionList.ListBox.SelectIndex(index);
+            }
 
             _completionWindow.Show();
             _completionWindow.Closed += delegate
@@ -236,7 +247,7 @@ namespace JSharp.TextEditor
             {
                 _completionWindow.Close();
             }
-            else if(e.Text[0] == '.' && EditorCompletionWindow.CompletionList.SelectedItem.Text.Length < 1)
+            else if(e.Text[0] == '.' && EditorCompletionWindow.CompletionList.SelectedItem?.Text.Length < 1)
                 InitializeCompletionWindow(wordContext);
 
             if (e.Text[0] == ';')

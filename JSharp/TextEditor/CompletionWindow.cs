@@ -18,8 +18,10 @@ namespace JSharp.TextEditor
 
 	    private static bool _completionDataInitialized;
 
-	    public EditorCompletionWindow(TextArea textArea) : base(textArea)
+		Editor editor;
+	    public EditorCompletionWindow(Editor editor) : base(editor.TextArea)
         {
+			this.editor = editor;
             SizeToContent = SizeToContent.Height;
 			MaxHeight = 150.0;
 			Width = 400;
@@ -53,7 +55,7 @@ namespace JSharp.TextEditor
 		{
 			Close();
 			CompletionList.SelectedItem?.Complete(TextArea, 
-				new AnchorSegment(TextArea.Document, StartOffset - 1, EndOffset - StartOffset + 1), e);
+				new AnchorSegment(TextArea.Document, editor.closestWordOffset, EndOffset - editor.closestWordOffset), e);
 		}
 
 		private void AttachEvents()
