@@ -100,5 +100,31 @@ namespace JSharp.Inbuilt_Panes
                 PluginHolder.Instance.ParentWindow.OpenDocument(selectedFile.FullPath);
             }
         }
+
+        private void GotoParent_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            SetDirectory(((FileItem)ListView.Items[0]).FullPath);
+        }
+
+        private void MenuItem_Click_1(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var selectedFile = (FileItem)ListView.SelectedItem;
+            if (selectedFile == null) return;
+
+            var messageBox = System.Windows.Forms.MessageBox.Show($"Are you sure you want to delete {selectedFile.Name}?", "Are you sure?", System.Windows.Forms.MessageBoxButtons.YesNo);
+            if(messageBox == System.Windows.Forms.DialogResult.Yes)
+            {
+                try
+                {
+                    File.Delete(selectedFile.FullPath);
+                    Files.Remove(selectedFile);
+                }
+                catch (System.Exception ex)
+                {
+                    System.Windows.Forms.MessageBox.Show(ex.Message);
+                }
+                
+            }
+        }
     }
 }

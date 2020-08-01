@@ -2,6 +2,7 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -182,7 +183,8 @@ namespace JSharp.Windows.MainWindow
 
         private void DockManager_ActiveContentChanged(object sender, EventArgs e)
         {
-           //this.Title = GetSelectedFile(true);
+            //this.Title = GetSelectedFile(true);
+            
         }
 
         private void Open_Project_Folder_Click(object sender, RoutedEventArgs e)

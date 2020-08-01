@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using AvalonDock.Layout;
 using AvalonDock.Themes;
 using ControlzEx.Theming;
@@ -231,6 +232,17 @@ namespace JSharp.Windows.MainWindow
             {
                 string data = ((Editor)doc.Content).OpenedDocumentShortName;
                 Title = data != null ? $"JSharp ({data})" : "JSharp";
+
+                try
+                {
+                    string dir = Directory.GetParent(GetSelectedFile(false)).FullName;
+                    fileExplorer.SetDirectory(dir);
+                    ProjectFolder = dir;
+                }
+                catch (Exception)
+                {
+                }
+                
             }
         }
 

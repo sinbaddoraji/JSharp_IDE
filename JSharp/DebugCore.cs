@@ -120,7 +120,7 @@ namespace JSharp
         {
             JdkPath = Properties.Settings.Default.JdkPath;
             JavaConsole = $"\"{JdkPath}\\bin\\java.exe\"";
-            JavaCompiler = $"\"{JdkPath}\\bin\\javac.exe\"";
+            JavaCompiler = $"{JdkPath}\\bin\\javac.exe";
             JavaJar = $"\"{JdkPath}\\bin\\jar.exe\"";
 
             ProgramLocation = Directory.GetParent(Environment.GetCommandLineArgs()[0]).ToString();
@@ -239,7 +239,7 @@ namespace JSharp
                         FileName = JavaCompiler, Arguments = FileName,
                         WorkingDirectory = WorkingDirectory,
                         CreateNoWindow = true, ErrorDialog = false, UseShellExecute = false,
-                        RedirectStandardInput = true, RedirectStandardOutput = true
+                        RedirectStandardError = true, RedirectStandardOutput = true
                     }
                 };
                 process.Start();

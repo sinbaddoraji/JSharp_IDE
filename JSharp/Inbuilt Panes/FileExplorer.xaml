@@ -9,6 +9,12 @@
 
         <ListBox x:Name="ListView" MouseDoubleClick="ListView_MouseDoubleClick"
                  Background="Transparent">
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Go to parent" Click="GotoParent_Click"></MenuItem>
+                    <MenuItem Header="Delete file" Click="MenuItem_Click_1"></MenuItem>
+                </ContextMenu>
+            </ListBox.ContextMenu>
             
             <ListBox.ItemTemplate>
                 <DataTemplate>
