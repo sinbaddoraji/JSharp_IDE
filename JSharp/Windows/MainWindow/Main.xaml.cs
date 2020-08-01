@@ -204,7 +204,13 @@ namespace JSharp.Windows.MainWindow
 
         private void ClassAnalyser_click(object sender, RoutedEventArgs e)
         {
-            new ClassAnalyser().ShowDialog();
+            //new ClassAnalyser().ShowDialog();
+        }
+
+
+        private void CreateJar_Click(object sender, RoutedEventArgs e)
+        {
+            DebugCore.CreatePackage();
         }
     }
 }

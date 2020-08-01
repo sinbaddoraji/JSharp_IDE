@@ -39,8 +39,7 @@
                     <MenuItem Header="Go-to Line" Click="Goto_Click" />
                 </MenuItem>
                 <MenuItem x:Name="Project" Header="Project"  DockPanel.Dock="Top" Background="Transparent">
-                    <MenuItem Header="Create Jar File" />
-                    <MenuItem Header="Add ClassPath" />
+                    <MenuItem Header="Create Jar File"  Click="CreateJar_Click"/>
                 </MenuItem>
 
                 <MenuItem x:Name="Build" Header="Build"  DockPanel.Dock="Top" Background="Transparent">

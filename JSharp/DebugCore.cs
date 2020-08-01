@@ -1,4 +1,5 @@
 using JSharp.PluginCore;
+using JSharp.Windows;
 using JSharp.Windows.MainWindow;
 using System;
 using System.Collections.Generic;
@@ -19,11 +20,13 @@ namespace JSharp
         private static Main PatentWindow => PluginHolder.Instance.ParentWindow;
         private static string ProjectFolder => PatentWindow.ProjectFolder;
 
-        private static string EntryFile = null;
+        public static string EntryFile = null;
 
         private static Process process;
 
         public static string JavaConsole;
+        public static string JavaCompiler;
+        public static string JavaJar;
         public static string ProgramLocation;
 
         public static System.Windows.Controls.TextBox OutputTextbox;
@@ -32,6 +35,8 @@ namespace JSharp
         {
             JdkPath = Properties.Settings.Default.JdkPath;
             JavaConsole = $"\"{JdkPath}\\bin\\java.exe\"";
+            JavaCompiler = $"\"{JdkPath}\\bin\\javac.exe\"";
+            JavaJar = $"\"{JdkPath}\\bin\\jar.exe\"";
             ProgramLocation = Directory.GetParent(Environment.GetCommandLineArgs()[0]).ToString();
             OutputTextbox = new System.Windows.Controls.TextBox
             {
@@ -68,6 +73,14 @@ namespace JSharp
             {
                 MessageBox.Show("Main class can not be found in project folder");
             }
+        }
+
+        public static string GetProjectDirectory()
+        {
+            if (EntryFile != null)
+                return GetParentDir(EntryFile);
+            else
+                return Directory.GetParent(PluginHolder.Instance.ParentWindow.GetSelectedFile(false)).Name;
         }
 
         private static string GetName(string filename)
@@ -139,11 +152,10 @@ namespace JSharp
         public static bool Compile(string WorkingDirectory, string FileName)
         {
             bool processStarted = false;
-            string javac = JdkPath + "\\bin\\javac.exe";
-            if (File.Exists(javac))
+            if (File.Exists(JavaCompiler))
             {
                 process = new Process();
-                process.StartInfo.FileName = javac;
+                process.StartInfo.FileName = JavaCompiler;
                 process.StartInfo.Arguments = FileName;
                 process.StartInfo.WorkingDirectory = WorkingDirectory;
                 process.StartInfo.CreateNoWindow = true;
@@ -152,10 +164,7 @@ namespace JSharp
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
 
-                OutputTextbox.Clear();
                 processStarted = process.Start();
-
-                OutputTextbox.Text = process.StandardOutput.ReadToEnd();
 
                 using (StreamReader s = process.StandardError)
                 {
@@ -177,6 +186,49 @@ namespace JSharp
                 MessageBox.Show("Unable to compile " + FileName);
             }
             return processStarted;
+        }
+
+        public static string GetProjectClasses()
+        {
+            string output = "";
+            string dir = GetProjectDirectory();
+            foreach (var item in Directory.GetFiles(dir, "*.class"))
+            {
+                output += item.Substring(dir.Length + 1) + " ";
+            }
+
+            return output.Trim();
+        }
+        public static void CreatePackage()
+        {
+            CompileProject(false);
+
+            string manifestfile = GetProjectDirectory() + "\\Manifest.mf";
+            GenerateProjectManifest(manifestfile);
+
+            string classes = GetProjectClasses();
+            const string jarfilename = "output.jar";
+
+            string processCode = $"/K  cd/   &&  cd  {GetProjectDirectory()} &&  {JavaJar}  cmf   Manifest.mf  {jarfilename}   {classes}";
+            ProcessStartInfo ProcessInfo = new ProcessStartInfo("cmd.exe", processCode)
+            {
+                CreateNoWindow = true,
+                UseShellExecute = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            process = Process.Start(ProcessInfo);
+        }
+
+        private static void GenerateProjectManifest(string manifestfile)
+        {
+            string mainClass = Path.GetFileNameWithoutExtension(EntryFile);
+            File.WriteAllText(manifestfile, "Manifest-Version: 1.0"
+                       + "\nAnt-Version: Apache Ant 1.9.4"
+                       + "\nCreated-By: 1.8.0_25-b18 (Oracle Corporation)"
+                       + "\nClass-Path: "
+                       + "\nX-COMMENT: Main-Class will be added automatically by build"
+                       + "\nMain-Class: " + mainClass
+                       + "\nMain-Class: " + mainClass);
         }
     }
 }
