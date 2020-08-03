@@ -117,9 +117,7 @@
             <ComboBox x:Name="ZoomValue" Width="41" SelectionChanged="ZoomValue_SelectionChanged" SelectedIndex="16" Height="26"/>
         </StatusBar>
 
-        <xcad:DockingManager ActiveContentChanged="DockManager_ActiveContentChanged"
-            BorderBrush="Black" BorderThickness="1"
-                           x:Name="DockManager" Panel.ZIndex="2">
+        <xcad:DockingManager BorderBrush="Black" BorderThickness="1" x:Name="DockManager" Panel.ZIndex="2">
 
             <xcad:DockingManager.DocumentHeaderTemplate>
                 <DataTemplate>

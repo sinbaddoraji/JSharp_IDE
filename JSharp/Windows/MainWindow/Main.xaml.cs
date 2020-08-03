@@ -24,13 +24,16 @@ namespace JSharp.Windows.MainWindow
         /*
          * This handles the events of the main window (Strictly)
          */
+
+        /// <summary>
+        /// Main window for JSharp
+        /// </summary>
         public Main()
         {
             InitializeComponent();
             Initalize();
 
-            Editor.FilterOptions = "Java Files (*.java)|*.java|Other Files (*.*)|*.*";
-            openFileDialog = new OpenFileDialog { Filter = Editor.FilterOptions };
+            openFileDialog = new OpenFileDialog { Filter = TextEditor.TextEditor.FilterOptions };
 
             for (int i = 1; i <= 100; i++) ZoomValue.Items.Add(i);
 
@@ -70,14 +73,9 @@ namespace JSharp.Windows.MainWindow
         private async void Initalize()
         {
             await LoadPlugins().ConfigureAwait(false);
-            SetWindowTheme(Settings.Default.DarkTheme);
+            UseDarkTheme(Settings.Default.DarkTheme);
             await AddInbuiltPanes().ConfigureAwait(false);
             await InitalizePanes().ConfigureAwait(false);
-        }
-
-        private void SelectedContent_Closed(object sender, EventArgs e)
-        {
-            //OpenedFiles.Remove(GetSelectedDocument().OpenedDocument);
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
@@ -88,19 +86,19 @@ namespace JSharp.Windows.MainWindow
 
         private void SaveAs_Click(object sender, RoutedEventArgs e)
         {
-            GetSelectedDocument().SaveAs();
+            GetSelectedTextEditor().SaveAs();
         }
 
         private void ZoomValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedDocument = GetSelectedDocument();
+            var selectedDocument = GetSelectedTextEditor();
             if(selectedDocument != null)
                 selectedDocument.FontSize = (int)ZoomValue.SelectedItem;
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            GetSelectedDocument().SaveDocument();
+            GetSelectedTextEditor().SaveDocument();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -113,7 +111,7 @@ namespace JSharp.Windows.MainWindow
             Settings.Default.OpenedFiles.Clear();
             foreach (var document in DocumentPane.Children)
             {
-                var child = ((Editor)document.Content);
+                var child = ((TextEditor.TextEditor)document.Content);
                 
                 if(child.OpenedDocument != null)
                     Settings.Default.OpenedFiles.Add(child.OpenedDocument);
@@ -124,10 +122,14 @@ namespace JSharp.Windows.MainWindow
 
         private void New_Click(object sender, RoutedEventArgs e)
         {
-            Editor edit = new Editor();
+            TextEditor.TextEditor edit = new TextEditor.TextEditor();
             edit.SaveAs();
 
-            AddDocumentPage(edit.OpenedDocumentShortName, edit);
+            if(!edit.IsUnoccupied())
+            {
+                AddDocumentPage(edit.OpenedDocumentShortName, edit);
+            }
+            
         }
 
         private void SaveAll_Click(object sender, RoutedEventArgs e)
@@ -143,7 +145,7 @@ namespace JSharp.Windows.MainWindow
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             new JSharp.MainWindow.Settings().ShowDialog();
-            SetWindowTheme(Settings.Default.DarkTheme);
+            UseDarkTheme(Settings.Default.DarkTheme);
         }
 
         private void Recents_Click(object sender, RoutedEventArgs e)
@@ -181,12 +183,6 @@ namespace JSharp.Windows.MainWindow
             DebugCore.RunInDebugger(this.GetSelectedFile(false));
         }
 
-        private void DockManager_ActiveContentChanged(object sender, EventArgs e)
-        {
-            //this.Title = GetSelectedFile(true);
-            
-        }
-
         private void Open_Project_Folder_Click(object sender, RoutedEventArgs e)
         {
             using(FolderBrowserDialog f = new FolderBrowserDialog())
@@ -204,15 +200,30 @@ namespace JSharp.Windows.MainWindow
             new GotoDialog().ShowDialog();
         }
 
-        private void ClassAnalyser_click(object sender, RoutedEventArgs e)
-        {
-            //new ClassAnalyser().ShowDialog();
-        }
-
-
         private void CreateJar_Click(object sender, RoutedEventArgs e)
         {
             DebugCore.CreatePackage();
+        }
+
+        private void NewDocument_IsSelectedChanged(object sender, EventArgs e)
+        {
+            var doc = (LayoutDocument)sender;
+            if (doc.IsSelected)
+            {
+                string data = ((TextEditor.TextEditor)doc.Content).OpenedDocumentShortName;
+                Title = data != null ? $"JSharp ({data})" : "JSharp";
+
+                try
+                {
+                    string dir = Directory.GetParent(GetSelectedFile(false)).FullName;
+                    fileExplorer.SetDirectory(dir);
+                    ProjectFolder = dir;
+                }
+                catch (Exception)
+                {
+                }
+
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ namespace JSharp.Inbuilt_Panes
     /// </summary>
     public partial class FindReplace
     {
-        private static Editor GetEditor() => PluginHolder.Instance.ParentWindow.GetSelectedDocument();
+        private static TextEditor.TextEditor GetEditor() => PluginHolder.Instance.ParentWindow.GetSelectedTextEditor();
 
         public FindReplace()
         {

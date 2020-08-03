@@ -29,7 +29,7 @@ namespace JSharp
             else
             {
                 //Initialize editor settings
-                new Editor();
+                TextEditor.TextEditor.InitalizeCompletionData();
             }
         }
     }

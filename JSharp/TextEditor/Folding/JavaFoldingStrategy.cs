@@ -4,7 +4,7 @@ using ICSharpCode.AvalonEdit.Folding;
 
 namespace JSharp.TextEditor
 {
-    internal static class BraceFoldingStrategy
+    internal static class JavaFoldingStrategy
     {
         /// <summary>
         /// Update code foldings

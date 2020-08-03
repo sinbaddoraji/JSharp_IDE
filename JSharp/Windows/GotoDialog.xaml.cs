@@ -20,7 +20,7 @@ namespace JSharp.Windows
     /// </summary>
     public partial class GotoDialog : Window
     {
-        private Editor Editor => PluginCore.PluginHolder.Instance.ParentWindow.GetSelectedDocument();
+        private TextEditor.TextEditor Editor => PluginCore.PluginHolder.Instance.ParentWindow.GetSelectedTextEditor();
         public GotoDialog()
         {
             InitializeComponent();

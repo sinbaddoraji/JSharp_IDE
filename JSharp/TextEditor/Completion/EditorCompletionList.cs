@@ -10,9 +10,14 @@ using JSharp.TextEditor;
 
 namespace JSharp.Code_Completion
 {
+    /// <summary>
+    /// A type of list used to hold specificity Editor Completion data
+    /// </summary>
     public class EditorCompletionList: CompletionList
     {
         private readonly List<string> AutoCompleteStrings = new List<string>();
+
+        public bool Contains(string data) => AutoCompleteStrings.IndexOf(data) != -1;
 
         public void Add(string data, bool isImportant = false)
         {
@@ -28,7 +33,7 @@ namespace JSharp.Code_Completion
                 AutoCompleteStrings.Insert(binraySearchIndex, data);
 
                 int insertionIndex = binraySearchIndex;
-                MyCompletionData newCompletionData = new MyCompletionData(data);
+                EditorCompletionData newCompletionData = new EditorCompletionData(data);
 
                 if(!data.StartsWith(".")) newCompletionData.Priority++;
                 if (isImportant) newCompletionData.Priority += 10;
@@ -39,11 +44,6 @@ namespace JSharp.Code_Completion
                 else
                     CompletionData.Insert(insertionIndex, newCompletionData);
             }
-        }
-
-        public bool Contains(string data)
-        {
-            return AutoCompleteStrings.IndexOf(data) != -1;
         }
     }
 }

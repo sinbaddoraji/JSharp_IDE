@@ -26,68 +26,122 @@ namespace JSharp.Windows.MainWindow
 {
     public partial class Main : MetroWindow
     {
-        /*
-         * This class contains all the abstract definitions for the main window
-         * Note: public properties, objects and so on are public for plug-in access and control
-         */
+        #region Fields/Properties
 
-        /*Property Declarations*/
-
-        //Pane Related properties
+        /// <summary>
+        /// Avalon dock panes located at the top left corner of the dock window
+        /// </summary>
         private readonly ObservableCollection<Pane> LeftPaneItemsUp = new ObservableCollection<Pane>();
+
+        /// <summary>
+        /// Avalon dock panes located at the bottom left corner of the dock window
+        /// </summary>
         private readonly ObservableCollection<Pane> LeftPaneItemsDown = new ObservableCollection<Pane>();
+
+        /// <summary>
+        /// Avalon dock panes located at the top right corner of the dock window
+        /// </summary>
         private readonly ObservableCollection<Pane> RightPaneItemsUp = new ObservableCollection<Pane>();
+
+        /// <summary>
+        /// Avalon dock panes located at the lower right corner of the dock window
+        /// </summary>
         private readonly ObservableCollection<Pane> RightPaneItemsDown = new ObservableCollection<Pane>();
+
+        /// <summary>
+        /// Avalon dock panes located at the Bottom Pane located at the left
+        /// </summary>
         private readonly ObservableCollection<Pane> BottomPaneItemsLeft = new ObservableCollection<Pane>();
+
+        /// <summary>
+        /// Avalon dock panes located at the Bottom Pane located at the right
+        /// </summary>
         private readonly ObservableCollection<Pane> BottomPaneItemsRight = new ObservableCollection<Pane>();
-        //Dialogues
+
+        /// <summary>
+        /// OpenFileDialog used for opening files as documents in JSharp
+        /// </summary>
         private readonly OpenFileDialog openFileDialog;
 
+        /// <summary>
+        /// Path to folder being used as folder directory
+        /// </summary>
         public string ProjectFolder;
 
+        /// <summary>
+        /// File Explorer for JSharp
+        /// </summary>
         public FileExplorer fileExplorer;
+
+        /// <summary>
+        /// Find and Replace Pane for JSharp
+        /// </summary>
         public FindReplace findReplacePane;
+
+        /// <summary>
+        /// Find and Replace Pane for JSharp
+        /// </summary>
         public LayoutAnchorablePane[] panes;
 
-        //Document Related Properties
-        private IEnumerable<string> OpenedFiles => DocumentPane.Children.Select(document => ((Editor)document.Content).OpenedDocument);
+        /// <summary>
+        /// List of files open in JSharp
+        /// </summary>
+        private IEnumerable<string> OpenedFiles => DocumentPane.Children.Select(document => ((TextEditor.TextEditor)document.Content).OpenedDocument);
 
+        /// <summary>
+        /// List of plug-ins that have successfully been loaded in JSharp
+        /// </summary>
         public List<IPlugin> RegisteredPlugins => PluginHolder.Instance.RegisteredPlugins;
 
+        /// <summary>
+        /// List document panes initialized in JSharp
+        /// </summary>
+        public LayoutDocumentPane Documents => DocumentPane;
+
+        /// <summary>
+        /// Selected Document pane
+        /// </summary>
+        private LayoutContent SelectedDocumentPane => DocumentPane.SelectedContent;
+
+        /// <summary>
+        /// JSharp pane window location
+        /// </summary>
+        private enum PaneLocation { UpperLeft, LowerLeft, UpperRight, LowerRight, BottomLeft, BottomRight }
+
+        /// <summary>
+        /// Get the name of the selected document
+        /// </summary>
         public string GetSelectedFile(bool shortName)
         {
             if (DocumentPane.SelectedContent == null) return "JSharp";
 
             var o = DocumentPane.SelectedContent.Content;
-            if (o.GetType() != typeof(Editor)) return "JSharp";
-            return shortName ? ((Editor)o).OpenedDocumentShortName : ((Editor)o).OpenedDocument;
+            if (o.GetType() != typeof(TextEditor.TextEditor)) return "JSharp";
+            return shortName ? ((TextEditor.TextEditor)o).OpenedDocumentShortName : ((TextEditor.TextEditor)o).OpenedDocument;
         }
 
-        public Editor GetSelectedDocument()
+        /// <summary>
+        /// Get the selected document editor
+        /// </summary>
+        public TextEditor.TextEditor GetSelectedTextEditor()
         {
-            if (DocumentPane.SelectedContent == null) return null;
+            if (DocumentPane.SelectedContent == null || DocumentPane.SelectedContent.Content == null) return null;
 
             var o = DocumentPane.SelectedContent.Content;
-            if (o.GetType() != typeof(Editor)) return null;
-            return (Editor)o;
+            if (o.GetType() != typeof(TextEditor.TextEditor)) return null;
+            return (TextEditor.TextEditor)o;
         }
 
-        public void SetSelectedDocument(Editor value)
-        {
-            var o = DocumentPane.SelectedContent.Content;
-            if (o.GetType() == typeof(Editor))
-                DocumentPane.SelectedContent.Content = value;
-        }
-
-        public LayoutDocumentPane Documents => DocumentPane;
-
-        private LayoutContent SelectedDocumentFrame => DocumentPane.SelectedContent;
+        #endregion
 
         #region WindowSettings
 
-        public void SetWindowTheme(bool darkMode)
+        /// <summary>
+        /// Get the selected document editor
+        /// </summary>
+        public void UseDarkTheme(bool useDarkTheme)
         {
-            if (darkMode)
+            if (useDarkTheme)
             {
                 //Visual studio dark theme
                 DockManager.Theme = new Vs2013DarkTheme();
@@ -95,8 +149,8 @@ namespace JSharp.Windows.MainWindow
                 ThemeManager.Current.SyncTheme();
                 Background = DockManager.Background;
                 Foreground = new SolidColorBrush(Colors.White);
-                Editor.TextBackground = Background;
-                Editor.TextForeground = Foreground;
+                TextEditor.TextEditor.TextBackground = Background;
+                TextEditor.TextEditor.TextForeground = Foreground;
                 WindowTitleBrush = Background;
                 TitleForeground = Foreground;
                 //Set pane colours
@@ -123,21 +177,24 @@ namespace JSharp.Windows.MainWindow
 
         #region Pane Related Functions
 
+        /// <summary>
+        /// Add built-in panes to JSharp window
+        /// </summary>
         private Task<bool> AddInbuiltPanes()
         {
             //LowerPaneItems.Add(new Pane(new CommandPrompt(), "Command prompt"));
             fileExplorer = new Inbuilt_Panes.FileExplorer();
             fileExplorer.SetDirectory(Environment.CurrentDirectory);
-            AddPane(new Pane(fileExplorer, "File Explorer"), (int)PaneLocations.UpperLeft);
+            AddPane(new Pane(fileExplorer, "File Explorer"), (int)PaneLocation.UpperLeft);
 
             findReplacePane = new FindReplace();
-            AddPane(new Pane(findReplacePane, "Find and Replace"), (int)PaneLocations.LowerLeft);
+            AddPane(new Pane(findReplacePane, "Find and Replace"), (int)PaneLocation.LowerLeft);
 
             UserControl OutputWindow = new UserControl
             {
                 Content = DebugCore.OutputTextbox
             };
-            AddPane(new Pane(OutputWindow, "Output Window"), (int)PaneLocations.BottomLeft);
+            AddPane(new Pane(OutputWindow, "Output Window"), (int)PaneLocation.BottomLeft);
 
             //_terminal = new JSharpTerminal();
             //AddPane(new Pane(_terminal, "Terminal"), 4);
@@ -145,8 +202,9 @@ namespace JSharp.Windows.MainWindow
             return Task.FromResult(true);
         }
 
-        private enum PaneLocations { UpperLeft, LowerLeft, UpperRight, LowerRight, BottomLeft, BottomRight }
-
+        /// <summary>
+        /// Initialize all currently known panes to JSharp
+        /// </summary>
         private Task<bool> InitalizePanes()
         {
             for (int i = 0; i < LeftPaneItemsUp.Count; i++)
@@ -183,6 +241,9 @@ namespace JSharp.Windows.MainWindow
             return Task.FromResult(true);
         }
 
+        /// <summary>
+        /// Add pane to JSharp window
+        /// </summary>
         public void AddPane(Pane pane, int paneLocation)
         {
             if (pane == null) return;
@@ -203,49 +264,34 @@ namespace JSharp.Windows.MainWindow
 
         #region Document Related Functions
 
-        private void AddDocumentPage(string fName = null, Editor e = null)
+        /// <summary>
+        /// Add document page to JSharp (Empty Text-Editor without any open editor or a specified TextEditor
+        /// </summary>
+        private void AddDocumentPage(string fileName, TextEditor.TextEditor e)
         {
             LayoutDocument newDocument = new LayoutDocument
             {
-                Title = fName ?? "Untitled Document",
-                Content = e ?? new Editor()
+                Title = fileName ?? "Untitled Document",
+                Content = e ?? new TextEditor.TextEditor()
             };
 
-            ((Editor)newDocument.Content).HorizontalAlignment = HorizontalAlignment.Stretch;
-            ((Editor)newDocument.Content).VerticalAlignment = VerticalAlignment.Stretch;
+            ((TextEditor.TextEditor)newDocument.Content).HorizontalAlignment = HorizontalAlignment.Stretch;
+            ((TextEditor.TextEditor)newDocument.Content).VerticalAlignment = VerticalAlignment.Stretch;
 
-            ((Editor)newDocument.Content).DocumentChanged += delegate
+            ((TextEditor.TextEditor)newDocument.Content).DocumentChanged += delegate
             {
-                newDocument.Title = ((Editor)newDocument.Content).OpenedDocumentShortName;
+                newDocument.Title = ((TextEditor.TextEditor)newDocument.Content).OpenedDocumentShortName;
             };
 
             newDocument.IsSelectedChanged += NewDocument_IsSelectedChanged;
 
             DocumentPane.Children.Add(newDocument);
-            SelectTab(DocumentPane.IndexOfChild(newDocument));
+            SelectDocumentTab(DocumentPane.IndexOfChild(newDocument));
         }
 
-        private void NewDocument_IsSelectedChanged(object sender, EventArgs e)
-        {
-            var doc = (LayoutDocument)sender;
-            if(doc.IsSelected)
-            {
-                string data = ((Editor)doc.Content).OpenedDocumentShortName;
-                Title = data != null ? $"JSharp ({data})" : "JSharp";
-
-                try
-                {
-                    string dir = Directory.GetParent(GetSelectedFile(false)).FullName;
-                    fileExplorer.SetDirectory(dir);
-                    ProjectFolder = dir;
-                }
-                catch (Exception)
-                {
-                }
-                
-            }
-        }
-
+        /// <summary>
+        /// Open an array of files as JSharp documents
+        /// </summary>
         public void OpenDocuments(string[] filenames)
         {
             foreach (var file in filenames)
@@ -261,6 +307,9 @@ namespace JSharp.Windows.MainWindow
             }
         }
 
+        /// <summary>
+        /// Open file as JSharp  document
+        /// </summary>
         public void OpenDocument(string filename)
         {
             if (Settings.Default.RecentFiles == null)
@@ -273,35 +322,38 @@ namespace JSharp.Windows.MainWindow
                 Settings.Default.Save();
             }
             if (OpenedFiles.Contains(filename)) return;
-            if (DocumentPane.Children.Count == 0)
-            {
-                AddDocumentPage("untitled");//Add Default Page
-            }
 
-            Editor ex;
+            TextEditor.TextEditor ex;
             string name = Path.GetFileName(filename);
-            if (GetSelectedDocument().IsUnoccupied())
+
+            if (GetSelectedTextEditor()?.IsUnoccupied() == true)
             {
-                ex = GetSelectedDocument();
-                SelectedDocumentFrame.Title = name;
+                ex = GetSelectedTextEditor();
+                SelectedDocumentPane.Title = name;
             }
             else
             {
-                ex = new Editor();
+                ex = new TextEditor.TextEditor();
                 AddDocumentPage(name, ex);
             }
             ex.OpenDocument(filename);
         }
 
+        /// <summary>
+        /// Save all currently open JSharp documents to their files
+        /// </summary>
         private void SaveAllDocuments()
         {
             foreach (var document in DocumentPane.Children)
             {
-                ((Editor)document.Content).SaveDocument();
+                ((TextEditor.TextEditor)document.Content).SaveDocument();
             }
         }
 
-        public void SelectTab(int index)
+        /// <summary>
+        /// Select document tab
+        /// </summary>
+        public void SelectDocumentTab(int index)
         {
             DocumentPane.SelectedContentIndex = index;
         }
@@ -310,6 +362,9 @@ namespace JSharp.Windows.MainWindow
 
         #region Plug-in Related Functions
 
+        /// <summary>
+        /// Load JSharp Plugin
+        /// </summary>
         private void LoadPlugin(IPlugin plugin)
         {
             if (plugin.IsBackgroundPlugin)
@@ -341,13 +396,16 @@ namespace JSharp.Windows.MainWindow
                 if (!plugin.AddToContextMenu && !plugin.AddToMenu) break;
 
                 if (plugin.AddToContextMenu)
-                    Editor.EditorContntextMenu.Items.Add(MenuItems[i]);
+                    TextEditor.TextEditor.GlobalEditorContntextMenu.Items.Add(MenuItems[i]);
 
                 if (plugin.AddToMenu)
                     PluginMenu.Items.Add(MenuItems[i]);
             }
         }
 
+        /// <summary>
+        /// Load all Plugins currently known to JSharp
+        /// </summary>
         private Task<bool> LoadPlugins()
         {
             PluginHolder.Instance = new PluginHolder { ParentWindow = this };

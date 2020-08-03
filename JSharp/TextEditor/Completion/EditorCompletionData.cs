@@ -6,9 +6,12 @@ using ICSharpCode.AvalonEdit.Editing;
 
 namespace JSharp.TextEditor
 {
-    public class MyCompletionData : ICompletionData
+    /// <summary>
+    /// Completion data for a completion window in a JSharp TextEditor
+    /// </summary>
+    public class EditorCompletionData : ICompletionData
     {
-        public MyCompletionData(string text) => Text = text;
+        public EditorCompletionData(string text) => Text = text;
 
         public ImageSource Image => null;
 

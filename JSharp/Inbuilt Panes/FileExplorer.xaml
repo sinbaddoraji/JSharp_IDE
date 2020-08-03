@@ -20,7 +20,7 @@
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" >
                         <Image Source="{Binding ImageSource}" d:DataContext="{d:DesignInstance}" />
-                        <TextBlock Text="{Binding Name}" d:DataContext="{d:DesignInstance }" />
+                        <TextBlock Text="{Binding Name}" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
