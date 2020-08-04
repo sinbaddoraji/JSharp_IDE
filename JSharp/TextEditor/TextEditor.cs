@@ -269,7 +269,12 @@ namespace JSharp.TextEditor
         {
             if (!EditorCompletionWindow.InitalizeCompletionData())
             {
-                _classList = File.ReadAllLines($@"{Settings.Default.JdkPath}\jre\lib\classlist").Select(x => x.Replace("/", ".")).Where(x => !x.Contains("$"));
+                if (Settings.Default.invalidClasses == null)
+                    Settings.Default.invalidClasses = new StringCollection();
+
+                bool invalidFound = false;
+
+                _classList = File.ReadAllLines($@"{Settings.Default.JdkPath}\jre\lib\classlist").Select(x => x.Replace("/", ".")).Where(x => !x.Contains("$") && !x.Contains("#") && !Settings.Default.invalidClasses.Contains(x));
                 foreach (string item in _classList)
                 {
                     try
@@ -277,8 +282,15 @@ namespace JSharp.TextEditor
                         if (item.Contains("lang")) AddCompletionData(item);
                         else AddCompletion_Data(item);
                     }
-                    catch { }
+                    catch
+                    {
+                        Settings.Default.invalidClasses.Add(item);
+                        invalidFound = true;
+                    }
                 }
+
+                if(invalidFound)
+                    Settings.Default.Save();
             }
         }
 
@@ -290,7 +302,6 @@ namespace JSharp.TextEditor
             AddCompletion_Data(data);
 
             java.lang.Class c = java.lang.Class.forName(data);
-
             if (c == null) return;
             AddCompletion_Data(c.getSimpleName());
 

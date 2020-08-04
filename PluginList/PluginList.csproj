@@ -14,4 +14,8 @@
     <OutputPath></OutputPath>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\JSharp\JSharp.csproj" />
+  </ItemGroup>
+
 </Project>

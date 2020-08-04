@@ -59,7 +59,7 @@
                 </MenuItem>
 
                 <MenuItem  Header="Help" DockPanel.Dock="Top" Background="Transparent">
-                    <MenuItem  Header="About JSharp" DockPanel.Dock="Top" />
+                    <MenuItem  Header="About JSharp" DockPanel.Dock="Top" Click="About_Click" />
                 </MenuItem>
             </Menu>
         </mah:WindowCommands>

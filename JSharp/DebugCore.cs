@@ -174,6 +174,9 @@ namespace JSharp
         /// </summary>
         public static void RunInDebugger(string filename)
         {
+            if (!filename.EndsWith(".java")) return;
+            CompileProject(false);
+
             string debuggerDir = ProgramLocation + "\\debugger.jar";
             string processCode = $"/K  cd/   &&  cd {GetParentDir(filename)}  &&  {JavaConsole} -jar {debuggerDir} {GetName(filename)}";
 

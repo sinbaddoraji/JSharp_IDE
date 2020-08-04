@@ -180,7 +180,7 @@ namespace JSharp.Windows.MainWindow
 
         private void DebugRun_Click(object sender, RoutedEventArgs e)
         {
-            DebugCore.RunInDebugger(this.GetSelectedFile(false));
+            DebugCore.RunInDebugger(GetSelectedFile(false));
         }
 
         private void Open_Project_Folder_Click(object sender, RoutedEventArgs e)
@@ -225,5 +225,11 @@ namespace JSharp.Windows.MainWindow
 
             }
         }
+
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            new AboutDialog().ShowDialog();
+        }
+
     }
 }
