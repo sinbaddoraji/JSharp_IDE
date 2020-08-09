@@ -100,42 +100,14 @@ namespace JSharp.Windows.MainWindow
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            //Unload all registered plugins incase none managable objects were used in plugins
-            PluginHolder.Instance.UnloadAllRegisteredPlugins();
-
-            SaveAllDocuments();
-
-            Properties.Settings.Default.OpenedFiles.Clear();
-            foreach (var document in DocumentPane.Children)
+            try
             {
-                var child = ((TextEditor.TextEditor)document.Content);
-                
-                if(child.OpenedDocument != null)
-                    Properties.Settings.Default.OpenedFiles.Add(child.OpenedDocument);
+                PerformClosingCommands();
             }
-
-            UpdatePanes();
-            //Write layout
-            XmlWriter xmlWriter = XmlWriter.Create("layout.xml");
-            xmlWriter.WriteStartDocument();
-            xmlWriter.WriteStartElement("panes");
-
-            foreach (var pane in dictionaryOfPanes)
+            finally
             {
-                xmlWriter.WriteStartElement("pane");
-                xmlWriter.WriteAttributeString("title", pane.Key);
-                xmlWriter.WriteAttributeString("paneLocation", pane.Value.paneLocation.ToString());
-                xmlWriter.WriteAttributeString("width", pane.Value.Width.ToString());
-                xmlWriter.WriteAttributeString("height", pane.Value.Height.ToString());
-                xmlWriter.WriteAttributeString("isCollapsed", pane.Value.isCollapsed.ToString());
-                xmlWriter.WriteEndElement();
+                System.Windows.Application.Current.Shutdown();
             }
-
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteEndDocument();
-            xmlWriter.Close();
-
-            Properties.Settings.Default.Save();
         }
 
         private void New_Click(object sender, RoutedEventArgs e)

@@ -139,6 +139,48 @@ namespace JSharp.Windows.MainWindow
             }
         }
 
+        /// <summary>
+        /// Perform closing commands (Make sure all settings are saved)
+        /// </summary>
+        private void PerformClosingCommands()
+        {
+            //Unload all registered plugins incase none managable objects were used in plugins
+            PluginHolder.Instance.UnloadAllRegisteredPlugins();
+
+            SaveAllDocuments();
+
+            Properties.Settings.Default.OpenedFiles.Clear();
+            foreach (var document in DocumentPane.Children)
+            {
+                var child = ((TextEditor.TextEditor)document.Content);
+
+                if (child.OpenedDocument != null)
+                    Properties.Settings.Default.OpenedFiles.Add(child.OpenedDocument);
+            }
+
+            UpdatePanes();
+            //Write layout
+            XmlWriter xmlWriter = XmlWriter.Create("layout.xml");
+            xmlWriter.WriteStartDocument();
+            xmlWriter.WriteStartElement("panes");
+
+            foreach (var pane in dictionaryOfPanes)
+            {
+                xmlWriter.WriteStartElement("pane");
+                xmlWriter.WriteAttributeString("title", pane.Key);
+                xmlWriter.WriteAttributeString("paneLocation", pane.Value.paneLocation.ToString());
+                xmlWriter.WriteAttributeString("width", pane.Value.Width.ToString());
+                xmlWriter.WriteAttributeString("height", pane.Value.Height.ToString());
+                xmlWriter.WriteAttributeString("isCollapsed", pane.Value.isCollapsed.ToString());
+                xmlWriter.WriteEndElement();
+            }
+
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteEndDocument();
+            xmlWriter.Close();
+
+            Properties.Settings.Default.Save();
+        }
         #endregion WindowSettings
 
         #region Pane Related Functions
@@ -192,7 +234,9 @@ namespace JSharp.Windows.MainWindow
                         {
                             title = reader.GetAttribute("title"),
                             paneLocation = int.Parse(reader.GetAttribute("paneLocation")),
-                            isCollapsed = bool.Parse(reader.GetAttribute("isCollapsed"))
+                            isCollapsed = bool.Parse(reader.GetAttribute("isCollapsed")),
+                            Width = double.Parse(reader.GetAttribute("width")),
+                            Height = double.Parse(reader.GetAttribute("height"))
                         };
 
                         if (!dictionaryOfPanes.ContainsKey(currentPane.title))
@@ -232,6 +276,8 @@ namespace JSharp.Windows.MainWindow
                 dictionaryOfPanes[pane.title].lA = pane.lA;
                 pane.paneLocation = dictionaryOfPanes[pane.title].paneLocation;
                 pane.isCollapsed = dictionaryOfPanes[pane.title].isCollapsed;
+                pane.Width = dictionaryOfPanes[pane.title].Width;
+                pane.Height = dictionaryOfPanes[pane.title].Height;
             }
 
             ((UserControl)pane.content).HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -241,8 +287,19 @@ namespace JSharp.Windows.MainWindow
             lA.CanDockAsTabbedDocument = false;
             lA.AddToLayout(DockManager, (AnchorableShowStrategy)pane.paneLocation);
 
-            ((LayoutAnchorablePane)lA.Parent).DockWidth = new GridLength(pane.Width);
-            ((LayoutAnchorablePane)lA.Parent).DockHeight = new GridLength(pane.Height);
+
+            if (lA.Parent is LayoutAnchorablePane p)
+            {
+                p.DockWidth = new GridLength(pane.Width);
+                p.DockHeight = new GridLength(pane.Height);
+            }
+            else if (lA.Parent is LayoutAnchorablePaneGroup pG)
+            {
+
+                pG.DockWidth = new GridLength(pane.Width);
+                pG.DockHeight = new GridLength(pane.Height);
+            }
+
             lA.AutoHideHeight = pane.Height;
             lA.AutoHideWidth = pane.Width;
             
@@ -272,16 +329,25 @@ namespace JSharp.Windows.MainWindow
                         break;
                 }
 
-                if (pane.Value.lA.Parent is LayoutAnchorablePane)
+                if(pane.Value.lA.IsAutoHidden)
                 {
-                    pane.Value.Width = ((LayoutAnchorablePane)pane.Value.lA.Parent).DockWidth.Value;
-                    pane.Value.Height = ((LayoutAnchorablePane)pane.Value.lA.Parent).DockHeight.Value;
+                    pane.Value.Width = pane.Value.lA.AutoHideWidth;
+                    pane.Value.Height = pane.Value.lA.AutoHideHeight;
                 }
-                if (pane.Value.lA.Parent is LayoutAnchorablePaneGroup)
+                else
                 {
-                    pane.Value.Width = ((LayoutAnchorablePaneGroup)pane.Value.lA.Parent).DockWidth.Value;
-                    pane.Value.Height = ((LayoutAnchorablePaneGroup)pane.Value.lA.Parent).DockHeight.Value;
+                    if (pane.Value.lA.Parent is LayoutAnchorablePane p)
+                    {
+                        pane.Value.Width = p.DockWidth.Value;
+                        pane.Value.Height = p.DockHeight.Value;
+                    }
+                    else if (pane.Value.lA.Parent is LayoutAnchorablePaneGroup pG)
+                    {
+                        pane.Value.Width = pG.DockWidth.Value;
+                        pane.Value.Height = pG.DockHeight.Value;
+                    }
                 }
+               
 
                 pane.Value.isCollapsed = pane.Value.lA.IsAutoHidden;
             }
