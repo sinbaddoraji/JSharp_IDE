@@ -1,49 +1,41 @@
-﻿using ICSharpCode.AvalonEdit.CodeCompletion;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.Collections.ObjectModel;
-using JSharp.TextEditor;
+﻿using System.Collections.Generic;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 
-namespace JSharp.Code_Completion
+namespace JSharp.TextEditor.Completion
 {
+    /// <inheritdoc />
     /// <summary>
     /// A type of list used to hold specificity Editor Completion data
     /// </summary>
     public class EditorCompletionList: CompletionList
     {
-        private readonly List<string> AutoCompleteStrings = new List<string>();
+        private readonly List<string> _autoCompleteStrings = new List<string>();
 
-        public bool Contains(string data) => AutoCompleteStrings.IndexOf(data) != -1;
+        public bool Contains(string data) => _autoCompleteStrings.IndexOf(data) != -1;
 
         public void Add(string data, bool isImportant = false)
         {
-            if(!AutoCompleteStrings.Contains(data))
-            {
-                AutoCompleteStrings.Add(data);
+            if (_autoCompleteStrings.Contains(data)) return;
+            _autoCompleteStrings.Add(data);
 
-                //Get predicted index of input in the list using binary search
-                int binraySearchIndex = AutoCompleteStrings.BinarySearch(data);
-                if (binraySearchIndex < 0) binraySearchIndex = ~binraySearchIndex;
+            //Get predicted index of input in the list using binary search
+            var binraySearchIndex = _autoCompleteStrings.BinarySearch(data);
+            if (binraySearchIndex < 0) binraySearchIndex = ~binraySearchIndex;
 
-                //Insert text at predicted index
-                AutoCompleteStrings.Insert(binraySearchIndex, data);
+            //Insert text at predicted index
+            _autoCompleteStrings.Insert(binraySearchIndex, data);
 
-                int insertionIndex = binraySearchIndex;
-                EditorCompletionData newCompletionData = new EditorCompletionData(data);
+            var insertionIndex = binraySearchIndex;
+            var newCompletionData = new EditorCompletionData(data);
 
-                if(!data.StartsWith(".")) newCompletionData.Priority++;
-                if (isImportant) newCompletionData.Priority += 10;
+            if(!data.StartsWith(".")) newCompletionData.Priority++;
+            if (isImportant) newCompletionData.Priority += 10;
 
-                //Add to completion data
-                if (insertionIndex >= AutoCompleteStrings.Count || insertionIndex >= CompletionData.Count)
-                    CompletionData.Add(newCompletionData);
-                else
-                    CompletionData.Insert(insertionIndex, newCompletionData);
-            }
+            //Add to completion data
+            if (insertionIndex >= _autoCompleteStrings.Count || insertionIndex >= CompletionData.Count)
+                CompletionData.Add(newCompletionData);
+            else
+                CompletionData.Insert(insertionIndex, newCompletionData);
         }
     }
 }

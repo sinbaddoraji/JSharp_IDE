@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
@@ -30,7 +31,7 @@ namespace JSharp.Inbuilt_Panes
             {
                 ParentDirectory = Directory.GetParent(FullPath).FullName;
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 ParentDirectory = FullPath;
             }
@@ -76,16 +77,22 @@ namespace JSharp.Inbuilt_Panes
 
         public void SetDirectory(string dir)
         {
-            Files.Clear();
+            try
+            {
+                Files.Clear();
 
-            Files.Add(new FileItem(Directory.GetParent(dir).FullName, true));
-            foreach (var directory in Directory.GetDirectories(dir)) AddListItem(directory);
+                Files.Add(new FileItem(Directory.GetParent(dir).FullName, true));
+                foreach (var directory in Directory.GetDirectories(dir)) AddListItem(directory);
 
-            string[] allowedExtensions = { ".java", ".cs", ".xml", ".xaml", ".html", ".js", ".css", ".py", ".php", ".json", ".txt", ".md" };
-            foreach (var file in Directory.GetFiles(dir).Where(x => allowedExtensions.Contains(GetExtension(x))))
-                AddListItem(file);
+                string[] allowedExtensions = { ".java", ".cs", ".xml", ".xaml", ".html", ".js", ".css", ".py", ".php", ".json", ".txt", ".md" };
+                foreach (var file in Directory.GetFiles(dir).Where(x => allowedExtensions.Contains(GetExtension(x))))
+                    AddListItem(file);
 
-            ListView.Items.Refresh();
+                ListView.Items.Refresh();
+            }
+            catch 
+            {
+            }
         }
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -112,18 +119,15 @@ namespace JSharp.Inbuilt_Panes
             if (selectedFile == null) return;
 
             var messageBox = System.Windows.Forms.MessageBox.Show($"Are you sure you want to delete {selectedFile.Name}?", "Are you sure?", System.Windows.Forms.MessageBoxButtons.YesNo);
-            if(messageBox == System.Windows.Forms.DialogResult.Yes)
+            if (messageBox != System.Windows.Forms.DialogResult.Yes) return;
+            try
             {
-                try
-                {
-                    File.Delete(selectedFile.FullPath);
-                    Files.Remove(selectedFile);
-                }
-                catch (System.Exception ex)
-                {
-                    System.Windows.Forms.MessageBox.Show(ex.Message);
-                }
-                
+                File.Delete(selectedFile.FullPath);
+                Files.Remove(selectedFile);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.Message);
             }
         }
     }

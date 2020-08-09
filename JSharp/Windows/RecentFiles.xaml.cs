@@ -14,10 +14,10 @@ namespace JSharp.Windows
         public RecentFiles()
         {
             InitializeComponent();
-            recentList.ItemsSource = Settings.Default.RecentFiles;
+            recentList.ItemsSource = Properties.Settings.Default.RecentFiles;
             recentList.MouseDoubleClick += RecentList_MouseDoubleClick;
 
-            if(Settings.Default.DarkTheme)
+            if(Properties.Settings.Default.DarkTheme)
             {
                 Background = PluginHolder.Instance.ParentWindow.Background;
                 Foreground = PluginHolder.Instance.ParentWindow.Background;
@@ -42,8 +42,8 @@ namespace JSharp.Windows
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Settings.Default.RecentFiles.Clear();
-            Settings.Default.Save();
+            Properties.Settings.Default.RecentFiles.Clear();
+            Properties.Settings.Default.Save();
         }
     }
 }

@@ -1,20 +1,15 @@
 using JSharp.PluginCore;
 using JSharp.Windows.MainWindow;
-using sun.reflect.generics.tree;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace JSharp
 {
     internal static class DebugCore
     {
-        /// <summary>
-        /// JDK path
-        /// </summary>
-        private static readonly string JdkPath;
-
         /// <summary>
         /// Path to Java console (java.exe)
         /// </summary>
@@ -48,27 +43,24 @@ namespace JSharp
         /// <summary>
         /// Java class containing Main(String[] args)
         /// </summary>
-        public static string MainClassFile;
+        private static string _mainClassFile;
 
         /// <summary>
         /// Debug process (process for compiler, console, ..)
         /// </summary>
-        private static Process process;
+        private static Process _process;
 
         /// <summary>
         /// Text-box with process output
         /// </summary>
-        public static System.Windows.Controls.TextBox OutputTextbox;
+        public static readonly System.Windows.Controls.TextBox OutputTextbox;
 
         /// <summary>
         /// Text-box with process output
         /// </summary>
-        public static string GetProjectDirectory()
+        private static string GetProjectDirectory()
         {
-            if (MainClassFile != null)
-                return GetParentDir(MainClassFile);
-            else
-                return Directory.GetParent(PluginHolder.Instance.ParentWindow.GetSelectedFile(false)).Name;
+            return _mainClassFile != null ? GetParentDir(_mainClassFile) : Directory.GetParent(PluginHolder.Instance.ParentWindow.GetSelectedFile(false)).Name;
         }
 
         /// <summary>
@@ -76,10 +68,10 @@ namespace JSharp
         /// </summary>
         private static string GetName(string filename)
         {
-            string fname = filename.Remove(filename.Length - 5);
+            var fname = filename.Remove(filename.Length - 5);
             if (!File.Exists(fname + ".class")) Compile(filename);
 
-            return fname.Substring(filename.LastIndexOf("\\") + 1);
+            return fname.Substring(filename.LastIndexOf("\\", StringComparison.Ordinal) + 1);
         }
 
         /// <summary>
@@ -101,14 +93,12 @@ namespace JSharp
         /// <summary>
         /// Get class names from project folder
         /// </summary>
-        public static string GetProjectClasses()
+        private static string GetProjectClasses()
         {
-            string output = "";
-            string dir = GetProjectDirectory();
+            var dir = GetProjectDirectory();
 
             var classFiles = Directory.GetFiles(dir, "*.class");
-            for (int i = 0; i < classFiles.Length; i++)
-                output += classFiles[i].Substring(dir.Length + 1) + " ";
+            var output = classFiles.Aggregate("", (current, t) => current + (t.Substring(dir.Length + 1) + " "));
 
             return output.Trim();
         }
@@ -118,10 +108,10 @@ namespace JSharp
         /// </summary>
         static DebugCore()
         {
-            JdkPath = Properties.Settings.Default.JdkPath;
-            JavaConsole = $"\"{JdkPath}\\bin\\java.exe\"";
-            JavaCompiler = $"{JdkPath}\\bin\\javac.exe";
-            JavaJar = $"\"{JdkPath}\\bin\\jar.exe\"";
+            var jdkPath = Properties.Settings.Default.JdkPath;
+            JavaConsole = $"\"{jdkPath}\\bin\\java.exe\"";
+            JavaCompiler = $"\"{jdkPath}\\bin\\javac.exe\"";
+            JavaJar = $"\"{jdkPath}\\bin\\jar.exe\"";
 
             ProgramLocation = Directory.GetParent(Environment.GetCommandLineArgs()[0]).ToString();
 
@@ -137,18 +127,17 @@ namespace JSharp
         /// </summary>
         public static void CompileProject(bool run)
         {
-            string projectFolder = GetParentDir(PluginHolder.Instance.ParentWindow.GetSelectedFile(false));
-            MainClassFile = null;
+            var projectFolder = GetParentDir(PluginHolder.Instance.ParentWindow.GetSelectedFile(false));
+            _mainClassFile = null;
 
-            var javaFiles = Directory.GetFiles(projectFolder, "*.java");
-            for (int i = 0; i < javaFiles.Length; i++)
+            foreach (var javaFile in Directory.GetFiles(projectFolder, "*.java"))
             {
-                if (MainClassFile == null && File.ReadAllText(javaFiles[i]).Contains("static void main"))
+                if (_mainClassFile == null && File.ReadAllText(javaFile).Contains("static void main"))
                 {
-                    MainClassFile = javaFiles[i];
+                    _mainClassFile = javaFile;
                 }
 
-                Compile(ProjectFolder, javaFiles[i]);
+                Compile(ProjectFolder, javaFile);
             }
 
             if (run) RunProject();
@@ -159,13 +148,13 @@ namespace JSharp
         /// </summary>
         public static void RunProject()
         {
-            if(MainClassFile != null)
+            if(_mainClassFile != null)
             {
-                Run(MainClassFile);
+                Run(_mainClassFile);
             }
             else
             {
-                MessageBox.Show("Main class can not be found in project folder");
+                MessageBox.Show(@"Main class can not be found in project folder");
             }
         }
 
@@ -180,7 +169,7 @@ namespace JSharp
             string debuggerDir = ProgramLocation + "\\debugger.jar";
             string processCode = $"/K  cd/   &&  cd {GetParentDir(filename)}  &&  {JavaConsole} -jar {debuggerDir} {GetName(filename)}";
 
-            process = new Process
+            _process = new Process
             {
                 StartInfo = new ProcessStartInfo()
                 {
@@ -190,7 +179,9 @@ namespace JSharp
                 }
             };
             OutputTextbox.Text += "Debugger Starting...\n";
-            process.Start();
+            OutputTextbox.ScrollToEnd();
+
+            _process.Start();
         }
 
         /// <summary>
@@ -198,13 +189,13 @@ namespace JSharp
         /// </summary>
         public static void Run(string filename)
         {
-            if (filename.Contains(".java") && filename != null)
+            if (filename.Contains(".java"))
             {
-                string fName = GetName(filename);
-                string processCode = $"/K  cd/   &&  cd {GetParentDir(filename)}  &&  {JavaConsole}  {fName} && title {fName}.java";
+                var fName = GetName(filename);
+                var processCode = $"/K  cd/   &&  cd {GetParentDir(filename)}  &&  {JavaConsole}  {fName} && title {fName}.java";
 
-                process?.Close();
-                process = new Process()
+                _process?.Close();
+                _process = new Process()
                 {
                     StartInfo = new ProcessStartInfo("cmd.exe", processCode)
                     {
@@ -212,12 +203,13 @@ namespace JSharp
                     }
                 };
 
-                process.Start();
+                _process.Start();
                 OutputTextbox.Text += $"Running {filename}\n";
+                OutputTextbox.ScrollToEnd();
             }
             else
             {
-                MessageBox.Show("This is not a valid Java file");
+                MessageBox.Show(@"This is not a valid Java file");
             }
         }
 
@@ -229,32 +221,33 @@ namespace JSharp
         /// <summary>
         /// Compile file in working directory
         /// </summary>
-        public static void Compile(string WorkingDirectory, string FileName)
+        private static void Compile(string workingDirectory, string fileName)
         {
             if (File.Exists(JavaCompiler))
             {
-                process?.Close();
+                _process?.Close();
 
-                process = new Process()
+                _process = new Process()
                 {
                     StartInfo = new ProcessStartInfo()
                     {
-                        FileName = JavaCompiler, Arguments = FileName,
-                        WorkingDirectory = WorkingDirectory,
+                        FileName = JavaCompiler, Arguments = fileName,
+                        WorkingDirectory = workingDirectory,
                         CreateNoWindow = true, ErrorDialog = false, UseShellExecute = false,
                         RedirectStandardError = true, RedirectStandardOutput = true
                     }
                 };
-                process.Start();
+                _process.Start();
 
-                string output = process.StandardError.ReadToEnd();
-                OutputTextbox.Text += output.Length > 0 ? $"{output}\n" : $"Successfully built {FileName}\n";
+                var output = _process.StandardError.ReadToEnd();
+                OutputTextbox.Text += output.Length > 0 ? $"{output}\n" : $"Successfully built {fileName}\n";
+                OutputTextbox.ScrollToEnd();
 
-                process.WaitForExit(20000);
+                _process.WaitForExit(20000);
             }
             else
             {
-                MessageBox.Show("Unable to compile " + FileName);
+                MessageBox.Show(@"Unable to compile " + fileName);
             }
         }
 
@@ -268,13 +261,13 @@ namespace JSharp
             string manifestfile = GetProjectDirectory() + "\\Manifest.mf";
             GenerateProjectManifest(manifestfile);
 
-            string classes = GetProjectClasses();
+            var classes = GetProjectClasses();
             const string jarfilename = "output.jar";
 
-            string processCode = $"/K  cd/   &&  cd  {GetProjectDirectory()} &&  {JavaJar}  cmf   Manifest.mf  {jarfilename}   {classes}";
+            var processCode = $"/K  cd/   &&  cd  {GetProjectDirectory()} &&  {JavaJar}  cmf   Manifest.mf  {jarfilename}   {classes}";
 
-            process?.Close();
-            process = new Process()
+            _process?.Close();
+            _process = new Process()
             {
                 StartInfo = new ProcessStartInfo("cmd.exe", processCode)
                 {
@@ -283,7 +276,7 @@ namespace JSharp
                     WindowStyle = ProcessWindowStyle.Hidden
                 }
             };
-            process.Start();
+            _process.Start();
         }
 
         /// <summary>
@@ -291,8 +284,8 @@ namespace JSharp
         /// </summary>
         private static void GenerateProjectManifest(string manifestfile)
         {
-            string mainClass = Path.GetFileNameWithoutExtension(MainClassFile);
-            File.WriteAllText(manifestfile,"Manifest-Version: 1.0"
+            var mainClass = Path.GetFileNameWithoutExtension(_mainClassFile);
+            File.WriteAllText(manifestfile,@"Manifest-Version: 1.0"
                        + "\nAnt-Version: Apache Ant 1.9.4"
                        + "\nCreated-By: 1.8.0_25-b18 (Oracle Corporation)"
                        + "\nClass-Path: "

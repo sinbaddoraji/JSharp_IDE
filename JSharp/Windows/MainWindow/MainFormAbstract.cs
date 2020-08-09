@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -9,22 +8,18 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using AvalonDock.Layout;
 using AvalonDock.Themes;
 using ControlzEx.Theming;
 using JSharp.Inbuilt_Panes;
 using JSharp.PluginCore;
-using JSharp.Properties;
-using JSharp.TextEditor;
-using MahApps.Metro.Controls;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using MessageBox = System.Windows.MessageBox;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace JSharp.Windows.MainWindow
 {
-    public partial class Main : MetroWindow
+    public partial class Main
     {
         #region Fields/Properties
 
@@ -71,17 +66,17 @@ namespace JSharp.Windows.MainWindow
         /// <summary>
         /// File Explorer for JSharp
         /// </summary>
-        public FileExplorer fileExplorer;
+        private FileExplorer fileExplorer;
 
         /// <summary>
         /// Find and Replace Pane for JSharp
         /// </summary>
-        public FindReplace findReplacePane;
+        private FindReplace findReplacePane;
 
         /// <summary>
         /// Find and Replace Pane for JSharp
         /// </summary>
-        public LayoutAnchorablePane[] panes;
+        private LayoutAnchorablePane[] panes;
 
         /// <summary>
         /// List of files open in JSharp
@@ -139,7 +134,7 @@ namespace JSharp.Windows.MainWindow
         /// <summary>
         /// Get the selected document editor
         /// </summary>
-        public void UseDarkTheme(bool useDarkTheme)
+        private void UseDarkTheme(bool useDarkTheme)
         {
             if (useDarkTheme)
             {
@@ -165,7 +160,7 @@ namespace JSharp.Windows.MainWindow
                 Background = Background;
 
                 Menu.Background = Background;
-                Color fontColour = (Color)ColorConverter.ConvertFromString("#FFDCDCDC");
+                var fontColour = (Color)ColorConverter.ConvertFromString("#FFDCDCDC");
                 TitleForeground = new SolidColorBrush(fontColour);
                 
                 ThemeManager.Current.ChangeTheme(this, "Light.Cyan");
@@ -183,18 +178,18 @@ namespace JSharp.Windows.MainWindow
         private Task<bool> AddInbuiltPanes()
         {
             //LowerPaneItems.Add(new Pane(new CommandPrompt(), "Command prompt"));
-            fileExplorer = new Inbuilt_Panes.FileExplorer();
+            fileExplorer = new FileExplorer();
             fileExplorer.SetDirectory(Environment.CurrentDirectory);
-            AddPane(new Pane(fileExplorer, "File Explorer"), (int)PaneLocation.UpperLeft);
+            AddPane(new Pane(fileExplorer, "File Explorer", (int)PaneLocation.UpperLeft));
 
             findReplacePane = new FindReplace();
-            AddPane(new Pane(findReplacePane, "Find and Replace"), (int)PaneLocation.LowerLeft);
+            AddPane(new Pane(findReplacePane, "Find and Replace", (int)PaneLocation.LowerLeft));
 
-            UserControl OutputWindow = new UserControl
+            var OutputWindow = new UserControl
             {
                 Content = DebugCore.OutputTextbox
             };
-            AddPane(new Pane(OutputWindow, "Output Window"), (int)PaneLocation.BottomLeft);
+            AddPane(new Pane(OutputWindow, "Output Window", (int)PaneLocation.BottomLeft));
 
             //_terminal = new JSharpTerminal();
             //AddPane(new Pane(_terminal, "Terminal"), 4);
@@ -209,33 +204,27 @@ namespace JSharp.Windows.MainWindow
         {
             for (int i = 0; i < LeftPaneItemsUp.Count; i++)
             {
-                Pane pane = LeftPaneItemsUp[i];
-                AddPane(pane, 0);
+                AddPane(LeftPaneItemsUp[i]);
             }
             for (int i = 0; i < LeftPaneItemsDown.Count; i++)
             {
-                Pane pane = LeftPaneItemsDown[i];
-                AddPane(pane, 1);
+                AddPane(LeftPaneItemsDown[i]);
             }
             for (int i = 0; i < RightPaneItemsUp.Count; i++)
             {
-                Pane pane = RightPaneItemsUp[i];
-                AddPane(pane, 2);
+                AddPane(RightPaneItemsUp[i]);
             }
             for (int i = 0; i < RightPaneItemsDown.Count; i++)
             {
-                Pane pane = RightPaneItemsDown[i];
-                AddPane(pane, 3);
+                AddPane(RightPaneItemsDown[i]);
             }
             for (int i = 0; i < BottomPaneItemsLeft.Count; i++)
             {
-                Pane pane = BottomPaneItemsLeft[i];
-                AddPane(pane, 4);
+                AddPane(BottomPaneItemsLeft[i]);
             }
             for (int i = 0; i < BottomPaneItemsRight.Count; i++)
             {
-                Pane pane = BottomPaneItemsRight[i];
-                AddPane(pane, 5);
+                AddPane(BottomPaneItemsRight[i]);
             }
 
             return Task.FromResult(true);
@@ -244,12 +233,15 @@ namespace JSharp.Windows.MainWindow
         /// <summary>
         /// Add pane to JSharp window
         /// </summary>
-        public void AddPane(Pane pane, int paneLocation)
+        private void AddPane(Pane pane)
         {
             if (pane == null) return;
-            LayoutAnchorable lA = new LayoutAnchorable { Title = pane.title };
-            lA.Content = pane.content;
-            
+            var lA = new LayoutAnchorable
+            {
+                Title = pane.title,
+                Content = pane.content
+            };
+
             ((UserControl)pane.content).HorizontalAlignment = HorizontalAlignment.Stretch;
             ((UserControl)pane.content).VerticalAlignment = VerticalAlignment.Stretch;
 
@@ -257,7 +249,7 @@ namespace JSharp.Windows.MainWindow
             {
                 panes = new[] { LeftPane, LeftPane2, RightPane, RightPane2, LowerPane, LowerPane2 };
             }
-            panes[paneLocation].Children.Add(lA);
+            panes[pane.paneLocation].Children.Add(lA);
         }
 
         #endregion Pane Related Functions
@@ -312,14 +304,15 @@ namespace JSharp.Windows.MainWindow
         /// </summary>
         public void OpenDocument(string filename)
         {
-            if (Settings.Default.RecentFiles == null)
+           
+            if (Properties.Settings.Default.RecentFiles == null)
             {
-                Settings.Default.RecentFiles = new StringCollection();
+                Properties.Settings.Default.RecentFiles = new StringCollection();
             }
-            if(!Settings.Default.RecentFiles.Contains(filename))
+            if(!Properties.Settings.Default.RecentFiles.Contains(filename))
             {
-                Settings.Default.RecentFiles.Add(filename);
-                Settings.Default.Save();
+                Properties.Settings.Default.RecentFiles.Add(filename);
+                Properties.Settings.Default.Save();
             }
             if (OpenedFiles.Contains(filename)) return;
 
@@ -353,7 +346,7 @@ namespace JSharp.Windows.MainWindow
         /// <summary>
         /// Select document tab
         /// </summary>
-        public void SelectDocumentTab(int index)
+        private void SelectDocumentTab(int index)
         {
             DocumentPane.SelectedContentIndex = index;
         }
@@ -373,33 +366,33 @@ namespace JSharp.Windows.MainWindow
             var paneControls = plugin.GetPaneControls();
             if (paneControls?.Length > 0)
             {
-                for (int i = 0; i < paneControls.Length; i++)
+                foreach (var t in paneControls)
                 {
-                    AddPane(new Pane(paneControls[i], paneControls[i].Name), 0);
+                    AddPane(new Pane(t, t.Name, 0));
                 }
             }
 
             if (plugin.IsAddedToToolBar)
             {
-                var ToolBarItems = plugin.GetToolbarItems();
+                var toolBarItems = plugin.GetToolbarItems();
                 //Add toolbar items
-                for (int i = 0; i < ToolBarItems.Length; i++)
-                    ToolBar.Items.Add(ToolBarItems[i]);
+                foreach (var t in toolBarItems)
+                    ToolBar.Items.Add(t);
             }
 
-            var MenuItems = plugin.GetMenuItems();
-            if (MenuItems == null) return;
+            var menuItems = plugin.GetMenuItems();
+            if (menuItems == null) return;
 
-            for (int i = 0; i < MenuItems.Length; i++)
+            foreach (var menuItem in menuItems)
             {
                 //Add menu items either to context menu or plug-ins menu
                 if (!plugin.AddToContextMenu && !plugin.AddToMenu) break;
 
                 if (plugin.AddToContextMenu)
-                    TextEditor.TextEditor.GlobalEditorContntextMenu.Items.Add(MenuItems[i]);
+                    TextEditor.TextEditor.GlobalEditorContntextMenu.Items.Add(menuItem);
 
                 if (plugin.AddToMenu)
-                    PluginMenu.Items.Add(MenuItems[i]);
+                    PluginMenu.Items.Add(menuItem);
             }
         }
 

@@ -2,10 +2,10 @@
 using System.Text.RegularExpressions;
 using System.Windows;
 using JSharp.PluginCore;
-using JSharp.TextEditor;
 
 namespace JSharp.Inbuilt_Panes
 {
+    /// <inheritdoc cref="FindReplace" />
     /// <summary>
     /// Interaction logic for FindReplace.xaml
     /// </summary>

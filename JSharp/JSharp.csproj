@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net48</TargetFramework>
@@ -12,23 +11,19 @@
     <Company>Pyrix</Company>
     <Description>Minimalist java IDE</Description>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>bin\Debug\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="bin\**" />
     <EmbeddedResource Remove="bin\**" />
     <None Remove="bin\**" />
     <Page Remove="bin\**" />
   </ItemGroup>
-  
   <ItemGroup>
     <None Remove="Images\add.png" />
     <None Remove="Images\application.png" />
@@ -54,7 +49,6 @@
     <None Remove="Images\WordWrap.png" />
     <None Remove="JSharp.png" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.0.1" />
     <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="4.30.0" />
@@ -64,7 +58,6 @@
     <PackageReference Include="IKVM.Runtime" Version="7.2.4630.5" />
     <PackageReference Include="MahApps.Metro" Version="2.1.1" />
   </ItemGroup>
-
   <ItemGroup>
     <Resource Include="Images\add.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -133,11 +126,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
-
   <ItemGroup>
     <SplashScreen Include="JSharp.png" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -150,19 +141,19 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
   <ItemGroup>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-
+  <ItemGroup>
+    <Folder Include="MainWindow" />
+  </ItemGroup>
 </Project>

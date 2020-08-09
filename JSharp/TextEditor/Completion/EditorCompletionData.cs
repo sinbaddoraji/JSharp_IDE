@@ -4,8 +4,9 @@ using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 
-namespace JSharp.TextEditor
+namespace JSharp.TextEditor.Completion
 {
+    /// <inheritdoc />
     /// <summary>
     /// Completion data for a completion window in a JSharp TextEditor
     /// </summary>

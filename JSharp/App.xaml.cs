@@ -1,14 +1,13 @@
-﻿using JSharp.TextEditor;
-using System;
-using System.IO;
-using System.Windows;
+﻿using System.IO;
+using JSharp.Windows;
 
 namespace JSharp
 {
+    /// <inheritdoc />
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
         public App()
         {
@@ -23,8 +22,8 @@ namespace JSharp
 
             if (!File.Exists($@"{JSharp.Properties.Settings.Default.JdkPath}\jre\lib\classlist"))
             {
-                System.Windows.Forms.MessageBox.Show("JDK path currently empty");
-                new MainWindow.Settings().ShowDialog();
+                System.Windows.Forms.MessageBox.Show(@"JDK path currently empty");
+                new Settings().ShowDialog();
             }
             else
             {

@@ -4,11 +4,10 @@ using System.Windows;
 using System.Windows.Input;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Editing;
-using JSharp.Code_Completion;
 
-namespace JSharp.TextEditor
+namespace JSharp.TextEditor.Completion
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// Completion window for text editor
 	/// </summary>
@@ -18,10 +17,10 @@ namespace JSharp.TextEditor
 
 	    private static bool _completionDataInitialized;
 
-		TextEditor editor;
+	    readonly TextEditor _editor;
 	    public EditorCompletionWindow(TextEditor editor) : base(editor.TextArea)
         {
-			this.editor = editor;
+			_editor = editor;
             SizeToContent = SizeToContent.Height;
 			MaxHeight = 150.0;
 			Width = 400;
@@ -55,7 +54,7 @@ namespace JSharp.TextEditor
 		{
 			Close();
 			CompletionList.SelectedItem?.Complete(TextArea, 
-				new AnchorSegment(TextArea.Document, editor._closestWordOffset, EndOffset - editor._closestWordOffset), e);
+				new AnchorSegment(TextArea.Document, _editor.ClosestWordOffset, EndOffset - _editor.ClosestWordOffset), e);
 		}
 
 		private void AttachEvents()

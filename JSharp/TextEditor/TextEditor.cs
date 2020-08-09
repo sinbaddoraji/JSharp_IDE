@@ -6,11 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Folding;
-using ICSharpCode.AvalonEdit.Highlighting;
-using JSharp.Code_Completion;
-using JSharp.Highlighting;
 using JSharp.PluginCore;
 using JSharp.Properties;
 using System.Threading.Tasks;
@@ -21,9 +17,13 @@ using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MenuItem = System.Windows.Controls.MenuItem;
 using MessageBox = System.Windows.MessageBox;
 using java.lang.reflect;
+using JSharp.TextEditor.Completion;
+using JSharp.TextEditor.Folding;
+using JSharp.TextEditor.Highlighting;
 
 namespace JSharp.TextEditor
 {
+    /// <inheritdoc />
     /// <summary>
     /// This file manages the properties of the text editor
     /// Note: Some properties are left public for easy plugin access
@@ -35,12 +35,12 @@ namespace JSharp.TextEditor
         /// <summary>
         /// Save file dialog for Text editor
         /// </summary>
-        private static readonly SaveFileDialog _saveFileDialog = new SaveFileDialog() { Filter = FilterOptions};
+        private static readonly SaveFileDialog SaveFileDialog = new SaveFileDialog { Filter = FilterOptions};
 
         /// <summary>
         /// Filter options for saveFileDialog or any additional dialog connected to textEditor
         /// </summary>
-        public static string FilterOptions { get; set; } = "Java Files (*.java)|*.java|Other Files (*.*)|*.*";
+        public static string FilterOptions { get; } = "Java Files (*.java)|*.java|Other Files (*.*)|*.*";
 
         /// <summary>
         /// Abstract list holding auto complete information for all text editors
@@ -50,7 +50,7 @@ namespace JSharp.TextEditor
         /// <summary>
         /// Class list extracted from JDK (A list of classes used by Java programs)
         /// </summary>
-        public static IEnumerable<string> _classList;
+        private static IEnumerable<string> _classList;
 
         /// <summary>
         /// Foreground colour for all document text editors running on the JSharp process
@@ -65,13 +65,13 @@ namespace JSharp.TextEditor
         /// <summary>
         /// Brackets to be auto-completed by JSharp
         /// </summary>
-        private static readonly Dictionary<string, string> _brackets
+        private static readonly Dictionary<string, string> Brackets
             = new Dictionary<string, string> { { "(", ")" }, { "{", "}" }, { "[", "]" }, { "'", "'" }, { "\"", "\"" } };
 
         /// <summary>
         /// Class used to manage syntax highlighting for all documents open on the JSharp process
         /// </summary>
-        private static readonly InnerHighlightingManager _highlightingManager = new InnerHighlightingManager();
+        private static readonly InnerHighlightingManager HighlightingManager = new InnerHighlightingManager();
 
         #endregion
 
@@ -105,12 +105,12 @@ namespace JSharp.TextEditor
         /// <summary>
         /// Context menu for text editor instance
         /// </summary>
-        public ContextMenu EditorContntextMenu;
+        private ContextMenu _editorContntextMenu;
 
         /// <summary>
         /// Context menu for text editor instance
         /// </summary>
-        public static ContextMenu GlobalEditorContntextMenu = new ContextMenu();
+        public static readonly ContextMenu GlobalEditorContntextMenu = new ContextMenu();
 
         /// <summary>
         /// Current instance of text editor is currently unoccupied
@@ -120,7 +120,7 @@ namespace JSharp.TextEditor
         /// <summary>
         /// Offset location of the closest word to cursor (Beginning of the word)
         /// </summary>
-        public int _closestWordOffset;
+        public int ClosestWordOffset;
 
         #endregion
 
@@ -144,7 +144,7 @@ namespace JSharp.TextEditor
             _foldingManager = FoldingManager.Install(TextArea);
             if (TextForeground != null) Foreground = TextForeground;
             if (TextBackground != null) Background = TextBackground;
-            SyntaxHighlighting = _highlightingManager.GetHighlightingFromExtension(".java");
+            SyntaxHighlighting = HighlightingManager.GetHighlightingFromExtension(".java");
 
         }
 
@@ -165,20 +165,20 @@ namespace JSharp.TextEditor
             paste.Click += delegate { Paste(); };
             selectAll.Click += delegate { SelectAll(); };
             //Add menu items to context menu
-            EditorContntextMenu = new ContextMenu();
-            EditorContntextMenu.Items.Add(cut);
-            EditorContntextMenu.Items.Add(copy);
-            EditorContntextMenu.Items.Add(paste);
-            EditorContntextMenu.Items.Add(selectAll);
+            _editorContntextMenu = new ContextMenu();
+            _editorContntextMenu.Items.Add(cut);
+            _editorContntextMenu.Items.Add(copy);
+            _editorContntextMenu.Items.Add(paste);
+            _editorContntextMenu.Items.Add(selectAll);
 
             //Add global items to context menu
             foreach (var item in GlobalEditorContntextMenu.Items)
             {
-                EditorContntextMenu.Items.Add(item);
+                _editorContntextMenu.Items.Add(item);
             }
 
             //Initialize context menu
-            ContextMenu = EditorContntextMenu;
+            ContextMenu = _editorContntextMenu;
         }
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace JSharp.TextEditor
 
         static TextEditor()
         {
-            _saveFileDialog.Filter = FilterOptions;
+            SaveFileDialog.Filter = FilterOptions;
         }
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace JSharp.TextEditor
                 caretOffset--;
 
             caretOffset++;
-            var start = _closestWordOffset = caretOffset;
+            var start = ClosestWordOffset = caretOffset;
 
             while (caretOffset < Document.TextLength && !char.IsWhiteSpace(Document.GetCharAt(caretOffset)))
                 caretOffset++;
@@ -346,7 +346,7 @@ namespace JSharp.TextEditor
         private void Editor_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter && e.Key != Key.Space) return;
-            if (SyntaxHighlighting != _highlightingManager.GetHighlightingFromExtension(".java")) return;
+            if (SyntaxHighlighting != HighlightingManager.GetHighlightingFromExtension(".java")) return;
             var wordContext = GetClosedWordToCursor(CaretOffset);
 
             if (!CompletionList.CompletionData.Any(x => x.Text.StartsWith(wordContext)) && _completionWindow == null && wordContext.Length > 0)
@@ -358,12 +358,12 @@ namespace JSharp.TextEditor
 
         private void TextEditor_TextArea_TextEntered(object sender, TextCompositionEventArgs e)
         {
-            if (_brackets.ContainsKey(e.Text))
+            if (Brackets.ContainsKey(e.Text))
             {
-                Document.Insert(CaretOffset, _brackets[e.Text]);
+                Document.Insert(CaretOffset, Brackets[e.Text]);
                 CaretOffset--;
             }
-            if (SyntaxHighlighting != _highlightingManager.GetHighlightingFromExtension(".java")) return;
+            if (SyntaxHighlighting != HighlightingManager.GetHighlightingFromExtension(".java")) return;
 
             var wordContext = GetClosedWordToCursor(CaretOffset);
 
@@ -375,7 +375,7 @@ namespace JSharp.TextEditor
 
         private void TextEditor_TextArea_TextEntering(object sender, TextCompositionEventArgs e)
         {
-            if (SyntaxHighlighting != _highlightingManager.GetHighlightingFromExtension(".java")) return;
+            if (SyntaxHighlighting != HighlightingManager.GetHighlightingFromExtension(".java")) return;
 
             string wordContext = GetClosedWordToCursor(CaretOffset);
 
@@ -435,7 +435,7 @@ namespace JSharp.TextEditor
 
             try
             {
-                File.WriteAllText(OpenedDocument, this.Text);
+                File.WriteAllText(OpenedDocument, Text);
             }
             catch (Exception e)
             {
@@ -451,7 +451,7 @@ namespace JSharp.TextEditor
             if (fileName == null)
                 throw new ArgumentNullException(nameof(fileName));
 
-            fileName = _saveFileDialog.FileName;
+            fileName = SaveFileDialog.FileName;
             OpenedDocument = fileName;
             OpenedDocumentShortName = new FileInfo(OpenedDocument).Name;
 
@@ -473,8 +473,8 @@ namespace JSharp.TextEditor
         /// </summary>
         public void SaveAs()
         {
-            if (_saveFileDialog.ShowDialog() == DialogResult.OK)
-                SaveAs(_saveFileDialog.FileName);
+            if (SaveFileDialog.ShowDialog() == DialogResult.OK)
+                SaveAs(SaveFileDialog.FileName);
         }
 
         #endregion
@@ -484,9 +484,9 @@ namespace JSharp.TextEditor
         private void SelectHighlighting(string filename)
         {
             //Set up syntax highlighting
-            SyntaxHighlighting = _highlightingManager.GetHighlightingFromExtension(new FileInfo(filename).Extension);
+            SyntaxHighlighting = HighlightingManager.GetHighlightingFromExtension(new FileInfo(filename).Extension);
             //Set up folding strategy
-            var highlighting = HighlightingManager.Instance.HighlightingDefinitions.Where(x => x.Name.Contains("ml"));
+            var highlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.HighlightingDefinitions.Where(x => x.Name.Contains("ml"));
             _foldingStrategy = highlighting.Contains(SyntaxHighlighting) ? new XmlFoldingStrategy() : null;
         }
 

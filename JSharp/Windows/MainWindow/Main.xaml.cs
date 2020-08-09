@@ -1,30 +1,29 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using AvalonDock.Layout;
 using JSharp.PluginCore;
-using JSharp.Properties;
-using JSharp.TextEditor;
-using MahApps.Metro.Controls;
 
 namespace JSharp.Windows.MainWindow
 {
+    /// <inheritdoc>
+    ///     <cref>MainWIndow</cref>
+    /// </inheritdoc>
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class Main : MetroWindow
+    public partial class Main
     {
         /*
          * This handles the events of the main window (Strictly)
          */
 
+        /// <inheritdoc />
         /// <summary>
         /// Main window for JSharp
         /// </summary>
@@ -37,23 +36,20 @@ namespace JSharp.Windows.MainWindow
 
             for (int i = 1; i <= 100; i++) ZoomValue.Items.Add(i);
 
-            if(Settings.Default.OpenedFiles == null)
+            if(Properties.Settings.Default.OpenedFiles == null)
             {
-                Settings.Default.OpenedFiles = new System.Collections.Specialized.StringCollection();
-                Settings.Default.Save();
+                Properties.Settings.Default.OpenedFiles = new StringCollection();
+                Properties.Settings.Default.Save();
             }
             else
             {
-                foreach (string file in (IList)Settings.Default.OpenedFiles)
+                foreach (string file in (IList)Properties.Settings.Default.OpenedFiles)
                 {
                     try
                     {
                         OpenDocument(file);
                     }
-                    catch (Exception e)
-                    {
-                        //MessageBox.Show(e.Message);
-                    }
+                    catch {}
                 }
             }
             
@@ -73,7 +69,7 @@ namespace JSharp.Windows.MainWindow
         private async void Initalize()
         {
             await LoadPlugins().ConfigureAwait(false);
-            UseDarkTheme(Settings.Default.DarkTheme);
+            UseDarkTheme(Properties.Settings.Default.DarkTheme);
             await AddInbuiltPanes().ConfigureAwait(false);
             await InitalizePanes().ConfigureAwait(false);
         }
@@ -108,16 +104,16 @@ namespace JSharp.Windows.MainWindow
 
             SaveAllDocuments();
 
-            Settings.Default.OpenedFiles.Clear();
+            Properties.Settings.Default.OpenedFiles.Clear();
             foreach (var document in DocumentPane.Children)
             {
                 var child = ((TextEditor.TextEditor)document.Content);
                 
                 if(child.OpenedDocument != null)
-                    Settings.Default.OpenedFiles.Add(child.OpenedDocument);
+                    Properties.Settings.Default.OpenedFiles.Add(child.OpenedDocument);
             }
 
-            Settings.Default.Save();
+            Properties.Settings.Default.Save();
         }
 
         private void New_Click(object sender, RoutedEventArgs e)
@@ -144,8 +140,8 @@ namespace JSharp.Windows.MainWindow
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            new JSharp.MainWindow.Settings().ShowDialog();
-            UseDarkTheme(Settings.Default.DarkTheme);
+            //new Settings().ShowDialog();
+            UseDarkTheme(Properties.Settings.Default.DarkTheme);
         }
 
         private void Recents_Click(object sender, RoutedEventArgs e)
@@ -155,12 +151,12 @@ namespace JSharp.Windows.MainWindow
 
         private void BuildClick_1(object sender, RoutedEventArgs e)
         {
-            DebugCore.Compile(this.GetSelectedFile(false));
+            DebugCore.Compile(GetSelectedFile(false));
         }
 
         private void Run_Click(object sender, RoutedEventArgs e)
         {
-            DebugCore.Run(this.GetSelectedFile(false));
+            DebugCore.Run(GetSelectedFile(false));
         }
 
         private void BuildAndRun_Click(object sender, RoutedEventArgs e)
@@ -168,11 +164,6 @@ namespace JSharp.Windows.MainWindow
             DebugCore.CompileProject(true);
         }
 
-        private void RunProject_Click(object sender, RoutedEventArgs e)
-        {
-            DebugCore.RunProject();
-            
-        }
         private void BuildProject_Click(object sender, RoutedEventArgs e)
         {
             DebugCore.CompileProject(false);
@@ -208,21 +199,18 @@ namespace JSharp.Windows.MainWindow
         private void NewDocument_IsSelectedChanged(object sender, EventArgs e)
         {
             var doc = (LayoutDocument)sender;
-            if (doc.IsSelected)
+            if (!doc.IsSelected) return;
+            var data = ((TextEditor.TextEditor)doc.Content).OpenedDocumentShortName;
+            Title = data != null ? $"JSharp ({data})" : "JSharp";
+
+            try
             {
-                string data = ((TextEditor.TextEditor)doc.Content).OpenedDocumentShortName;
-                Title = data != null ? $"JSharp ({data})" : "JSharp";
-
-                try
-                {
-                    string dir = Directory.GetParent(GetSelectedFile(false)).FullName;
-                    fileExplorer.SetDirectory(dir);
-                    ProjectFolder = dir;
-                }
-                catch (Exception)
-                {
-                }
-
+                var dir = Directory.GetParent(GetSelectedFile(false)).FullName;
+                fileExplorer.SetDirectory(dir);
+                ProjectFolder = dir;
+            }
+            catch 
+            {
             }
         }
 
@@ -231,5 +219,9 @@ namespace JSharp.Windows.MainWindow
             new AboutDialog().ShowDialog();
         }
 
+        private void ClearOutput_Click(object sender, RoutedEventArgs e)
+        {
+            DebugCore.OutputTextbox.Clear();
+        }
     }
 }

@@ -2,7 +2,7 @@
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
 
-namespace JSharp.TextEditor
+namespace JSharp.TextEditor.Folding
 {
     internal static class JavaFoldingStrategy
     {
@@ -33,22 +33,21 @@ namespace JSharp.TextEditor
             var startOffsets = new Stack<int>();
             for (int i = 0, lastNewLineOffset = 0; i < document.TextLength; i++)
             {
-                switch (document.GetCharAt(i))
+                if (document.GetCharAt(i) == '{')
                 {
-                    case '{':
-                        startOffsets.Push(i);
-                        break;
-                    case '\n':
-                    case '\r':
-                        lastNewLineOffset = i + 1;
-                        break;
-                    case '}' when startOffsets.Count > 0:
-                        var startOffset = startOffsets.Pop();
+                    startOffsets.Push(i);
+                }
+                else if (document.GetCharAt(i) == '\n' || document.GetCharAt(i) == '\r')
+                {
+                    lastNewLineOffset = i + 1;
+                }
+                else if (document.GetCharAt(i) == '}' && startOffsets.Count > 0)
+                {
+                    var startOffset = startOffsets.Pop();
 
-                        //Create folding if completing } is not on the same line
-                        if (startOffset < lastNewLineOffset)
-                            newFoldings.Add(new NewFolding(startOffset, i + 1));
-                        break;
+                    //Create folding if completing } is not on the same line
+                    if (startOffset < lastNewLineOffset)
+                        newFoldings.Add(new NewFolding(startOffset, i + 1));
                 }
             }
             newFoldings.Sort((a, b) => a.StartOffset.CompareTo(b.StartOffset));

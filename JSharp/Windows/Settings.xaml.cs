@@ -1,12 +1,11 @@
-﻿using JSharp.PluginCore;
-using JSharp.Windows.MainWindow;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Forms;
 using MessageBox = System.Windows.Forms.MessageBox;
 
-namespace JSharp.MainWindow
+namespace JSharp.Windows
 {
+    /// <inheritdoc />
     /// <summary>
     /// Interaction logic for Settings.xaml
     /// </summary>
@@ -17,17 +16,17 @@ namespace JSharp.MainWindow
             return Properties.Settings.Default.JdkPath;
         }
 
-        public static void SetJdkPath(string value)
+        private static void SetJdkPath(string value)
         {
             Properties.Settings.Default.JdkPath = value;
         }
 
-        private bool GetDarkMode()
+        private static bool GetDarkMode()
         {
             return Properties.Settings.Default.DarkTheme;
         }
 
-        private void SetDarkMode(bool value)
+        private static void SetDarkMode(bool value)
         {
             Properties.Settings.Default.DarkTheme = value;
         }
@@ -45,14 +44,7 @@ namespace JSharp.MainWindow
             Properties.Settings.Default.Save();
             Close();
 
-            if (PluginHolder.Instance.ParentWindow == null && jdkBox.Text != "JDK path can not be found")
-            {
-                new Main();
-            }
-            else
-            {
-                MessageBox.Show("You may have to restart JSharp");
-            }
+            new MainWindow.Main().Show();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -68,7 +60,7 @@ namespace JSharp.MainWindow
                     }
                     else
                     {
-                        MessageBox.Show("Invalid JDK path");
+                        MessageBox.Show(@"Invalid JDK path");
                     }
                   
                 }

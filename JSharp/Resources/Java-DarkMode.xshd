@@ -22,7 +22,7 @@
   <Color name="Package" foreground="#FF009FFF"  />
   <Color name="Literals" foreground="White"  />
   <Color name="CommentTags" foreground="#FF57B74A"  fontStyle="italic" />
-  <Color name="JavaDocTags" foreground="Gray"  fontStyle="italic" />
+  <Color name="JavaDocTags" foreground="DarkGray"  fontStyle="italic" />
   <RuleSet ignoreCase="false">
     <Rule color="Punctuation">
       [?,.()\[\]{}+\-/%*&lt;&gt;^!|]+
@@ -72,7 +72,6 @@
       <Word>float</Word>
       <Word>byte</Word>
       <Word>char</Word>
-      <Word>var</Word>
     </Keywords>
     <Keywords color="ReferenceTypes">
       <Word>class</Word>

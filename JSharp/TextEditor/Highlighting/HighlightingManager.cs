@@ -4,7 +4,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using JSharp.Properties;
 
-namespace JSharp.Highlighting
+namespace JSharp.TextEditor.Highlighting
 {
     internal class InnerHighlightingManager : HighlightingManager
     {
