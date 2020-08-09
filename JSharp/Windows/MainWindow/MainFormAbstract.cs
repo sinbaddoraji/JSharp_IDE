@@ -237,21 +237,16 @@ namespace JSharp.Windows.MainWindow
             ((UserControl)pane.content).HorizontalAlignment = HorizontalAlignment.Stretch;
             ((UserControl)pane.content).VerticalAlignment = VerticalAlignment.Stretch;
 
-                //panes[pane.paneLocation].Children.Add(lA);
-                if((AnchorableShowStrategy)pane.paneLocation == AnchorableShowStrategy.Bottom)
-                {
-                    lA.AutoHideHeight = 250;
-                    lA.FloatingHeight = 250;
-                }
-                else
-                {
-                    lA.AutoHideWidth = 250;
-                    lA.FloatingWidth = 250;
-                }
+            //panes[pane.paneLocation].Children.Add(lA);
+            lA.CanDockAsTabbedDocument = false;
             lA.AddToLayout(DockManager, (AnchorableShowStrategy)pane.paneLocation);
-          
 
-            if(pane.isCollapsed)
+            ((LayoutAnchorablePane)lA.Parent).DockWidth = new GridLength(pane.Width);
+            ((LayoutAnchorablePane)lA.Parent).DockHeight = new GridLength(pane.Height);
+            lA.AutoHideHeight = pane.Height;
+            lA.AutoHideWidth = pane.Width;
+            
+            if (pane.isCollapsed)
             {
                 lA.ToggleAutoHide();
             }
@@ -275,6 +270,17 @@ namespace JSharp.Windows.MainWindow
                     case AnchorSide.Bottom:
                         pane.Value.paneLocation = (int)AnchorableShowStrategy.Bottom;
                         break;
+                }
+
+                if (pane.Value.lA.Parent is LayoutAnchorablePane)
+                {
+                    pane.Value.Width = ((LayoutAnchorablePane)pane.Value.lA.Parent).DockWidth.Value;
+                    pane.Value.Height = ((LayoutAnchorablePane)pane.Value.lA.Parent).DockHeight.Value;
+                }
+                if (pane.Value.lA.Parent is LayoutAnchorablePaneGroup)
+                {
+                    pane.Value.Width = ((LayoutAnchorablePaneGroup)pane.Value.lA.Parent).DockWidth.Value;
+                    pane.Value.Height = ((LayoutAnchorablePaneGroup)pane.Value.lA.Parent).DockHeight.Value;
                 }
 
                 pane.Value.isCollapsed = pane.Value.lA.IsAutoHidden;

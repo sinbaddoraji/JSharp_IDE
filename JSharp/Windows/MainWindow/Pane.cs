@@ -11,6 +11,8 @@ namespace JSharp
         public bool isCollapsed;
 
         public LayoutAnchorable lA;
+        public double Width = 280;
+        public double Height = 180;
 
         public Pane(object content, string title, int paneLocation, bool isCollapsed)
         {

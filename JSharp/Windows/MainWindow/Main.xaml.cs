@@ -125,6 +125,8 @@ namespace JSharp.Windows.MainWindow
                 xmlWriter.WriteStartElement("pane");
                 xmlWriter.WriteAttributeString("title", pane.Key);
                 xmlWriter.WriteAttributeString("paneLocation", pane.Value.paneLocation.ToString());
+                xmlWriter.WriteAttributeString("width", pane.Value.Width.ToString());
+                xmlWriter.WriteAttributeString("height", pane.Value.Height.ToString());
                 xmlWriter.WriteAttributeString("isCollapsed", pane.Value.isCollapsed.ToString());
                 xmlWriter.WriteEndElement();
             }

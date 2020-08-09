@@ -131,29 +131,12 @@
 
             <xcad:LayoutRoot x:Name="_layoutRoot">
 
-                <xcad:LayoutPanel Orientation="Vertical">
+                <xcad:LayoutPanel Orientation="Horizontal">
 
-                    <xcad:LayoutPanel Orientation="Horizontal">
+                    <xcad:LayoutDocumentPaneGroup>
+                        <xcad:LayoutDocumentPane x:Name="DocumentPane" />
+                    </xcad:LayoutDocumentPaneGroup>
 
-                        <xcad:LayoutAnchorablePaneGroup DockWidth="280" Orientation="Vertical">
-                            <xcad:LayoutAnchorablePane x:Name="LeftPane"></xcad:LayoutAnchorablePane>
-                            <xcad:LayoutAnchorablePane x:Name="LeftPane2"></xcad:LayoutAnchorablePane>
-                        </xcad:LayoutAnchorablePaneGroup>
-
-                        <xcad:LayoutDocumentPaneGroup>
-                            <xcad:LayoutDocumentPane x:Name="DocumentPane" />
-                        </xcad:LayoutDocumentPaneGroup>
-
-                        <xcad:LayoutAnchorablePaneGroup DockWidth="280" Orientation="Vertical">
-                            <xcad:LayoutAnchorablePane x:Name="RightPane"></xcad:LayoutAnchorablePane>
-                            <xcad:LayoutAnchorablePane x:Name="RightPane2"></xcad:LayoutAnchorablePane>
-                        </xcad:LayoutAnchorablePaneGroup>
-                    </xcad:LayoutPanel>
-
-                    <xcad:LayoutAnchorablePaneGroup DockHeight="180">
-                        <xcad:LayoutAnchorablePane x:Name="LowerPane"></xcad:LayoutAnchorablePane>
-                        <xcad:LayoutAnchorablePane x:Name="LowerPane2"></xcad:LayoutAnchorablePane>
-                    </xcad:LayoutAnchorablePaneGroup>
                 </xcad:LayoutPanel>
 
             </xcad:LayoutRoot>
