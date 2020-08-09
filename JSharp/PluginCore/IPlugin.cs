@@ -67,7 +67,7 @@ namespace JSharp.PluginCore
         /// <summary>
         /// Initialize plug-ins
         /// </summary>
-        UserControl[] GetPaneControls(); // User control within pane
+        Pane[] GetPaneControls(); // User control within pane
 
         /// <summary>
         /// Initialize plug-ins

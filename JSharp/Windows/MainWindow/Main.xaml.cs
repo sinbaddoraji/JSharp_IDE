@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Xml;
 using AvalonDock.Layout;
 using JSharp.PluginCore;
 
@@ -62,16 +63,16 @@ namespace JSharp.Windows.MainWindow
                     OpenDocument(args[i]);
                 }
             }
-
-            
         }
 
         private async void Initalize()
         {
             await LoadPlugins().ConfigureAwait(false);
             UseDarkTheme(Properties.Settings.Default.DarkTheme);
-            await AddInbuiltPanes().ConfigureAwait(false);
             await InitalizePanes().ConfigureAwait(false);
+            await AddInbuiltPanes().ConfigureAwait(false);
+           
+
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
@@ -112,6 +113,25 @@ namespace JSharp.Windows.MainWindow
                 if(child.OpenedDocument != null)
                     Properties.Settings.Default.OpenedFiles.Add(child.OpenedDocument);
             }
+
+            UpdatePanes();
+            //Write layout
+            XmlWriter xmlWriter = XmlWriter.Create("layout.xml");
+            xmlWriter.WriteStartDocument();
+            xmlWriter.WriteStartElement("panes");
+
+            foreach (var pane in dictionaryOfPanes)
+            {
+                xmlWriter.WriteStartElement("pane");
+                xmlWriter.WriteAttributeString("title", pane.Key);
+                xmlWriter.WriteAttributeString("paneLocation", pane.Value.paneLocation.ToString());
+                xmlWriter.WriteAttributeString("isCollapsed", pane.Value.isCollapsed.ToString());
+                xmlWriter.WriteEndElement();
+            }
+
+            xmlWriter.WriteEndElement();
+            xmlWriter.WriteEndDocument();
+            xmlWriter.Close();
 
             Properties.Settings.Default.Save();
         }

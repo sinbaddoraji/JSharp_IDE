@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
+using System.Xml;
 using AvalonDock.Layout;
 using AvalonDock.Themes;
 using ControlzEx.Theming;
@@ -22,36 +23,6 @@ namespace JSharp.Windows.MainWindow
     public partial class Main
     {
         #region Fields/Properties
-
-        /// <summary>
-        /// Avalon dock panes located at the top left corner of the dock window
-        /// </summary>
-        private readonly ObservableCollection<Pane> LeftPaneItemsUp = new ObservableCollection<Pane>();
-
-        /// <summary>
-        /// Avalon dock panes located at the bottom left corner of the dock window
-        /// </summary>
-        private readonly ObservableCollection<Pane> LeftPaneItemsDown = new ObservableCollection<Pane>();
-
-        /// <summary>
-        /// Avalon dock panes located at the top right corner of the dock window
-        /// </summary>
-        private readonly ObservableCollection<Pane> RightPaneItemsUp = new ObservableCollection<Pane>();
-
-        /// <summary>
-        /// Avalon dock panes located at the lower right corner of the dock window
-        /// </summary>
-        private readonly ObservableCollection<Pane> RightPaneItemsDown = new ObservableCollection<Pane>();
-
-        /// <summary>
-        /// Avalon dock panes located at the Bottom Pane located at the left
-        /// </summary>
-        private readonly ObservableCollection<Pane> BottomPaneItemsLeft = new ObservableCollection<Pane>();
-
-        /// <summary>
-        /// Avalon dock panes located at the Bottom Pane located at the right
-        /// </summary>
-        private readonly ObservableCollection<Pane> BottomPaneItemsRight = new ObservableCollection<Pane>();
 
         /// <summary>
         /// OpenFileDialog used for opening files as documents in JSharp
@@ -72,11 +43,6 @@ namespace JSharp.Windows.MainWindow
         /// Find and Replace Pane for JSharp
         /// </summary>
         private FindReplace findReplacePane;
-
-        /// <summary>
-        /// Find and Replace Pane for JSharp
-        /// </summary>
-        private LayoutAnchorablePane[] panes;
 
         /// <summary>
         /// List of files open in JSharp
@@ -101,7 +67,12 @@ namespace JSharp.Windows.MainWindow
         /// <summary>
         /// JSharp pane window location
         /// </summary>
-        private enum PaneLocation { UpperLeft, LowerLeft, UpperRight, LowerRight, BottomLeft, BottomRight }
+        private enum PaneLocation { Left, Right, Bottom}
+
+        /// <summary>
+        /// JSharp pane window location
+        /// </summary>
+        private Dictionary<string, Pane> dictionaryOfPanes = new Dictionary<string, Pane>();
 
         /// <summary>
         /// Get the name of the selected document
@@ -180,16 +151,16 @@ namespace JSharp.Windows.MainWindow
             //LowerPaneItems.Add(new Pane(new CommandPrompt(), "Command prompt"));
             fileExplorer = new FileExplorer();
             fileExplorer.SetDirectory(Environment.CurrentDirectory);
-            AddPane(new Pane(fileExplorer, "File Explorer", (int)PaneLocation.UpperLeft));
+            AddPane(new Pane(fileExplorer, "File Explorer", (int)(AnchorableShowStrategy.Left), false));
 
             findReplacePane = new FindReplace();
-            AddPane(new Pane(findReplacePane, "Find and Replace", (int)PaneLocation.LowerLeft));
+            AddPane(new Pane(findReplacePane, "Find and Replace", (int)(AnchorableShowStrategy.Left), false));
 
             var OutputWindow = new UserControl
             {
                 Content = DebugCore.OutputTextbox
             };
-            AddPane(new Pane(OutputWindow, "Output Window", (int)PaneLocation.BottomLeft));
+            AddPane(new Pane(OutputWindow, "Output Window", (int)(AnchorableShowStrategy.Bottom), false));
 
             //_terminal = new JSharpTerminal();
             //AddPane(new Pane(_terminal, "Terminal"), 4);
@@ -202,30 +173,39 @@ namespace JSharp.Windows.MainWindow
         /// </summary>
         private Task<bool> InitalizePanes()
         {
-            for (int i = 0; i < LeftPaneItemsUp.Count; i++)
+            if (dictionaryOfPanes == null)
+                dictionaryOfPanes = new Dictionary<string, Pane>();
+
+            if(!File.Exists("layout.xml")) return Task.FromResult(true);
+            try
             {
-                AddPane(LeftPaneItemsUp[i]);
+                XmlReader reader = XmlReader.Create("layout.xml");
+
+                reader.MoveToContent();
+                // Parse the file and display each of the nodes.
+
+                while (reader.Read())
+                {
+                    if (reader.Name == "pane")
+                    {
+                        Pane currentPane = new Pane
+                        {
+                            title = reader.GetAttribute("title"),
+                            paneLocation = int.Parse(reader.GetAttribute("paneLocation")),
+                            isCollapsed = bool.Parse(reader.GetAttribute("isCollapsed"))
+                        };
+
+                        if (!dictionaryOfPanes.ContainsKey(currentPane.title))
+                            dictionaryOfPanes.Add(currentPane.title, currentPane);
+                    }
+                    reader.MoveToNextAttribute();
+                }
             }
-            for (int i = 0; i < LeftPaneItemsDown.Count; i++)
+            catch (Exception)
             {
-                AddPane(LeftPaneItemsDown[i]);
+                
             }
-            for (int i = 0; i < RightPaneItemsUp.Count; i++)
-            {
-                AddPane(RightPaneItemsUp[i]);
-            }
-            for (int i = 0; i < RightPaneItemsDown.Count; i++)
-            {
-                AddPane(RightPaneItemsDown[i]);
-            }
-            for (int i = 0; i < BottomPaneItemsLeft.Count; i++)
-            {
-                AddPane(BottomPaneItemsLeft[i]);
-            }
-            for (int i = 0; i < BottomPaneItemsRight.Count; i++)
-            {
-                AddPane(BottomPaneItemsRight[i]);
-            }
+           
 
             return Task.FromResult(true);
         }
@@ -236,20 +216,69 @@ namespace JSharp.Windows.MainWindow
         private void AddPane(Pane pane)
         {
             if (pane == null) return;
+
             var lA = new LayoutAnchorable
             {
                 Title = pane.title,
                 Content = pane.content
             };
+            pane.lA = lA;
+
+            if (!dictionaryOfPanes.ContainsKey(pane.title))
+                dictionaryOfPanes.Add(pane.title, pane);
+            else
+
+            {
+                dictionaryOfPanes[pane.title].lA = pane.lA;
+                pane.paneLocation = dictionaryOfPanes[pane.title].paneLocation;
+                pane.isCollapsed = dictionaryOfPanes[pane.title].isCollapsed;
+            }
 
             ((UserControl)pane.content).HorizontalAlignment = HorizontalAlignment.Stretch;
             ((UserControl)pane.content).VerticalAlignment = VerticalAlignment.Stretch;
 
-            if(panes == null)
+                //panes[pane.paneLocation].Children.Add(lA);
+                if((AnchorableShowStrategy)pane.paneLocation == AnchorableShowStrategy.Bottom)
+                {
+                    lA.AutoHideHeight = 250;
+                    lA.FloatingHeight = 250;
+                }
+                else
+                {
+                    lA.AutoHideWidth = 250;
+                    lA.FloatingWidth = 250;
+                }
+            lA.AddToLayout(DockManager, (AnchorableShowStrategy)pane.paneLocation);
+          
+
+            if(pane.isCollapsed)
             {
-                panes = new[] { LeftPane, LeftPane2, RightPane, RightPane2, LowerPane, LowerPane2 };
+                lA.ToggleAutoHide();
             }
-            panes[pane.paneLocation].Children.Add(lA);
+        }
+
+        private void UpdatePanes()
+        {
+            foreach (var pane in dictionaryOfPanes)
+            {
+                switch (pane.Value.lA.Parent.GetSide())
+                {
+                    case AnchorSide.Left:
+                        pane.Value.paneLocation = (int)AnchorableShowStrategy.Left;
+                        break;
+                    case AnchorSide.Top:
+                        pane.Value.paneLocation = (int)AnchorableShowStrategy.Top;
+                        break;
+                    case AnchorSide.Right:
+                        pane.Value.paneLocation = (int)AnchorableShowStrategy.Right;
+                        break;
+                    case AnchorSide.Bottom:
+                        pane.Value.paneLocation = (int)AnchorableShowStrategy.Bottom;
+                        break;
+                }
+
+                pane.Value.isCollapsed = pane.Value.lA.IsAutoHidden;
+            }
         }
 
         #endregion Pane Related Functions
@@ -366,9 +395,9 @@ namespace JSharp.Windows.MainWindow
             var paneControls = plugin.GetPaneControls();
             if (paneControls?.Length > 0)
             {
-                foreach (var t in paneControls)
+                foreach (var pane in paneControls)
                 {
-                    AddPane(new Pane(t, t.Name, 0));
+                    AddPane(pane);
                 }
             }
 

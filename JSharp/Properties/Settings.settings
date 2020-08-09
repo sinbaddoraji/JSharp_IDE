@@ -27,5 +27,8 @@
     <Setting Name="RegisteredPlugins" Type="System.Object" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="Panes" Type="System.Collections.Specialized.ListDictionary" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
