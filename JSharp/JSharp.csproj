@@ -156,4 +156,12 @@
   <ItemGroup>
     <Folder Include="MainWindow" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\net48\Resources\Java-DarkMode.xshd" />
+    <None Include="bin\Debug\net48\Resources\Java-LightMode.xshd" />
+    <None Include="bin\Debug\net48\Resources\Python-DarkMode.xshd" />
+    <None Include="bin\Debug\net48\Resources\Python-LightMode.xshd" />
+    <None Include="bin\Debug\net48\Resources\XML-DarkMode.xshd" />
+    <None Include="bin\Debug\net48\Resources\XML-LightMode.xshd" />
+  </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using JSharp.Windows;
 
 namespace JSharp
@@ -11,6 +12,7 @@ namespace JSharp
     {
         public App()
         {
+            Directory.SetCurrentDirectory(Directory.GetParent(Environment.GetCommandLineArgs()[0]).FullName);
             if(!File.Exists("debugger.jar"))
                 File.WriteAllBytes("debugger.jar", JSharp.Properties.Resources.debugger);
 
