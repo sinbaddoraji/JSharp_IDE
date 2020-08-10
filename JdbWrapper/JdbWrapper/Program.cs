@@ -13,10 +13,20 @@ namespace JdbWrapper
         public static void Main(string[] args)
         {
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(true);
+            Application.SetCompatibleTextRenderingDefault(false);
 
-            Application.Run(new DebuggerGUI(args[0], args[1]));
-
+            if(args.Length == 2)
+            {
+                Application.Run(new DebuggerGUI(args[0], args[1]));
+            }
+            else if (args.Length == 1)
+            {
+                Application.Run(new DebuggerGUI(args[0]));
+            }
+            else
+            {
+                Application.Run(new DebuggerGUI());
+            }
         }
     }
 }

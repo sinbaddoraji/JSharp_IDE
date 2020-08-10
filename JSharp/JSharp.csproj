@@ -10,6 +10,7 @@
     <Authors>Osinachi Nwagboso</Authors>
     <Company>Pyrix</Company>
     <Description>Minimalist java IDE</Description>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>bin\Debug\</OutputPath>
@@ -48,6 +49,12 @@
     <None Remove="Images\Undo.png" />
     <None Remove="Images\WordWrap.png" />
     <None Remove="JSharp.png" />
+    <None Remove="Resources\Java-DarkMode.xshd" />
+    <None Remove="Resources\Java-LightMode.xshd" />
+    <None Remove="Resources\Python-DarkMode.xshd" />
+    <None Remove="Resources\Python-LightMode.xshd" />
+    <None Remove="Resources\XML-DarkMode.xshd" />
+    <None Remove="Resources\XML-LightMode.xshd" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.0.1" />
@@ -125,6 +132,24 @@
     <Resource Include="Images\WordWrap.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Java-DarkMode.xshd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Java-LightMode.xshd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Python-DarkMode.xshd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Python-LightMode.xshd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\XML-DarkMode.xshd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\XML-LightMode.xshd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <SplashScreen Include="JSharp.png" />
@@ -143,7 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>

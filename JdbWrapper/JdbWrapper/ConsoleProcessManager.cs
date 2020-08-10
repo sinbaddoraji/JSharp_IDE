@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Diagnostics;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace JdbWrapper
 {
-    using System;
-    using System.Diagnostics;
-    using System.Text;
-    using System.Threading;
-    using System.Threading.Tasks;
-
-    public class ConsoleAppManager
+    //Code based on answer found in https://stackoverflow.com/questions/21848271/redirecting-standard-input-of-console-application
+    public class ConsoleProcessManger
     {
         private readonly string appName;
         private readonly Process process = new Process();
@@ -16,7 +16,7 @@ namespace JdbWrapper
         private SynchronizationContext context;
         private string pendingWriteData;
 
-        public ConsoleAppManager(string appName)
+        public ConsoleProcessManger(string appName)
         {
             this.appName = appName;
 

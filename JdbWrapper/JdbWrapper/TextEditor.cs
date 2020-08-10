@@ -26,6 +26,7 @@ namespace JdbWrapper
             AutoCompleteBrackets = true;
             Language = Language.CSharp;
             BookmarkColor = Color.Red;
+            ReadOnly = true;
 
             OpenFile(filename);
             shortName = Path.GetFileName(filename);
