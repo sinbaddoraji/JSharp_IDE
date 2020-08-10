@@ -52,7 +52,7 @@ namespace JSharp
             p.Start();
             p.WaitForExit(2000);
 
-            return p.StandardOutput.ReadToEnd();
+            return Directory.GetParent(p.StandardOutput.ReadToEnd()).Parent.FullName;
         }
     }
 }
