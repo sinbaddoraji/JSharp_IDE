@@ -10,17 +10,17 @@ namespace JdbWrapper
     //Code based on answer found in https://stackoverflow.com/questions/21848271/redirecting-standard-input-of-console-application
     public class ConsoleProcessManger
     {
-        private readonly string appName;
+        private readonly string processFileName;
         private readonly Process process = new Process();
-        private readonly object theLock = new object();
+        private readonly object threadLock = new object();
         private SynchronizationContext context;
         private string pendingWriteData;
 
         public ConsoleProcessManger(string appName)
         {
-            this.appName = appName;
+            this.processFileName = appName;
 
-            process.StartInfo.FileName = this.appName;
+            process.StartInfo.FileName = this.processFileName;
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.StandardErrorEncoding = Encoding.UTF8;
 
@@ -71,15 +71,8 @@ namespace JdbWrapper
 
         public void Write(string data)
         {
-            if (data == null)
-            {
-                return;
-            }
-
-            lock (theLock)
-            {
-                pendingWriteData = data;
-            }
+            if (data == null) return;
+            lock (threadLock) pendingWriteData = data;
         }
 
         public void WriteLine(string data)
@@ -106,11 +99,7 @@ namespace JdbWrapper
 
         protected virtual void OnProcessExited()
         {
-            EventHandler handler = ProcessExited;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
+            ProcessExited?.Invoke(this, EventArgs.Empty);
         }
 
         protected virtual void OnStandartTextReceived(string e)
@@ -181,12 +170,18 @@ namespace JdbWrapper
                     await process.StandardInput.WriteLineAsync(pendingWriteData);
                     await process.StandardInput.FlushAsync();
 
-                    lock (theLock)
+                    lock (threadLock)
                     {
                         pendingWriteData = null;
                     }
                 }
             }
+        }
+
+        internal void Close()
+        {
+            if (Running)
+                process.Kill();
         }
     }
 
@@ -195,13 +190,12 @@ namespace JdbWrapper
     {
         public static char[] SubArray(this char[] input, int startIndex, int length)
         {
-            List<char> result = new List<char>();
-            for (int i = startIndex; i < length; i++)
-            {
-                result.Add(input[i]);
-            }
+            char[] output = new char[length];
 
-            return result.ToArray();
+            for (int i = 0, j = startIndex; i < length; i++, j++)
+                output[i] = input[j];
+
+            return output;
         }
     }
 }

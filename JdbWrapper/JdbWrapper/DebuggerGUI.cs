@@ -1,15 +1,7 @@
-﻿using FastColoredTextBoxNS;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace JdbWrapper
@@ -36,12 +28,12 @@ namespace JdbWrapper
             InitializeComponent();
             jdbPath = FindJavaPath();
 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            AutoScaleDimensions = new SizeF(96F, 96F);
 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            AutoScaleMode = AutoScaleMode.Dpi;
         }
 
-       
+
         private string FindJavaPath()
         {
             Process p = new Process()
@@ -66,12 +58,12 @@ namespace JdbWrapper
             string[] files = System.IO.Directory.GetFiles(folder, "*.java");
             Directory.SetCurrentDirectory(folder);
 
-            foreach (var item in files)
+            foreach (string item in files)
             {
                 Open(item);
             }
 
-            
+
             StartDebugging();
         }
 
@@ -93,7 +85,7 @@ namespace JdbWrapper
             }
         }
 
-        
+
 
         private void Open(string file)
         {
@@ -103,7 +95,7 @@ namespace JdbWrapper
             };
 
             TextEditor textEditor = new TextEditor(this, file);
-            if(textEditor.Text.Contains("static void main(String[] args)"))
+            if (textEditor.Text.Contains("static void main(String[] args)"))
             {
                 mainFile = textEditor.shortName;
                 tabControl1.SelectedTab = t;
@@ -114,44 +106,97 @@ namespace JdbWrapper
             tabControl1.TabPages.Add(t);
         }
 
-        private void DebuggerGUI_SizeChanged(object sender, EventArgs e) => panel1.Left = (Width - panel1.Width) / 2;
+        private void DebuggerGUI_SizeChanged(object sender, EventArgs e)
+        {
+            panel1.Left = (Width - panel1.Width) / 2;
+        }
 
-        private void DirectCommand_Click(object sender, EventArgs e) => consoleAppManager.WriteLine(textBox1.Text);
+        private void DirectCommand_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine(textBox1.Text);
+        }
 
-        private void Suspend_Click(object sender, EventArgs e) => consoleAppManager.WriteLine("suspend");
+        private void Suspend_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine("suspend");
+        }
 
-        private void Classes_Click(object sender, EventArgs e) => consoleAppManager.WriteLine("classes");
+        private void Classes_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine("classes");
+        }
 
-        private void Methods_Click(object sender, EventArgs e) => consoleAppManager.WriteLine("methods");
+        private void Methods_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine("methods");
+        }
 
-        private void Threads_Click(object sender, EventArgs e) => consoleAppManager.WriteLine("threads");
+        private void Threads_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine("threads");
+        }
 
-        private void StepOver_Click(object sender, EventArgs e) => consoleAppManager.WriteLine("stepi");
+        private void StepOver_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine("stepi");
+        }
 
-        private void Fields_Click(object sender, EventArgs e) => consoleAppManager.WriteLine("fields");
+        private void Fields_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine("fields");
+        }
 
-        private void Locals_Click(object sender, EventArgs e) => consoleAppManager.WriteLine("locals");
+        private void Locals_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine("locals");
+        }
 
-        private void Resume_Click(object sender, EventArgs e) => consoleAppManager.WriteLine("resume");
+        private void Resume_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine("resume");
+        }
 
-        private void Continue_Click(object sender, EventArgs e) => consoleAppManager.WriteLine("cont");
+        private void Continue_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine("cont");
+        }
 
-        private void Step_Click(object sender, EventArgs e) => consoleAppManager.WriteLine("step");
+        private void Step_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine("step");
+        }
 
-        private void Next_Click(object sender, EventArgs e) => consoleAppManager.WriteLine("next");
+        private void Next_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine("next");
+        }
 
-        private void Help_Click(object sender, EventArgs e) => consoleAppManager.WriteLine("help");
+        private void Help_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine("help");
+        }
 
-        private void Run_Click(object sender, EventArgs e) => consoleAppManager.WriteLine($"run");
+        private void Run_Click(object sender, EventArgs e)
+        {
+            consoleAppManager.WriteLine($"run");
+        }
 
-        private void ConsoleAppManager_StandartTextReceived(object sender, string e) => outputTextbox.Text += e;
+        private void ConsoleAppManager_StandartTextReceived(object sender, string e)
+        {
+            outputTextbox.Text += e;
+        }
 
-        private void ConsoleAppManager_ErrorTextReceived(object sender, string e) => outputTextbox.Text += e;
+        private void ConsoleAppManager_ErrorTextReceived(object sender, string e)
+        {
+            outputTextbox.Text += e;
+        }
 
         private void TextBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter)
+            {
                 consoleAppManager.WriteLine(textBox1.Text);
+            }
         }
 
         private void Open_Click(object sender, EventArgs e)
@@ -166,6 +211,11 @@ namespace JdbWrapper
         private void DebuggerGUI_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void DebuggerGUI_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            consoleAppManager.Close();
         }
     }
 }

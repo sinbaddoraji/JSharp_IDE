@@ -135,7 +135,7 @@ namespace JSharp.Windows.MainWindow
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            //new Settings().ShowDialog();
+            new Settings().ShowDialog();
             UseDarkTheme(Properties.Settings.Default.DarkTheme);
         }
 

@@ -180,6 +180,8 @@ namespace JSharp.Windows.MainWindow
             xmlWriter.Close();
 
             Properties.Settings.Default.Save();
+
+            DebugCore.CloseProcess();
         }
         #endregion WindowSettings
 

@@ -23,12 +23,12 @@ namespace JSharp.TextEditor.Highlighting
             if (!Directory.Exists("Resources"))
             {
                 Directory.CreateDirectory("Resources");
-                File.WriteAllBytes("Resources\\Java-LightMode.xshd", Resources.Java_LightMode);
-                File.WriteAllBytes("Resources\\Java-DarkMode.xshd", Resources.Java_LightMode);
-                File.WriteAllBytes("Resources\\Python-LightMode.xshd", Resources.Java_LightMode);
-                File.WriteAllBytes("Resources\\Python-DarkMode.xshd", Resources.Java_LightMode);
-                File.WriteAllBytes("Resources\\XML-LightMode.xshd", Resources.Java_LightMode);
-                File.WriteAllBytes("Resources\\XML-DarkMode.xshd", Resources.Java_LightMode);
+                File.WriteAllText("Resources\\Java-LightMode.xshd", Resources.Java_LightMode);
+                File.WriteAllText("Resources\\Java-DarkMode.xshd", Resources.Java_LightMode);
+                File.WriteAllText("Resources\\Python-LightMode.xshd", Resources.Java_LightMode);
+                File.WriteAllText("Resources\\Python-DarkMode.xshd", Resources.Java_LightMode);
+                File.WriteAllText("Resources\\XML-LightMode.xshd", Resources.Java_LightMode);
+                File.WriteAllText("Resources\\XML-DarkMode.xshd", Resources.Java_LightMode);
             }
             //Java highlighting
             _javaLight = HighlightingLoader.Load(new XmlTextReader(File.OpenRead("Resources\\Java-LightMode.xshd")), this);

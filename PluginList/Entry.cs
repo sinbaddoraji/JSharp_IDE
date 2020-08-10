@@ -1,4 +1,5 @@
-﻿using JSharp.PluginCore;
+﻿using JSharp;
+using JSharp.PluginCore;
 using JSharp.Windows.MainWindow;
 using System.Windows.Controls;
 
@@ -37,6 +38,8 @@ namespace PluginList
         }
 
         public void Unload() { }
+
+        Pane[] IPlugin.GetPaneControls() => null;
     }
 }
 

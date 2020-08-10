@@ -101,22 +101,36 @@ namespace JSharp.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;!-- syntaxdefinition for Java 2001 by Jonathan Pierce &amp; Mike Krueger --&gt;
+        ///&lt;!-- converted to AvalonEdit format by Siegfried Pammer in 2010 --&gt;
+        ///&lt;SyntaxDefinition name=&quot;Java&quot; extensions=&quot;.java&quot; xmlns=&quot;http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008&quot;&gt;
+        ///  &lt;Color name=&quot;MethodName&quot; foreground=&quot;#FF09D5&quot; /&gt;
+        ///  &lt;Color name=&quot;Digits&quot; foreground=&quot;#11D500&quot; /&gt;
+        ///  &lt;Color name=&quot;String&quot; foreground=&quot;#FFE0580E&quot;  /&gt;
+        ///  &lt;Color name=&quot;Character&quot; foreground=&quot;Magenta&quot;  /&gt;
+        ///  &lt;Color name=&quot;Comment&quot; f [rest of string was truncated]&quot;;.
         /// </summary>
-        public static byte[] Java_DarkMode {
+        public static string Java_DarkMode {
             get {
-                object obj = ResourceManager.GetObject("Java_DarkMode", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("Java_DarkMode", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;!-- syntaxdefinition for Java 2001 by Jonathan Pierce &amp; Mike Krueger --&gt;
+        ///&lt;!-- converted to AvalonEdit format by Siegfried Pammer in 2010 --&gt;
+        ///&lt;SyntaxDefinition name=&quot;Java&quot; extensions=&quot;.java&quot; xmlns=&quot;http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008&quot;&gt;
+        ///  &lt;Color name=&quot;MethodName&quot; foreground=&quot;#FF09D5&quot; /&gt;
+        ///  &lt;Color name=&quot;Digits&quot; foreground=&quot;#11D500&quot; /&gt;
+        ///  &lt;Color name=&quot;String&quot; foreground=&quot;#FFE0580E&quot;  /&gt;
+        ///  &lt;Color name=&quot;Character&quot; foreground=&quot;Magenta&quot;  /&gt;
+        ///  &lt;Color name=&quot;Comment&quot; f [rest of string was truncated]&quot;;.
         /// </summary>
-        public static byte[] Java_LightMode {
+        public static string Java_LightMode {
             get {
-                object obj = ResourceManager.GetObject("Java_LightMode", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("Java_LightMode", resourceCulture);
             }
         }
         
@@ -141,22 +155,36 @@ namespace JSharp.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;!-- syntaxdefinition for Java 2001 by Jonathan Pierce &amp; Mike Krueger --&gt;
+        ///&lt;!-- converted to AvalonEdit format by Siegfried Pammer in 2010 --&gt;
+        ///&lt;SyntaxDefinition name=&quot;Java&quot; extensions=&quot;.java&quot; xmlns=&quot;http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008&quot;&gt;
+        ///  &lt;Color name=&quot;MethodName&quot; foreground=&quot;#FF09D5&quot; /&gt;
+        ///  &lt;Color name=&quot;Digits&quot; foreground=&quot;#11D500&quot; /&gt;
+        ///  &lt;Color name=&quot;String&quot; foreground=&quot;#FFE0580E&quot;  /&gt;
+        ///  &lt;Color name=&quot;Character&quot; foreground=&quot;Magenta&quot;  /&gt;
+        ///  &lt;Color name=&quot;Comment&quot; f [rest of string was truncated]&quot;;.
         /// </summary>
-        public static byte[] Python_DarkMode {
+        public static string Python_DarkMode {
             get {
-                object obj = ResourceManager.GetObject("Python_DarkMode", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("Python_DarkMode", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;!-- syntaxdefinition for Java 2001 by Jonathan Pierce &amp; Mike Krueger --&gt;
+        ///&lt;!-- converted to AvalonEdit format by Siegfried Pammer in 2010 --&gt;
+        ///&lt;SyntaxDefinition name=&quot;Java&quot; extensions=&quot;.java&quot; xmlns=&quot;http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008&quot;&gt;
+        ///  &lt;Color name=&quot;MethodName&quot; foreground=&quot;#FF09D5&quot; /&gt;
+        ///  &lt;Color name=&quot;Digits&quot; foreground=&quot;#11D500&quot; /&gt;
+        ///  &lt;Color name=&quot;String&quot; foreground=&quot;#FFE0580E&quot;  /&gt;
+        ///  &lt;Color name=&quot;Character&quot; foreground=&quot;Magenta&quot;  /&gt;
+        ///  &lt;Color name=&quot;Comment&quot; f [rest of string was truncated]&quot;;.
         /// </summary>
-        public static byte[] Python_LightMode {
+        public static string Python_LightMode {
             get {
-                object obj = ResourceManager.GetObject("Python_LightMode", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("Python_LightMode", resourceCulture);
             }
         }
         
@@ -201,22 +229,36 @@ namespace JSharp.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;!-- syntaxdefinition for Java 2001 by Jonathan Pierce &amp; Mike Krueger --&gt;
+        ///&lt;!-- converted to AvalonEdit format by Siegfried Pammer in 2010 --&gt;
+        ///&lt;SyntaxDefinition name=&quot;Java&quot; extensions=&quot;.java&quot; xmlns=&quot;http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008&quot;&gt;
+        ///  &lt;Color name=&quot;MethodName&quot; foreground=&quot;#FF09D5&quot; /&gt;
+        ///  &lt;Color name=&quot;Digits&quot; foreground=&quot;#11D500&quot; /&gt;
+        ///  &lt;Color name=&quot;String&quot; foreground=&quot;#FFE0580E&quot;  /&gt;
+        ///  &lt;Color name=&quot;Character&quot; foreground=&quot;Magenta&quot;  /&gt;
+        ///  &lt;Color name=&quot;Comment&quot; f [rest of string was truncated]&quot;;.
         /// </summary>
-        public static byte[] XML_DarkMode {
+        public static string XML_DarkMode {
             get {
-                object obj = ResourceManager.GetObject("XML_DarkMode", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("XML_DarkMode", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;!-- syntaxdefinition for Java 2001 by Jonathan Pierce &amp; Mike Krueger --&gt;
+        ///&lt;!-- converted to AvalonEdit format by Siegfried Pammer in 2010 --&gt;
+        ///&lt;SyntaxDefinition name=&quot;Java&quot; extensions=&quot;.java&quot; xmlns=&quot;http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008&quot;&gt;
+        ///  &lt;Color name=&quot;MethodName&quot; foreground=&quot;#FF09D5&quot; /&gt;
+        ///  &lt;Color name=&quot;Digits&quot; foreground=&quot;#11D500&quot; /&gt;
+        ///  &lt;Color name=&quot;String&quot; foreground=&quot;#FFE0580E&quot;  /&gt;
+        ///  &lt;Color name=&quot;Character&quot; foreground=&quot;Magenta&quot;  /&gt;
+        ///  &lt;Color name=&quot;Comment&quot; f [rest of string was truncated]&quot;;.
         /// </summary>
-        public static byte[] XML_LightMode {
+        public static string XML_LightMode {
             get {
-                object obj = ResourceManager.GetObject("XML_LightMode", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("XML_LightMode", resourceCulture);
             }
         }
     }

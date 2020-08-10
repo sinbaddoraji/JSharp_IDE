@@ -184,6 +184,15 @@ namespace JSharp
         }
 
         /// <summary>
+        /// Close debug process if any
+        /// </summary>
+         public static void CloseProcess()
+         {
+            if (_process != null)
+                _process.Close();
+         }
+
+        /// <summary>
         /// Run Java program
         /// </summary>
         public static void Run(string filename)
