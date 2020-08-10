@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Xml;
 using AvalonDock.Layout;
 using JSharp.PluginCore;
+using JdbWrapper;
 
 namespace JSharp.Windows.MainWindow
 {
@@ -165,7 +166,7 @@ namespace JSharp.Windows.MainWindow
 
         private void DebugRun_Click(object sender, RoutedEventArgs e)
         {
-            DebugCore.RunInDebugger(GetSelectedFile(false));
+            DebugCore.RunInDebugger();
         }
 
         private void Open_Project_Folder_Click(object sender, RoutedEventArgs e)

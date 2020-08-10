@@ -39,7 +39,9 @@ namespace JSharp.PluginCore
             "IKVM.OpenJDK.Util.dll",
             "IKVM.OpenJDK.XML.API.dll",
             "IKVM.Reflection.dll",
-            "IKVM.Runtime.dll"
+            "IKVM.Runtime.dll",
+            "FastColoredTextBox.dll",
+            "JdbWrapper.dll"
         };
 
         /// <summary>

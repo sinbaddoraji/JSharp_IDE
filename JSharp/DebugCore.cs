@@ -26,6 +26,11 @@ namespace JSharp
         private static readonly string JavaJar;
 
         /// <summary>
+        /// Java Debugger
+        /// </summary>
+        private static readonly string JavaJdb;
+
+        /// <summary>
         /// Location Path of JSharp
         /// </summary>
         private static readonly string ProgramLocation;
@@ -112,6 +117,7 @@ namespace JSharp
             JavaConsole = $"\"{jdkPath}\\bin\\java.exe\"";
             JavaCompiler = $"\"{jdkPath}\\bin\\javac.exe\"";
             JavaJar = $"\"{jdkPath}\\bin\\jar.exe\"";
+            JavaJdb = $"\"{jdkPath}\\bin\\jdb.exe\"";
 
             ProgramLocation = Directory.GetParent(Environment.GetCommandLineArgs()[0]).ToString();
 
@@ -161,21 +167,14 @@ namespace JSharp
         /// <summary>
         /// Run Java program in debugger
         /// </summary>
-        public static void RunInDebugger(string filename)
+        public static void RunInDebugger()
         {
-            if (!filename.EndsWith(".java")) return;
             CompileProject(false);
-
-            string debuggerDir = ProgramLocation + "\\debugger.jar";
-            string processCode = $"/K  cd/   &&  cd {GetParentDir(filename)}  &&  {JavaConsole} -jar {debuggerDir} {GetName(filename)}";
-
             _process = new Process
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName = "cmd.exe", Arguments = processCode,
-                    CreateNoWindow = true, ErrorDialog = true, UseShellExecute = false,
-                    RedirectStandardError = true, RedirectStandardOutput = true
+                    FileName = "JdbWrapper.exe", Arguments = $"{JavaJdb} \"{ProjectFolder}\""
                 }
             };
             OutputTextbox.Text += "Debugger Starting...\n";
@@ -223,7 +222,7 @@ namespace JSharp
         /// </summary>
         private static void Compile(string workingDirectory, string fileName)
         {
-            if (File.Exists(JavaCompiler))
+            if (File.Exists(JavaCompiler.Replace("\"","")))
             {
                 _process?.Close();
 
@@ -231,7 +230,7 @@ namespace JSharp
                 {
                     StartInfo = new ProcessStartInfo()
                     {
-                        FileName = JavaCompiler, Arguments = fileName,
+                        FileName = JavaCompiler, Arguments = $"-g \"{fileName}\"",
                         WorkingDirectory = workingDirectory,
                         CreateNoWindow = true, ErrorDialog = false, UseShellExecute = false,
                         RedirectStandardError = true, RedirectStandardOutput = true

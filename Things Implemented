@@ -37,4 +37,3 @@ Limitations:
     JSharp is not universal (It does not run on all platforms)
     JSharp's debugger is at a basic functionality (It does not support breakpoints and may not be able to handle very big classes)
     JSharp does not have an in-text debugger (The user is not notified about syntax errors till compilation)
-    JSharp pane windows are reset on restart (They go back to ther default locations on start)
