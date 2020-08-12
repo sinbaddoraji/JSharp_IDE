@@ -62,6 +62,6 @@ JSharp uses JDB as a debugger. A GUI wrapper has been created in order to use JD
 > Graphics/Front-end:
 
  MahApps.Metro and Avalon dock were used to give JSharp the clean look it has.
-![JSharp DarkMode](https://raw.githubusercontent.com/sinbaddoraji/JSharp_IDE/master/JSharpDark.PNG?token=AJT6XMXSYZWGMXHKRDDJKL27GQCCE)
+![JSharp DarkMode](JSharpDark.PNG)
 <Br>
-![JSharp LightMode](https://raw.githubusercontent.com/sinbaddoraji/JSharp_IDE/master/JSharpLight.PNG?token=AJT6XMQ57FCFLZIUF6B3DTC7GQCB4)
+![JSharp LightMode](JSharpLight.PNG)
