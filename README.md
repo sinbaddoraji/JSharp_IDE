@@ -1,57 +1,45 @@
-This read me file is currently being used as a milestone tracker. Things marked with "*" are currently implemented features.
+# JSharp (A minimalist java IDE)
 
-# JSharp => A minimalist java IDE written in c# as possible replacement IDE for minimalist coders
+ 
 
-*JSharp should have a flexible User Interface like Visual Studio.
+## Why JSharp?
 
-*JSharp should have a text editor with Syntax Highlighting
+  1. Sharp has a flexible User Interface like Visual Studio. 
+    	 - JSharp has a text editor with Syntax Highlighting.  		 
+    	 - JSharp has support an auto-complete feature for Java.
+    	 - JSharp supports plugins written in C#
+    
+   2. JSharp is fast and easy to use
+        
+   3. JSharp is able to compile java files without the need for projects
+        
+   4. JSharp has a basic debugger.
+    
+   5. JSharp is themeable
 
-*JSharp should support auto complete for Java
+## Resources Needed to run JSharp:
 
-*JSharp should have a plugin 
+  -  Microsoft .net framework 4.8
+  -  Java development kit version 1.8.0_251 or higher
+  -  2GB ram or more
+ -   70MB hard disk space (Minimum)
 
-  A plugin should be able to add menu items to the JSharp window
-  
-  A plugin shpuld be able to add toolbar objects to the JSharp window
-  
-  A plugin should be able to handle some JSharp window events
-  
-  A plugin should be able to add context menu items
+## How to Build:
 
-JSharp should have documentation for plugin development
-
-*JSharp should be fast and easy to use
-
-*JSharp should be able to compile java files without the need for projects
-
-*JSharp should have a java debugger 
-  The java debugger should be able to identify breakpoints -> Yet to implement
-  The java debugger should be able to step into code (line by line)
-  
-*JSharp should be themeable
-
-Resources Needed to run JSharp:
-
-  Microsoft .net framework 4.8
-  Java development kit version 1.8.0_251 or higher
-  2GB ram or more
-  70MB hard disk space (Minimum)
-
-How to Build:
   Build with visual studio. No complicated process is needed to build JSharp.
 
-Frameworks Used:
+## Frameworks Used:
 
-Avalon Dock => Used for docking 
-Avalon Edit => Used for text editor 
-IKVM => Used for running java code from c#
-MahApps.Metro => Used to create the window
+  -  Avalon Dock => Used for docking 
+  -  Avalon Edit => Used for text editor 
+  -  IKVM => Used for running java code from c#
+  -  MahApps.Metro => Used to create the window
 
-Notes:
+## Notes:
 
 JSharp was initially written in .net core but it was rewritten in the normal .net framework to make it work on other platforms using mono
 
-On Plugins:
+> On Plugins:
 
 Plugins were implemented in a very straight forward way. C# reflection is used to extract data from the dll files.
 
@@ -59,16 +47,21 @@ A plugin project should refrence the JSharp project or "JSharp.exe" which needs 
 
 The plugin should have one major file called "Entry.cs" which inherits IPlugin which is found in the JSharp lib. Implementing the Interface in any way desired should create a functional plugin as long as there are no build-errors or noticable bugs.
 
-On auto-complete:
+> On auto-complete:
 
 The base which this was built on is the avalon-edit framework and IKVM. The completion window provided by avalon-edit is modified and used to display data extracted from code written using the Java reflection libruary to suggest java code (a java libruary used to analyse Java code that has already been built).
 
-On the debugger:
+> On the debugger:
 
-The debugger for JSharp is based on the java-dt graphical debugger. Further work has not been done on the debugger yet. The plan is to pick up where the example program left off and continue from there as the debugger is currently very basic
+JSharp uses JDB as a debugger. A GUI wrapper has been created in order to use JDB outside of the console environment
 
-On Syntax highlighting:
+> On Syntax highlighting:
+
  Syntax highlighting was acchieved using avalon-edit. Custom highlighting schemes in xshd (an xml derivative) were created for JSharp. Once the custom schemes were made, classes to use them were implemented. The original Higlighting manager was not used because JSharp has a light and dark mode and highlighting colour schemes need to change as the theme changes
 
- Graphics/Front-end:
+> Graphics/Front-end:
+
  MahApps.Metro and Avalon dock were used to give JSharp the clean look it has.
+![JSharp DarkMode](JSharpDark.PNG)
+<Br>
+![JSharp LightMode](JSharpLight.PNG)
