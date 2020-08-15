@@ -181,7 +181,6 @@
             this.outputTextbox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.outputTextbox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.outputTextbox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.outputTextbox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.outputTextbox.IsReplaceMode = false;
             this.outputTextbox.Location = new System.Drawing.Point(4, 3);
             this.outputTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -238,7 +237,7 @@
             // 
             this.button12.BackColor = System.Drawing.Color.White;
             this.button12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button12.Location = new System.Drawing.Point(668, 41);
+            this.button12.Location = new System.Drawing.Point(668, 39);
             this.button12.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(152, 34);
@@ -277,7 +276,7 @@
             // 
             this.button15.BackColor = System.Drawing.Color.White;
             this.button15.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button15.Location = new System.Drawing.Point(824, 41);
+            this.button15.Location = new System.Drawing.Point(824, 39);
             this.button15.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(144, 34);

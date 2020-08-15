@@ -45,7 +45,8 @@ namespace JSharp
                     FileName = "where.exe",
                     Arguments = "jdb",
                     UseShellExecute = false,
-                    RedirectStandardOutput = true
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
                 }
             };
 

@@ -43,7 +43,8 @@ namespace JdbWrapper
                     FileName = "where.exe",
                     Arguments = "jdb",
                     UseShellExecute = false,
-                    RedirectStandardOutput = true
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
                 }
             };
 
@@ -55,7 +56,7 @@ namespace JdbWrapper
 
         private void OpenProjectFolder(string folder)
         {
-            string[] files = System.IO.Directory.GetFiles(folder, "*.java");
+            string[] files = Directory.GetFiles(folder, "*.java");
             Directory.SetCurrentDirectory(folder);
 
             foreach (string item in files)
@@ -216,6 +217,12 @@ namespace JdbWrapper
         private void DebuggerGUI_FormClosing(object sender, FormClosingEventArgs e)
         {
             consoleAppManager.Close();
+
+            foreach (TabPage tabPage in tabControl1.TabPages)
+            {
+                TextEditor textEditor = (TextEditor)tabPage.Controls[0];
+                textEditor.SaveToFile(textEditor.filename,System.Text.Encoding.UTF8);
+            }
         }
     }
 }

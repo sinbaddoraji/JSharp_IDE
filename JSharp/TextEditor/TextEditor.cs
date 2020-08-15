@@ -20,6 +20,8 @@ using java.lang.reflect;
 using JSharp.TextEditor.Completion;
 using JSharp.TextEditor.Folding;
 using JSharp.TextEditor.Highlighting;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Rendering;
 
 namespace JSharp.TextEditor
 {

@@ -19,6 +19,7 @@ namespace JdbWrapper
         DebuggerGUI parent;
 
         public string shortName;
+        public string filename;
 
         public TextEditor(DebuggerGUI parent, string filename)
         {
@@ -28,6 +29,7 @@ namespace JdbWrapper
             BookmarkColor = Color.Red;
             ReadOnly = true;
 
+            this.filename = filename;
             OpenFile(filename);
             shortName = Path.GetFileName(filename);
             shortName = shortName.Substring(0, shortName.Length - 5);
@@ -41,7 +43,7 @@ namespace JdbWrapper
         private void TextEditor_TextChanged(object sender, TextChangedEventArgs e)
         {
             this.SelectionStart = TextLength;
-            
+
         }
 
         private void InitalizeContextMenu()
@@ -61,7 +63,7 @@ namespace JdbWrapper
 
         private void RemoveBreakpoint_Click1(object sender, EventArgs e)
         {
-            if(BookmarkedLines.Contains(CurrentLine))
+            if (BookmarkedLines.Contains(CurrentLine))
             {
                 BookmarkedLines.Remove(CurrentLine);
                 UnbookmarkLine(CurrentLine);
