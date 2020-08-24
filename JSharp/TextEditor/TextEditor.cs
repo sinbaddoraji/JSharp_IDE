@@ -47,7 +47,7 @@ namespace JSharp.TextEditor
         /// <summary>
         /// Abstract list holding auto complete information for all text editors
         /// </summary>
-        private static EditorCompletionList CompletionList => EditorCompletionWindow.CompletionList;
+        private static EditorCompletionList CompletionList => EditorCompletionWindow._editorCompletionList;
 
         /// <summary>
         /// Class list extracted from JDK (A list of classes used by Java programs)
@@ -192,22 +192,22 @@ namespace JSharp.TextEditor
 
             //Initialize code completion window
             _completionWindow = new EditorCompletionWindow(this);
-            if (EditorCompletionWindow.CompletionList.Contains(wordContext))
+            if (EditorCompletionWindow._editorCompletionList.Contains(wordContext))
             {
-                EditorCompletionWindow.CompletionList?.SelectItem(wordContext);
+                EditorCompletionWindow._editorCompletionList?.SelectItem(wordContext);
             }
             var firstMatch = CompletionList.CompletionData.First(x => x.Text.StartsWith(wordContext));
-            if (firstMatch != null && EditorCompletionWindow.CompletionList.ListBox != null)
+            if (firstMatch != null && EditorCompletionWindow._editorCompletionList.ListBox != null)
             {
-                int index = EditorCompletionWindow.CompletionList.ListBox.Items.IndexOf(firstMatch);
-                EditorCompletionWindow.CompletionList.ListBox.SelectIndex(index);
+                int index = EditorCompletionWindow._editorCompletionList.ListBox.Items.IndexOf(firstMatch);
+                EditorCompletionWindow._editorCompletionList.ListBox.SelectIndex(index);
             }
 
             _completionWindow.Show();
             _completionWindow.Closed += delegate
             {
                 _completionWindow = null;
-                EditorCompletionWindow.CompletionList?.SelectItem(string.Empty);
+                EditorCompletionWindow._editorCompletionList?.SelectItem(string.Empty);
             };
         }
 
@@ -381,11 +381,11 @@ namespace JSharp.TextEditor
 
             string wordContext = GetClosedWordToCursor(CaretOffset);
 
-            if (EditorCompletionWindow.CompletionList.SelectedItem == null && _completionWindow != null)
+            if (EditorCompletionWindow._editorCompletionList.SelectedItem == null && _completionWindow != null)
             {
                 _completionWindow.Close();
             }
-            else if (e.Text[0] == '.' && EditorCompletionWindow.CompletionList.SelectedItem?.Text.Length < 1)
+            else if (e.Text[0] == '.' && EditorCompletionWindow._editorCompletionList.SelectedItem?.Text.Length < 1)
                 InitializeCompletionWindow(wordContext);
 
             if (e.Text[0] == ';')
@@ -393,7 +393,7 @@ namespace JSharp.TextEditor
                 if (_classList.Contains(wordContext.Replace(".", "/")))
                     AddCompletionData(wordContext);
 
-                EditorCompletionWindow.CompletionList.RequestInsertion(e);
+                EditorCompletionWindow._editorCompletionList.RequestInsertion(e);
             }
             else if (e.Text[0] == '\n' && _completionWindow != null)
             {
@@ -404,7 +404,7 @@ namespace JSharp.TextEditor
                 if (!CompletionList.Contains(wordContext) && _completionWindow == null)
                     AddCompletionData(wordContext);
                 else if (wordContext.Length > 0 && !CompletionList.Contains(wordContext))
-                    EditorCompletionWindow.CompletionList.RequestInsertion(e);
+                    EditorCompletionWindow._editorCompletionList.RequestInsertion(e);
             }
         }
 
@@ -519,5 +519,21 @@ namespace JSharp.TextEditor
         }
 
         #endregion
+
+        public EditorCompletionWindow EditorCompletionWindow
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        internal InnerHighlightingManager InnerHighlightingManager
+        {
+            get => default;
+            set
+            {
+            }
+        }
     }
 }

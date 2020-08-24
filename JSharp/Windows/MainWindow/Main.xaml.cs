@@ -19,7 +19,7 @@ namespace JSharp.Windows.MainWindow
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class Main
+    public partial class MainWindow
     {
         /*
          * This handles the events of the main window (Strictly)
@@ -29,7 +29,7 @@ namespace JSharp.Windows.MainWindow
         /// <summary>
         /// Main window for JSharp
         /// </summary>
-        public Main()
+        public MainWindow()
         {
             InitializeComponent();
             Initalize();
@@ -63,6 +63,46 @@ namespace JSharp.Windows.MainWindow
                 {
                     OpenDocument(args[i]);
                 }
+            }
+        }
+
+        public AboutDialog AboutDialog
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public RecentFiles RecentFiles
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public Settings Settings
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public GotoDialog GotoDialog
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public PluginHolder PluginHolder
+        {
+            get => default;
+            set
+            {
             }
         }
 

@@ -62,7 +62,7 @@ namespace JSharp.PluginCore
         /// <summary>
         /// Plug-in Parent window
         /// </summary>
-        Windows.MainWindow.Main ParentWindow { get; set; }
+        Windows.MainWindow.MainWindow ParentWindow { get; set; }
 
         /// <summary>
         /// Initialize plug-ins

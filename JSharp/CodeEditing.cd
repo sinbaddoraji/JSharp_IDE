@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="JSharp.TextEditor.TextEditor">
+    <Position X="4.25" Y="0.5" Width="2.25" />
+    <Members>
+      <Field Name="_classList" Hidden="true" />
+      <Field Name="Brackets" Hidden="true" />
+      <Method Name="TextEditor" Hidden="true" />
+      <Method Name="TextEditor_TextArea_TextEntered" Hidden="true" />
+      <Method Name="TextEditor_TextArea_TextEntering" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>kAEAAgAKIYAQABCGAAAwABAAUQEIAAIEABqICIQAhgI=</HashCode>
+      <FileName>TextEditor\TextEditor.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="EditorCompletionWindow" />
+      <Property Name="InnerHighlightingManager" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="JSharp.TextEditor.Completion.EditorCompletionWindow">
+    <Position X="0.5" Y="0.5" Width="2.75" />
+    <Members>
+      <Method Name="AttachEvents" Hidden="true" />
+      <Method Name="CaretPositionChanged" Hidden="true" />
+      <Method Name="CompletionList_InsertionRequested" Hidden="true" />
+      <Method Name="DetachEvents" Hidden="true" />
+      <Method Name="EditorCompletionWindow" Hidden="true" />
+      <Method Name="GetScrollEventTarget" Hidden="true" />
+      <Method Name="InitalizeCompletionData" Hidden="true" />
+      <Method Name="OnClosed" Hidden="true" />
+      <Method Name="OnKeyDown" Hidden="true" />
+      <Method Name="TextArea_MouseWheel" Hidden="true" />
+      <Method Name="TextArea_PreviewTextInput" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAkARAAAAAgAAAAAAgAAAAgAAAIEAAQAAABAAKAAAQA=</HashCode>
+      <FileName>TextEditor\Completion\CompletionWindow.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="EditorCompletionList" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="JSharp.TextEditor.Completion.EditorCompletionData" BaseTypeListCollapsed="true">
+    <Position X="1" Y="4.75" Width="1.75" />
+    <Members>
+      <Method Name="EditorCompletionData" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAgAAIEAAAAAAAAAAAAABAAAAAACAAAAAA=</HashCode>
+      <FileName>TextEditor\Completion\EditorCompletionData.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="JSharp.TextEditor.Completion.EditorCompletionList">
+    <Position X="0.75" Y="2.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAICAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>TextEditor\Completion\EditorCompletionList.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="EditorCompletionData" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="JSharp.TextEditor.Folding.JavaFoldingStrategy">
+    <Position X="7.5" Y="4" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>TextEditor\Folding\JavaFoldingStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="JSharp.TextEditor.Highlighting.InnerHighlightingManager">
+    <Position X="7.5" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAgAAABAAAAAAAAAABAAAAAAAAAAAAAAAAAQAEAA=</HashCode>
+      <FileName>TextEditor\Highlighting\HighlightingManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

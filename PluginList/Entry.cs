@@ -19,8 +19,8 @@ namespace PluginList
         public bool AddToMenu { get; set; } = true;
         public bool IsAddedToToolBar { get; set; } = false;
         public bool AddToContextMenu { get; set; } = false;
-        public Main ParentWindow { get; set; }
-        public static Main Parent;
+        public MainWindow ParentWindow { get; set; }
+        public static MainWindow Parent;
 
         public MenuItem[] GetMenuItems() => plugins;
 

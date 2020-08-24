@@ -44,7 +44,7 @@ namespace JSharp.Windows
             Properties.Settings.Default.Save();
             Close();
 
-            new MainWindow.Main().Show();
+            new MainWindow.MainWindow().Show();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

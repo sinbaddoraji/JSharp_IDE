@@ -17,7 +17,7 @@ namespace JSharp.PluginCore
         /// <summary>
         /// JSharp Window
         /// </summary>
-        public Windows.MainWindow.Main ParentWindow { get; set; }
+        public Windows.MainWindow.MainWindow ParentWindow { get; set; }
 
         /// <summary>
         /// A list of all valid registered plug-ins connected to JSharp
@@ -91,6 +91,22 @@ namespace JSharp.PluginCore
             foreach (var plugin in Directory.EnumerateFiles(pluginPath, "*.dll"))
             {
                 await LoadPlugin(plugin).ConfigureAwait(false);
+            }
+        }
+
+        public IPlugin IPlugin
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public IPlugin IPlugin1
+        {
+            get => default;
+            set
+            {
             }
         }
     }

@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="JSharp.Pane">
+    <Position X="4" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAICAAAABAAAQIAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\MainWindow\Pane.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="JSharp.Windows.MainWindow.MainWindow">
+    <Position X="1.5" Y="1" Width="2" />
+    <Members>
+      <Method Name="About_Click" Hidden="true" />
+      <Property Name="AboutDialog" Hidden="true" />
+      <Method Name="AddInbuiltPanes" Hidden="true" />
+      <Method Name="BuildAndRun_Click" Hidden="true" />
+      <Method Name="BuildClick_1" Hidden="true" />
+      <Method Name="BuildProject_Click" Hidden="true" />
+      <Method Name="ClearOutput_Click" Hidden="true" />
+      <Method Name="CreateJar_Click" Hidden="true" />
+      <Method Name="DebugRun_Click" Hidden="true" />
+      <Method Name="Exit_Click" Hidden="true" />
+      <Method Name="GetSelectedFile" Hidden="true" />
+      <Method Name="GetSelectedTextEditor" Hidden="true" />
+      <Method Name="Goto_Click" Hidden="true" />
+      <Property Name="GotoDialog" Hidden="true" />
+      <Method Name="Initalize" Hidden="true" />
+      <Method Name="InitalizePanes" Hidden="true" />
+      <Method Name="MainWindow" Hidden="true" />
+      <Method Name="New_Click" Hidden="true" />
+      <Method Name="NewDocument_IsSelectedChanged" Hidden="true" />
+      <Method Name="Open_Click" Hidden="true" />
+      <Method Name="Open_Project_Folder_Click" Hidden="true" />
+      <Method Name="OpenDocument" Hidden="true" />
+      <Method Name="OpenDocuments" Hidden="true" />
+      <Property Name="OpenedFiles" Hidden="true" />
+      <Field Name="openFileDialog" Hidden="true" />
+      <Method Name="PerformClosingCommands" Hidden="true" />
+      <Field Name="ProjectFolder" Hidden="true" />
+      <Property Name="RecentFiles" Hidden="true" />
+      <Method Name="Recents_Click" Hidden="true" />
+      <Method Name="Run_Click" Hidden="true" />
+      <Method Name="Save_Click" Hidden="true" />
+      <Method Name="SaveAll_Click" Hidden="true" />
+      <Method Name="SaveAllDocuments" Hidden="true" />
+      <Method Name="SaveAs_Click" Hidden="true" />
+      <Method Name="SelectDocumentTab" Hidden="true" />
+      <Property Name="SelectedDocumentPane" Hidden="true" />
+      <Property Name="Settings" Hidden="true" />
+      <Method Name="Settings_Click" Hidden="true" />
+      <Method Name="UpdatePanes" Hidden="true" />
+      <Method Name="UseDarkTheme" Hidden="true" />
+      <Method Name="Window_Closing" Hidden="true" />
+      <Method Name="ZoomValue_SelectionChanged" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="JSharp.Windows.MainWindow.MainWindow.PaneLocation">
+        <TypeIdentifier>
+          <NewMemberFileName>Windows\MainWindow\MainFormAbstract.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>EUYBQgEAAEgAiFACABBMQAgA1oAhgACCmEAAgEAsJGI=</HashCode>
+      <FileName>Windows\MainWindow\Main.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="PluginHolder" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="JSharp.PluginCore.PluginHolder">
+    <Position X="4" Y="1" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAggCAAAAAAAAAAgAAIEAAAAQAAAAASAAAAAAAAAA=</HashCode>
+      <FileName>PluginCore\PluginHolder.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="IPlugin1" />
+    </ShowAsAssociation>
+  </Class>
+  <Interface Name="JSharp.PluginCore.IPlugin">
+    <Position X="7.25" Y="1.5" Width="2" />
+    <Members>
+      <Property Name="AddToContextMenu" Hidden="true" />
+      <Property Name="Author" Hidden="true" />
+      <Property Name="Description" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Unload" Hidden="true" />
+      <Property Name="Version" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>IAAAMACgAAAgAAABggAAAAQAAAAAAAAEAAACAQAAIAA=</HashCode>
+      <FileName>PluginCore\IPlugin.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

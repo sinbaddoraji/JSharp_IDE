@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:xcad="https://github.com/Dirkster99/AvalonDock" x:Name="Window" x:Class="JSharp.Windows.MainWindow.Main"
+        xmlns:xcad="https://github.com/Dirkster99/AvalonDock" x:Name="Window" x:Class="JSharp.Windows.MainWindow.MainWindow"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" 
         mc:Ignorable="d" SaveWindowPosition="True"   GlowBrush="Black" ShowIconOnTitleBar="True" TitleAlignment="Center" Title="JSharp"
         Height="450" Width="800" SizeToContent="Manual" WindowStartupLocation="CenterScreen" Background="White" Closing="Window_Closing" WindowState="Maximized">

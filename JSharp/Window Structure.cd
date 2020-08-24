@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="JSharp.Windows.AboutDialog" BaseTypeListCollapsed="true">
+    <Position X="0.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\AboutDialog.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="JSharp.Windows.GotoDialog" BaseTypeListCollapsed="true">
+    <Position X="0.75" Y="5.5" Width="1.75" />
+    <Members>
+      <Method Name="Button_Click" Hidden="true" />
+      <Method Name="Txt_KeyDown" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAEABAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\GotoDialog.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="JSharp.Windows.RecentFiles" BaseTypeListCollapsed="true">
+    <Position X="0.75" Y="2" Width="1.75" />
+    <Members>
+      <Method Name="Button_Click" Hidden="true" />
+      <Method Name="RecentList_MouseDoubleClick" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\RecentFiles.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="JSharp.Windows.Settings" BaseTypeListCollapsed="true">
+    <Position X="0.75" Y="3.5" Width="1.75" />
+    <Members>
+      <Method Name="Button_Click" Hidden="true" />
+      <Method Name="Button_Click_1" Hidden="true" />
+      <Method Name="Settings" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAABAAAAAABAAAECAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Windows\Settings.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="JSharp.Windows.MainWindow.MainWindow" BaseTypeListCollapsed="true">
+    <Position X="5.25" Y="0.5" Width="2.25" />
+    <Members>
+      <Method Name="About_Click" Hidden="true" />
+      <Method Name="BuildAndRun_Click" Hidden="true" />
+      <Method Name="BuildClick_1" Hidden="true" />
+      <Method Name="BuildProject_Click" Hidden="true" />
+      <Method Name="ClearOutput_Click" Hidden="true" />
+      <Method Name="CreateJar_Click" Hidden="true" />
+      <Method Name="DebugRun_Click" Hidden="true" />
+      <Method Name="Exit_Click" Hidden="true" />
+      <Method Name="Goto_Click" Hidden="true" />
+      <Method Name="New_Click" Hidden="true" />
+      <Method Name="NewDocument_IsSelectedChanged" Hidden="true" />
+      <Method Name="Open_Click" Hidden="true" />
+      <Method Name="Open_Project_Folder_Click" Hidden="true" />
+      <Method Name="Recents_Click" Hidden="true" />
+      <Method Name="Run_Click" Hidden="true" />
+      <Method Name="Save_Click" Hidden="true" />
+      <Method Name="SaveAll_Click" Hidden="true" />
+      <Method Name="SaveAs_Click" Hidden="true" />
+      <Method Name="Settings_Click" Hidden="true" />
+      <Method Name="Window_Closing" Hidden="true" />
+      <Method Name="ZoomValue_SelectionChanged" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Enum Name="JSharp.Windows.MainWindow.MainWindow.PaneLocation" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Windows\MainWindow\MainFormAbstract.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>EUYBQgEAAEgAiFACABBMQAgA1oAhgACCmEAAgEAsJGI=</HashCode>
+      <FileName>Windows\MainWindow\Main.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="AboutDialog" />
+      <Property Name="RecentFiles" />
+      <Property Name="Settings" />
+      <Property Name="GotoDialog" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

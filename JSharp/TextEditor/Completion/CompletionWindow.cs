@@ -13,7 +13,7 @@ namespace JSharp.TextEditor.Completion
 	/// </summary>
 	public class EditorCompletionWindow : CompletionWindowBase
     {
-	    public static readonly EditorCompletionList CompletionList = new EditorCompletionList();
+	    public static readonly EditorCompletionList _editorCompletionList = new EditorCompletionList();
 
 	    private static bool _completionDataInitialized;
 
@@ -24,13 +24,21 @@ namespace JSharp.TextEditor.Completion
             SizeToContent = SizeToContent.Height;
 			MaxHeight = 150.0;
 			Width = 400;
-			Content = CompletionList;
+			Content = _editorCompletionList;
 			MinHeight = 15.0;
 			MinWidth = 30.0;
 			AttachEvents();
 		}
 
-		public static bool InitalizeCompletionData()
+        public EditorCompletionList EditorCompletionList
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public static bool InitalizeCompletionData()
         {
 			if (_completionDataInitialized) return true;
 
@@ -42,7 +50,7 @@ namespace JSharp.TextEditor.Completion
 
 			Parallel.ForEach(keywords, key =>
 			{
-				lock(CompletionList) { CompletionList.Add(key, true); }
+				lock(_editorCompletionList) { _editorCompletionList.Add(key, true); }
 			});
 
 			_completionDataInitialized = true;
@@ -53,13 +61,13 @@ namespace JSharp.TextEditor.Completion
 		private void CompletionList_InsertionRequested(object sender, EventArgs e)
 		{
 			Close();
-			CompletionList.SelectedItem?.Complete(TextArea, 
+			_editorCompletionList.SelectedItem?.Complete(TextArea, 
 				new AnchorSegment(TextArea.Document, _editor.ClosestWordOffset, EndOffset - _editor.ClosestWordOffset), e);
 		}
 
 		private void AttachEvents()
 		{
-			CompletionList.InsertionRequested += CompletionList_InsertionRequested;
+			_editorCompletionList.InsertionRequested += CompletionList_InsertionRequested;
 			TextArea.Caret.PositionChanged += CaretPositionChanged;
             TextArea.MouseWheel += TextArea_MouseWheel;
             TextArea.PreviewTextInput += TextArea_PreviewTextInput;
@@ -67,7 +75,7 @@ namespace JSharp.TextEditor.Completion
 
 		protected override void DetachEvents()
 		{
-			CompletionList.InsertionRequested -= CompletionList_InsertionRequested;
+			_editorCompletionList.InsertionRequested -= CompletionList_InsertionRequested;
 			TextArea.Caret.PositionChanged -= CaretPositionChanged;
 			TextArea.MouseWheel -= TextArea_MouseWheel;
 			TextArea.PreviewTextInput -= TextArea_PreviewTextInput;
@@ -84,7 +92,7 @@ namespace JSharp.TextEditor.Completion
 		{
 			base.OnKeyDown(e);
 			if (!e.Handled)
-				CompletionList.HandleKey(e);
+				_editorCompletionList.HandleKey(e);
 		}
 
 		private void TextArea_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -101,8 +109,8 @@ namespace JSharp.TextEditor.Completion
 
 		private UIElement GetScrollEventTarget()
 		{
-            return CompletionList == null ? this :
-				(UIElement)(CompletionList.ScrollViewer ?? CompletionList.ListBox ?? ((object)CompletionList));
+            return _editorCompletionList == null ? this :
+				(UIElement)(_editorCompletionList.ScrollViewer ?? _editorCompletionList.ListBox ?? ((object)_editorCompletionList));
         }
 
         private void CaretPositionChanged(object sender, EventArgs e)
@@ -111,7 +119,7 @@ namespace JSharp.TextEditor.Completion
 			if (offset == StartOffset)
 			{
 				Close();
-				CompletionList.SelectItem(string.Empty);
+				_editorCompletionList.SelectItem(string.Empty);
 				return;
 			}
 			if (offset < StartOffset || offset > EndOffset)
@@ -121,7 +129,7 @@ namespace JSharp.TextEditor.Completion
 			}
 			var document = TextArea.Document;
 			if (document != null)
-				CompletionList.SelectItem(document.GetText(StartOffset, offset - StartOffset));
+				_editorCompletionList.SelectItem(document.GetText(StartOffset, offset - StartOffset));
 		}
 
     }

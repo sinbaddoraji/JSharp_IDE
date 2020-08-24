@@ -20,7 +20,7 @@ namespace JSharp.Windows
     /// </summary>
     public partial class GotoDialog : Window
     {
-        private TextEditor.TextEditor Editor => PluginCore.PluginHolder.Instance.ParentWindow.GetSelectedTextEditor();
+        private TextEditor.TextEditor _textEditor => PluginCore.PluginHolder.Instance.ParentWindow.GetSelectedTextEditor();
         public GotoDialog()
         {
             InitializeComponent();
@@ -34,7 +34,7 @@ namespace JSharp.Windows
         private void GotoLine()
         {
             if (int.TryParse(txt.Text, out int output))
-                Editor.ScrollToLine(output);
+                _textEditor.ScrollToLine(output);
             Close();
         }
 

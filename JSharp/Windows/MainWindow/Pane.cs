@@ -5,21 +5,21 @@ namespace JSharp
 {
     public class Pane
     {
-        public object content;
-        public string title;
-        public int paneLocation;
-        public bool isCollapsed;
+        public object _content;
+        public string _title;
+        public int _paneLocation;
+        public bool _isAutoHide;
 
-        public LayoutAnchorable lA;
-        public double Width = 280;
-        public double Height = 180;
+        public LayoutAnchorable _parentPaneHolder;
+        public double _width = 280;
+        public double _height = 180;
 
         public Pane(object content, string title, int paneLocation, bool isCollapsed)
         {
-            this.content = content;
-            this.title = title;
-            this.paneLocation = paneLocation;
-            this.isCollapsed = isCollapsed;
+            this._content = content;
+            this._title = title;
+            this._paneLocation = paneLocation;
+            this._isAutoHide = isCollapsed;
         }
 
         public Pane()

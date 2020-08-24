@@ -38,7 +38,7 @@ namespace JSharp
         /// <summary>
         /// JSharp Main-Window
         /// </summary>
-        private static Main MainWindow => PluginHolder.Instance.ParentWindow;
+        private static MainWindow MainWindow => PluginHolder.Instance.ParentWindow;
 
         /// <summary>
         /// JSharp project folder

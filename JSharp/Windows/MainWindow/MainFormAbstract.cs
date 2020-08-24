@@ -20,7 +20,7 @@ using UserControl = System.Windows.Controls.UserControl;
 
 namespace JSharp.Windows.MainWindow
 {
-    public partial class Main
+    public partial class MainWindow
     {
         #region Fields/Properties
 
@@ -168,10 +168,10 @@ namespace JSharp.Windows.MainWindow
             {
                 xmlWriter.WriteStartElement("pane");
                 xmlWriter.WriteAttributeString("title", pane.Key);
-                xmlWriter.WriteAttributeString("paneLocation", pane.Value.paneLocation.ToString());
-                xmlWriter.WriteAttributeString("width", pane.Value.Width.ToString());
-                xmlWriter.WriteAttributeString("height", pane.Value.Height.ToString());
-                xmlWriter.WriteAttributeString("isCollapsed", pane.Value.isCollapsed.ToString());
+                xmlWriter.WriteAttributeString("paneLocation", pane.Value._paneLocation.ToString());
+                xmlWriter.WriteAttributeString("width", pane.Value._width.ToString());
+                xmlWriter.WriteAttributeString("height", pane.Value._height.ToString());
+                xmlWriter.WriteAttributeString("isCollapsed", pane.Value._isAutoHide.ToString());
                 xmlWriter.WriteEndElement();
             }
 
@@ -234,15 +234,15 @@ namespace JSharp.Windows.MainWindow
                     {
                         Pane currentPane = new Pane
                         {
-                            title = reader.GetAttribute("title"),
-                            paneLocation = int.Parse(reader.GetAttribute("paneLocation")),
-                            isCollapsed = bool.Parse(reader.GetAttribute("isCollapsed")),
-                            Width = double.Parse(reader.GetAttribute("width")),
-                            Height = double.Parse(reader.GetAttribute("height"))
+                            _title = reader.GetAttribute("title"),
+                            _paneLocation = int.Parse(reader.GetAttribute("paneLocation")),
+                            _isAutoHide = bool.Parse(reader.GetAttribute("isCollapsed")),
+                            _width = double.Parse(reader.GetAttribute("width")),
+                            _height = double.Parse(reader.GetAttribute("height"))
                         };
 
-                        if (!dictionaryOfPanes.ContainsKey(currentPane.title))
-                            dictionaryOfPanes.Add(currentPane.title, currentPane);
+                        if (!dictionaryOfPanes.ContainsKey(currentPane._title))
+                            dictionaryOfPanes.Add(currentPane._title, currentPane);
                     }
                     reader.MoveToNextAttribute();
                 }
@@ -265,47 +265,47 @@ namespace JSharp.Windows.MainWindow
 
             var lA = new LayoutAnchorable
             {
-                Title = pane.title,
-                Content = pane.content
+                Title = pane._title,
+                Content = pane._content
             };
-            pane.lA = lA;
+            pane._parentPaneHolder = lA;
 
-            if (!dictionaryOfPanes.ContainsKey(pane.title))
-                dictionaryOfPanes.Add(pane.title, pane);
+            if (!dictionaryOfPanes.ContainsKey(pane._title))
+                dictionaryOfPanes.Add(pane._title, pane);
             else
 
             {
-                dictionaryOfPanes[pane.title].lA = pane.lA;
-                pane.paneLocation = dictionaryOfPanes[pane.title].paneLocation;
-                pane.isCollapsed = dictionaryOfPanes[pane.title].isCollapsed;
-                pane.Width = dictionaryOfPanes[pane.title].Width;
-                pane.Height = dictionaryOfPanes[pane.title].Height;
+                dictionaryOfPanes[pane._title]._parentPaneHolder = pane._parentPaneHolder;
+                pane._paneLocation = dictionaryOfPanes[pane._title]._paneLocation;
+                pane._isAutoHide = dictionaryOfPanes[pane._title]._isAutoHide;
+                pane._width = dictionaryOfPanes[pane._title]._width;
+                pane._height = dictionaryOfPanes[pane._title]._height;
             }
 
-            ((UserControl)pane.content).HorizontalAlignment = HorizontalAlignment.Stretch;
-            ((UserControl)pane.content).VerticalAlignment = VerticalAlignment.Stretch;
+            ((UserControl)pane._content).HorizontalAlignment = HorizontalAlignment.Stretch;
+            ((UserControl)pane._content).VerticalAlignment = VerticalAlignment.Stretch;
 
             //panes[pane.paneLocation].Children.Add(lA);
             lA.CanDockAsTabbedDocument = false;
-            lA.AddToLayout(DockManager, (AnchorableShowStrategy)pane.paneLocation);
+            lA.AddToLayout(DockManager, (AnchorableShowStrategy)pane._paneLocation);
 
 
             if (lA.Parent is LayoutAnchorablePane p)
             {
-                p.DockWidth = new GridLength(pane.Width);
-                p.DockHeight = new GridLength(pane.Height);
+                p.DockWidth = new GridLength(pane._width);
+                p.DockHeight = new GridLength(pane._height);
             }
             else if (lA.Parent is LayoutAnchorablePaneGroup pG)
             {
 
-                pG.DockWidth = new GridLength(pane.Width);
-                pG.DockHeight = new GridLength(pane.Height);
+                pG.DockWidth = new GridLength(pane._width);
+                pG.DockHeight = new GridLength(pane._height);
             }
 
-            lA.AutoHideHeight = pane.Height;
-            lA.AutoHideWidth = pane.Width;
+            lA.AutoHideHeight = pane._height;
+            lA.AutoHideWidth = pane._width;
             
-            if (pane.isCollapsed)
+            if (pane._isAutoHide)
             {
                 lA.ToggleAutoHide();
             }
@@ -315,43 +315,43 @@ namespace JSharp.Windows.MainWindow
         {
             foreach (var pane in dictionaryOfPanes)
             {
-                switch (pane.Value.lA.Parent.GetSide())
+                switch (pane.Value._parentPaneHolder.Parent.GetSide())
                 {
                     case AnchorSide.Left:
-                        pane.Value.paneLocation = (int)AnchorableShowStrategy.Left;
+                        pane.Value._paneLocation = (int)AnchorableShowStrategy.Left;
                         break;
                     case AnchorSide.Top:
-                        pane.Value.paneLocation = (int)AnchorableShowStrategy.Top;
+                        pane.Value._paneLocation = (int)AnchorableShowStrategy.Top;
                         break;
                     case AnchorSide.Right:
-                        pane.Value.paneLocation = (int)AnchorableShowStrategy.Right;
+                        pane.Value._paneLocation = (int)AnchorableShowStrategy.Right;
                         break;
                     case AnchorSide.Bottom:
-                        pane.Value.paneLocation = (int)AnchorableShowStrategy.Bottom;
+                        pane.Value._paneLocation = (int)AnchorableShowStrategy.Bottom;
                         break;
                 }
 
-                if(pane.Value.lA.IsAutoHidden)
+                if(pane.Value._parentPaneHolder.IsAutoHidden)
                 {
-                    pane.Value.Width = pane.Value.lA.AutoHideWidth;
-                    pane.Value.Height = pane.Value.lA.AutoHideHeight;
+                    pane.Value._width = pane.Value._parentPaneHolder.AutoHideWidth;
+                    pane.Value._height = pane.Value._parentPaneHolder.AutoHideHeight;
                 }
                 else
                 {
-                    if (pane.Value.lA.Parent is LayoutAnchorablePane p)
+                    if (pane.Value._parentPaneHolder.Parent is LayoutAnchorablePane p)
                     {
-                        pane.Value.Width = p.DockWidth.Value;
-                        pane.Value.Height = p.DockHeight.Value;
+                        pane.Value._width = p.DockWidth.Value;
+                        pane.Value._height = p.DockHeight.Value;
                     }
-                    else if (pane.Value.lA.Parent is LayoutAnchorablePaneGroup pG)
+                    else if (pane.Value._parentPaneHolder.Parent is LayoutAnchorablePaneGroup pG)
                     {
-                        pane.Value.Width = pG.DockWidth.Value;
-                        pane.Value.Height = pG.DockHeight.Value;
+                        pane.Value._width = pG.DockWidth.Value;
+                        pane.Value._height = pG.DockHeight.Value;
                     }
                 }
                
 
-                pane.Value.isCollapsed = pane.Value.lA.IsAutoHidden;
+                pane.Value._isAutoHide = pane.Value._parentPaneHolder.IsAutoHidden;
             }
         }
 

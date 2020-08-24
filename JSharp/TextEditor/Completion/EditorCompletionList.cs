@@ -11,6 +11,14 @@ namespace JSharp.TextEditor.Completion
     {
         private readonly List<string> _autoCompleteStrings = new List<string>();
 
+        public EditorCompletionData EditorCompletionData
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
         public bool Contains(string data) => _autoCompleteStrings.IndexOf(data) != -1;
 
         public void Add(string data, bool isImportant = false)
