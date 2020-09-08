@@ -216,7 +216,8 @@ namespace JdbWrapper
 
         private void DebuggerGUI_FormClosing(object sender, FormClosingEventArgs e)
         {
-            consoleAppManager.Close();
+            if(consoleAppManager != null)
+                consoleAppManager.Close();
 
             foreach (TabPage tabPage in tabControl1.TabPages)
             {
