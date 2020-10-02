@@ -379,6 +379,7 @@ namespace JSharp.Windows.MainWindow
             };
 
             ((TextEditor.TextEditor)newDocument.Content).Text = $"public class {newDocument.Title.Substring(0, newDocument.Title.Length - 5)}"+ "\n{\n\n}";
+            ((TextEditor.TextEditor)newDocument.Content)._paneParent = newDocument;
 
             newDocument.IsSelectedChanged += delegate 
             {

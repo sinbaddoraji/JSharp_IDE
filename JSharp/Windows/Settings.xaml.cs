@@ -44,7 +44,9 @@ namespace JSharp.Windows
             Properties.Settings.Default.Save();
             Close();
 
-            new MainWindow.MainWindow().Show();
+            MessageBox.Show(@"JSharp will now restart");
+            System.Diagnostics.Process.Start(System.Windows.Forms.Application.ExecutablePath);
+            System.Windows.Application.Current.Shutdown();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

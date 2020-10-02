@@ -23,6 +23,7 @@ using JSharp.TextEditor.Highlighting;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 using JSharp.Inbuilt_Panes;
+using AvalonDock.Layout;
 
 namespace JSharp.TextEditor
 {
@@ -84,6 +85,11 @@ namespace JSharp.TextEditor
         /// The pop-up that makes use of CompletionList to provide hints
         /// </summary>
         private EditorCompletionWindow _completionWindow;
+
+        /// <summary>
+        /// GUI element holding this instance of TextEditor
+        /// </summary>
+        public LayoutDocument _paneParent;
 
         /// <summary>
         /// Currently opened document
@@ -463,6 +469,7 @@ namespace JSharp.TextEditor
             OpenedDocumentShortName = new FileInfo(OpenedDocument).Name;
 
             File.WriteAllText(fileName, Text);
+            _paneParent.Title = OpenedDocumentShortName;
             Load(fileName);
 
             if (Settings.Default.RecentFiles == null)

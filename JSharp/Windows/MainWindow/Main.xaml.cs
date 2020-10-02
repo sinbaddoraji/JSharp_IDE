@@ -188,6 +188,7 @@ namespace JSharp.Windows.MainWindow
 
         private void BuildClick_1(object sender, ExecutedRoutedEventArgs e)
         {
+            SaveAllDocuments();
             DebugCore.Compile(GetSelectedFile(false));
         }
 
@@ -198,16 +199,19 @@ namespace JSharp.Windows.MainWindow
 
         private void BuildAndRun_Click(object sender, ExecutedRoutedEventArgs e)
         {
+            SaveAllDocuments();
             DebugCore.CompileProject(true);
         }
 
         private void BuildProject_Click(object sender, ExecutedRoutedEventArgs e)
         {
+            SaveAllDocuments();
             DebugCore.CompileProject(false);
         }
 
         private void DebugRun_Click(object sender, RoutedEventArgs e)
         {
+            SaveAllDocuments();
             DebugCore.RunInDebugger();
         }
 
@@ -217,7 +221,7 @@ namespace JSharp.Windows.MainWindow
             {
                 if(f.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    SetProjectFolder(ProjectFolder);
+                    SetProjectFolder(f.SelectedPath);
                 }
             }
         }
@@ -229,6 +233,7 @@ namespace JSharp.Windows.MainWindow
 
         private void CreateJar_Click(object sender, RoutedEventArgs e)
         {
+            SaveAllDocuments();
             DebugCore.CreatePackage();
         }
 

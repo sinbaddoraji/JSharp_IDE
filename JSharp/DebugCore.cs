@@ -65,7 +65,7 @@ namespace JSharp
         /// </summary>
         private static string GetProjectDirectory()
         {
-            return _mainClassFile != null ? GetParentDir(_mainClassFile) : Directory.GetParent(PluginHolder.Instance.ParentWindow.GetSelectedFile(false)).Name;
+            return _mainClassFile != null ? GetParentDir(_mainClassFile) : Directory.GetParent(PluginHolder.Instance.ParentWindow.GetSelectedFile(false)).FullName;
         }
 
         /// <summary>
