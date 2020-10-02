@@ -9,6 +9,42 @@
         Height="450" Width="800" SizeToContent="Manual" WindowStartupLocation="CenterScreen" Background="White" Closing="Window_Closing" WindowState="Maximized">
 
 
+    <Window.Resources>
+        <RoutedUICommand x:Key="OpenCommand" Text="OpenCommand" />
+        <RoutedUICommand x:Key="SaveCommand" Text="SaveCommand" />
+        <RoutedUICommand x:Key="SaveAllCommand" Text="SaveAllCommand" />
+        <RoutedUICommand x:Key="BuildCommand" Text="BuildCommand" />
+        <RoutedUICommand x:Key="BuildProjectCommand" Text="BuildProjectCommand" />
+        <RoutedUICommand x:Key="BuildAndRunCommand" Text="BuildAndRunCommand" />
+        <RoutedUICommand x:Key="RunCommand" Text="RunCommand" />
+    </Window.Resources>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource OpenCommand}" 
+                    Executed="Open_Click" />
+        <CommandBinding Command="{StaticResource SaveCommand}" 
+                    Executed="Save_Click" />
+        <CommandBinding Command="{StaticResource SaveAllCommand}" 
+                    Executed="SaveAll_Click" />
+        <CommandBinding Command="{StaticResource BuildCommand}" 
+                    Executed="BuildClick_1" />
+        <CommandBinding Command="{StaticResource BuildProjectCommand}" 
+                    Executed="BuildProject_Click" />
+        <CommandBinding Command="{StaticResource BuildAndRunCommand}" 
+                    Executed="BuildAndRun_Click" />
+        <CommandBinding Command="{StaticResource RunCommand}" 
+                    Executed="Run_Click" />
+    </Window.CommandBindings>
+
+    <Window.InputBindings>
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="{StaticResource OpenCommand}" />
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{StaticResource SaveCommand}" />
+        <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="{StaticResource SaveAllCommand}" />
+        <KeyBinding Key="F1"  Command="{StaticResource BuildCommand}" />
+        <KeyBinding Key="F2"  Command="{StaticResource BuildProjectCommand}" />
+        <KeyBinding Key="F3"  Command="{StaticResource BuildAndRunCommand}" />
+        <KeyBinding Key="F4"  Command="{StaticResource RunCommand}" />
+    </Window.InputBindings>
 
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
@@ -16,10 +52,10 @@
                 <MenuItem Header="File" Background="Transparent">
                     <MenuItem x:Name="New" Header="New" Click="New_Click" />
                     <MenuItem x:Name="Open_Project_Folder" Header="Open Project Folder" Click="Open_Project_Folder_Click" />
-                    <MenuItem x:Name="Open" Header="Open" InputGestureText="Ctrl+O" Click="Open_Click" />
-                    <MenuItem x:Name="Save" Header="Save" InputGestureText="Ctrl+S" Click="Save_Click" />
+                    <MenuItem x:Name="Open" Header="Open" InputGestureText="Ctrl+O" Command="{StaticResource OpenCommand}"  />
+                    <MenuItem x:Name="Save" Header="Save" InputGestureText="Ctrl+S" Command="{StaticResource SaveCommand}" />
                     <MenuItem x:Name="SaveAs" Header="Save As" Click="SaveAs_Click" />
-                    <MenuItem x:Name="SaveAll" Header="Save All" Click="SaveAll_Click" />
+                    <MenuItem x:Name="SaveAll" Header="Save All" InputGestureText="Ctrl+Shift+S" Command="{StaticResource SaveAllCommand}" />
                     <Separator />
                     <MenuItem x:Name="Recents" Header="Recent Files" Click="Recents_Click" />
                     <MenuItem x:Name="Exit" Header="Exit" Click="Exit_Click" />
@@ -42,11 +78,11 @@
                 </MenuItem>
 
                 <MenuItem x:Name="Build" Header="Build"  DockPanel.Dock="Top" Background="Transparent">
-                    <MenuItem Header="Build" Click="BuildClick_1"/>
-                    <MenuItem Header="Build Project" Click="BuildProject_Click"/>
-                    <MenuItem Header="Run" Click="Run_Click" />
-                    <MenuItem Header="Run Project" Click="BuildProject_Click" />
-                    <MenuItem Header="Build and Run" Click="BuildAndRun_Click"></MenuItem>
+                    <MenuItem Header="Build" InputGestureText="F1" Command="{StaticResource BuildCommand}"/>
+                    <MenuItem Header="Build Project" InputGestureText="F2" Command="{StaticResource BuildProjectCommand}"/>
+                    <MenuItem Header="Build and Run Project" InputGestureText="F3" Command="{StaticResource BuildAndRunCommand}"/>
+                    <MenuItem Header="Run" InputGestureText="F4" Command="{StaticResource RunCommand}"/>
+
                 </MenuItem>
 
                 <MenuItem x:Name="Debug" Header="Debug"  DockPanel.Dock="Top" Background="Transparent">
@@ -61,6 +97,8 @@
                     <MenuItem  Header="About JSharp" DockPanel.Dock="Top" Click="About_Click" />
                 </MenuItem>
             </Menu>
+            
+            
         </mah:WindowCommands>
         </mah:MetroWindow.LeftWindowCommands>
 
@@ -86,7 +124,7 @@
             <Button>
                 <Image Height="16" Source="/Images/Open.png" />
             </Button>
-            <Button Click="Save_Click">
+            <Button Command="{StaticResource SaveCommand}">
                 <Image Source="/Images/Save.png" Height="16" />
             </Button>
             <Separator />

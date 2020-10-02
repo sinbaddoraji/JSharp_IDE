@@ -10,6 +10,7 @@ using System.Xml;
 using AvalonDock.Layout;
 using JSharp.PluginCore;
 using JdbWrapper;
+using System.Windows.Input;
 
 namespace JSharp.Windows.MainWindow
 {
@@ -117,7 +118,7 @@ namespace JSharp.Windows.MainWindow
             await AddInbuiltPanes().ConfigureAwait(false);
         }
 
-        private void Open_Click(object sender, RoutedEventArgs e)
+        private void Open_Click(object sender, ExecutedRoutedEventArgs e)
         {
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 OpenDocuments(openFileDialog.FileNames);
@@ -135,7 +136,7 @@ namespace JSharp.Windows.MainWindow
                 selectedDocument.FontSize = (int)ZoomValue.SelectedItem;
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
+        private void Save_Click(object sender, ExecutedRoutedEventArgs e)
         {
             GetSelectedTextEditor().SaveDocument();
         }
@@ -164,7 +165,7 @@ namespace JSharp.Windows.MainWindow
             
         }
 
-        private void SaveAll_Click(object sender, RoutedEventArgs e)
+        private void SaveAll_Click(object sender, ExecutedRoutedEventArgs e)
         {
             SaveAllDocuments();
         }
@@ -185,22 +186,22 @@ namespace JSharp.Windows.MainWindow
             new RecentFiles().ShowDialog();
         }
 
-        private void BuildClick_1(object sender, RoutedEventArgs e)
+        private void BuildClick_1(object sender, ExecutedRoutedEventArgs e)
         {
             DebugCore.Compile(GetSelectedFile(false));
         }
 
-        private void Run_Click(object sender, RoutedEventArgs e)
+        private void Run_Click(object sender, ExecutedRoutedEventArgs e)
         {
             DebugCore.Run(GetSelectedFile(false));
         }
 
-        private void BuildAndRun_Click(object sender, RoutedEventArgs e)
+        private void BuildAndRun_Click(object sender, ExecutedRoutedEventArgs e)
         {
             DebugCore.CompileProject(true);
         }
 
-        private void BuildProject_Click(object sender, RoutedEventArgs e)
+        private void BuildProject_Click(object sender, ExecutedRoutedEventArgs e)
         {
             DebugCore.CompileProject(false);
         }
