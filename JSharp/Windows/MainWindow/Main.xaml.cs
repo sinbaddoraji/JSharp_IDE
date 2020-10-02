@@ -112,8 +112,6 @@ namespace JSharp.Windows.MainWindow
             UseDarkTheme(Properties.Settings.Default.DarkTheme);
             await InitalizePanes().ConfigureAwait(false);
             await AddInbuiltPanes().ConfigureAwait(false);
-           
-
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
@@ -229,14 +227,6 @@ namespace JSharp.Windows.MainWindow
         private void CreateJar_Click(object sender, RoutedEventArgs e)
         {
             DebugCore.CreatePackage();
-        }
-
-        private void NewDocument_IsSelectedChanged(object sender, EventArgs e)
-        {
-            var doc = (LayoutDocument)sender;
-            if (!doc.IsSelected) return;
-            var data = ((TextEditor.TextEditor)doc.Content).OpenedDocumentShortName;
-            Title = data != null ? $"JSharp ({data})" : "JSharp";
         }
 
         private void About_Click(object sender, RoutedEventArgs e)

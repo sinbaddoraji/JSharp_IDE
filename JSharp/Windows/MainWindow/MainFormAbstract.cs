@@ -378,7 +378,16 @@ namespace JSharp.Windows.MainWindow
                 newDocument.Title = ((TextEditor.TextEditor)newDocument.Content).OpenedDocumentShortName;
             };
 
-            newDocument.IsSelectedChanged += NewDocument_IsSelectedChanged;
+            ((TextEditor.TextEditor)newDocument.Content).Text = $"public class {newDocument.Title.Substring(0, newDocument.Title.Length - 5)}"+ "\n{\n\n}";
+
+            newDocument.IsSelectedChanged += delegate 
+            {
+                if(newDocument.IsSelected)
+                {
+                    var data = ((TextEditor.TextEditor)newDocument.Content).OpenedDocumentShortName;
+                    Title = data != null ? $"JSharp ({data})" : "JSharp";
+                }
+            };
 
             DocumentPane.Children.Add(newDocument);
             SelectDocumentTab(DocumentPane.IndexOfChild(newDocument));
