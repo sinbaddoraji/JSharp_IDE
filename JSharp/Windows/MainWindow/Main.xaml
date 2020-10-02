@@ -21,8 +21,6 @@
                     <MenuItem x:Name="SaveAs" Header="Save As" Click="SaveAs_Click" />
                     <MenuItem x:Name="SaveAll" Header="Save All" Click="SaveAll_Click" />
                     <Separator />
-                    <MenuItem x:Name="CloseAll" Header="Close All" />
-                    <Separator />
                     <MenuItem x:Name="Recents" Header="Recent Files" Click="Recents_Click" />
                     <MenuItem x:Name="Exit" Header="Exit" Click="Exit_Click" />
                 </MenuItem>
