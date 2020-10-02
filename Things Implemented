@@ -34,7 +34,10 @@ JSharp automatically finds file encoding
 Limitations:
 
     Only has autocomplete not intellisense: It suggest code but not so intelligently
-    JSharp is not universal (It does not run on all platforms)
+    JSharp only runs on windows
     JSharp's debugger is at a basic functionality (It does not support breakpoints and may not be able to handle very big classes)
     JSharp does not have an in-text debugger (The user is not notified about syntax errors till compilation)
     JSharp lacks refactoring tools
+    JSharp does not allow the user to select file encoding.
+    JSharp does not have intaractive java features.
+    JSharp does not have a profiler.

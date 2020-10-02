@@ -352,6 +352,7 @@ namespace JSharp.TextEditor
         private void Editor_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter && e.Key != Key.Space) return;
+
             if (SyntaxHighlighting != HighlightingManager.GetHighlightingFromExtension(".java")) return;
             var wordContext = GetClosedWordToCursor(CaretOffset);
 
