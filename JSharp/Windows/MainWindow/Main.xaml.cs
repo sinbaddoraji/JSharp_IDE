@@ -237,16 +237,6 @@ namespace JSharp.Windows.MainWindow
             if (!doc.IsSelected) return;
             var data = ((TextEditor.TextEditor)doc.Content).OpenedDocumentShortName;
             Title = data != null ? $"JSharp ({data})" : "JSharp";
-
-            try
-            {
-                var dir = Directory.GetParent(GetSelectedFile(false)).FullName;
-                fileExplorer.SetDirectory(dir);
-                ProjectFolder = dir;
-            }
-            catch 
-            {
-            }
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
