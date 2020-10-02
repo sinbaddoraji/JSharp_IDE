@@ -49,7 +49,10 @@ namespace JSharp.Windows.MainWindow
                 {
                     try
                     {
-                        OpenDocument(file);
+                        if(File.Exists(file))
+                        {
+                            OpenDocument(file);
+                        }
                     }
                     catch {}
                 }
@@ -213,8 +216,7 @@ namespace JSharp.Windows.MainWindow
             {
                 if(f.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    ProjectFolder = f.SelectedPath;
-                    fileExplorer.SetDirectory(ProjectFolder);
+                    SetProjectFolder(ProjectFolder);
                 }
             }
         }

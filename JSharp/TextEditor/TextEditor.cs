@@ -22,6 +22,7 @@ using JSharp.TextEditor.Folding;
 using JSharp.TextEditor.Highlighting;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
+using JSharp.Inbuilt_Panes;
 
 namespace JSharp.TextEditor
 {
@@ -160,18 +161,21 @@ namespace JSharp.TextEditor
             var copy = new MenuItem { Header = "Copy" };
             var paste = new MenuItem { Header = "Paste" };
             var selectAll = new MenuItem { Header = "Select All" };
+            var useParentDirectory = new MenuItem { Header = "Go to Parent DIR" };
 
             //Initialize menu item events
             cut.Click += delegate { Cut(); };
             copy.Click += delegate { Copy(); };
             paste.Click += delegate { Paste(); };
             selectAll.Click += delegate { SelectAll(); };
+            useParentDirectory.Click += delegate { PluginHolder.Instance.ParentWindow.SetProjectFolder(Directory.GetParent(OpenedDocument).FullName); };
             //Add menu items to context menu
             _editorContntextMenu = new ContextMenu();
             _editorContntextMenu.Items.Add(cut);
             _editorContntextMenu.Items.Add(copy);
             _editorContntextMenu.Items.Add(paste);
             _editorContntextMenu.Items.Add(selectAll);
+            _editorContntextMenu.Items.Add(useParentDirectory);
 
             //Add global items to context menu
             foreach (var item in GlobalEditorContntextMenu.Items)

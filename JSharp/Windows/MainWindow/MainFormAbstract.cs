@@ -416,7 +416,6 @@ namespace JSharp.Windows.MainWindow
         /// </summary>
         public void OpenDocument(string filename)
         {
-           
             if (Properties.Settings.Default.RecentFiles == null)
             {
                 Properties.Settings.Default.RecentFiles = new StringCollection();
@@ -442,6 +441,15 @@ namespace JSharp.Windows.MainWindow
                 AddDocumentPage(name, ex);
             }
             ex.OpenDocument(filename);
+        }
+
+        /// <summary>
+        /// Set focus project folder  for JSharp
+        /// </summary>
+        public void SetProjectFolder(string dir)
+        {
+            ProjectFolder = dir;
+            fileExplorer.SetDirectory(dir);
         }
 
         /// <summary>
