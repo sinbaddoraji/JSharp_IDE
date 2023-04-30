@@ -39,7 +39,7 @@
 
 JSharp was initially written in .net core but it was rewritten in the normal .net framework to make it work on other platforms using mono
 
-> On Plugins:
+> Plugins:
 
 Plugins were implemented in a very straight forward way. C# reflection is used to extract data from the dll files.
 
@@ -47,11 +47,11 @@ A plugin project should refrence the JSharp project or "JSharp.exe" which needs 
 
 The plugin should have one major file called "Entry.cs" which inherits IPlugin which is found in the JSharp lib. Implementing the Interface in any way desired should create a functional plugin as long as there are no build-errors or noticable bugs.
 
-> On auto-complete:
+> Auto-complete:
 
 The base which this was built on is the avalon-edit framework and IKVM. The completion window provided by avalon-edit is modified and used to display data extracted from code written using the Java reflection libruary to suggest java code (a java libruary used to analyse Java code that has already been built).
 
-> On the debugger:
+> The debugger:
 
 JSharp uses JDB as a debugger. A GUI wrapper has been created in order to use JDB outside of the console environment
 
